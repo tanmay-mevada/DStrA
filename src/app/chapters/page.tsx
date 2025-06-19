@@ -6,10 +6,16 @@ import { useEffect, useState } from 'react';
 import ChapterCard from '@/components/ChapterCard';
 import { BookOpen } from 'lucide-react';
 
+interface Section {
+  heading: string;
+  content: string;
+}
+
 interface Chapter {
   _id: string;
   title: string;
   description: string;
+  sections: Section[];
 }
 
 export default function ChaptersPage() {
@@ -18,7 +24,6 @@ export default function ChaptersPage() {
 
   const [chapters, setChapters] = useState<Chapter[]>([]);
 
-  // 🔐 Redirect to login if not authenticated
   useEffect(() => {
     if (status === 'loading') return;
     if (!session?.user) {
@@ -26,7 +31,6 @@ export default function ChaptersPage() {
     }
   }, [status, session, router]);
 
-  // 📦 Fetch chapters after session is confirmed
   useEffect(() => {
     if (session?.user) {
       fetch('/api/chapters')
@@ -57,6 +61,7 @@ export default function ChaptersPage() {
               id={chapter._id}
               title={chapter.title}
               description={chapter.description}
+              sections={chapter.sections}
             />
           ))}
         </div>

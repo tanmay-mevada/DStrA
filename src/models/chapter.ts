@@ -3,7 +3,12 @@ import mongoose, { Schema } from 'mongoose';
 const chapterSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
-  content: { type: String },
+  sections: [
+    {
+      heading: { type: String },
+      content: { type: String }, // Markdown supported
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
 });
 
