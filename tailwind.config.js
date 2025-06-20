@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
@@ -13,22 +13,25 @@ module.exports = {
         surfaceDark: '#1e293b',
         text: '#111827',
         textDark: '#e2e8f0',
-        border: '#000000',
+        borderL: '#64748b', // 👈 light border
         borderDark: '#334155',
       },
+      borderColor: theme => ({
+        ...theme('colors'),
+        DEFAULT: theme('colors.borderL'),           // 👈 optional fallback
+        borderL: theme('colors.borderL'),
+        borderDark: theme('colors.borderDark'),
+      }),
+      animation: {
+        fadeIn: 'fadeIn 0.4s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+      },
     },
-    extend: {
-  animation: {
-    fadeIn: 'fadeIn 0.4s ease-in-out',
-  },
-  keyframes: {
-    fadeIn: {
-      '0%': { opacity: 0 },
-      '100%': { opacity: 1 },
-    },
-  },
-},
-
   },
   plugins: [],
 };

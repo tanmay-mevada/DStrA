@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
+import { ShieldUser } from 'lucide-react';
 
 const navItems = [
   { label: 'Chapters', href: '/chapters' },
@@ -46,9 +47,9 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="px-3 py-2 font-semibold text-black bg-yellow-400 rounded hover:bg-yellow-300"
+              className="px-3 py-2 font-semibold rounded dark:text-text"
             >
-              Admin
+            <ShieldUser className="w-7 h-7 text-text" />
             </Link>
           )}
           

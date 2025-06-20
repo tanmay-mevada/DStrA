@@ -5,3 +5,15 @@
 html {
   transition: background-color 0.3s, color 0.3s;
 }
+
+/* globals.css or a module */
+.prose table {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid white;
+  padding: 8px;
+}
