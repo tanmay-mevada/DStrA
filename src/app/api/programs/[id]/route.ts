@@ -1,6 +1,6 @@
 // src/app/api/programs/[id]/route.ts
 import { NextResponse } from 'next/server';
-import { Program } from '@/models/program';
+import Program from '@/models/program';
 import connectDB from '@/lib/db';
 
 export async function GET(
