@@ -1,12 +1,18 @@
+// src/lib/db.ts
+
 import mongoose from 'mongoose';
 
-export async function connectDB() {
-  if (mongoose.connection.readyState >= 1) return;
+let isConnected = false;
 
-  try {
-    await mongoose.connect(process.env.MONGO_URI!);
-    console.log("✅ MongoDB connected");
-  } catch (err) {
-    console.error("❌ DB connection error:", err);
-  }
+export default async function connectDB() {
+  if (isConnected) return;
+
+  const MONGO_URI = process.env.MONGO_URI;
+
+  if (!MONGO_URI) throw new Error('Mongo URI is not defined');
+
+  await mongoose.connect(MONGO_URI);
+  isConnected = true;
+
+  console.log('✅ Connected to MongoDB');
 }

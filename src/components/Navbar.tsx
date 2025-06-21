@@ -10,6 +10,7 @@ import { ShieldUser } from 'lucide-react';
 const navItems = [
   { label: 'Chapters', href: '/chapters' },
   { label: 'Snippets', href: '/snippets' },
+  { label: 'Programs', href: '/programs' },
 ];
 
 export default function Navbar() {
@@ -49,7 +50,7 @@ export default function Navbar() {
               href="/admin"
               className="px-3 py-2 font-semibold rounded dark:text-text"
             >
-            <ShieldUser className="w-7 h-7 text-text" />
+            <ShieldUser className="w-7 h-7 text-text dark:text-textDark" />
             </Link>
           )}
           

@@ -20,7 +20,7 @@ export default function ThemeToggle() {
     >
       {/* Moon icon (light mode) */}
       <svg
-        className="block fill-violet-700 dark:hidden"
+        className="block fill-black-700 dark:hidden"
         fill="currentColor"
         viewBox="0 0 20 20"
       >
@@ -29,7 +29,7 @@ export default function ThemeToggle() {
 
       {/* Sun icon (dark mode) */}
       <svg
-        className="hidden fill-yellow-400 dark:block"
+        className="hidden fill-white-400 dark:block"
         fill="currentColor"
         viewBox="0 0 20 20"
       >

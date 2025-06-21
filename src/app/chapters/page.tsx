@@ -4,29 +4,20 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ChapterCard from '@/components/ChapterCard';
-import { BookOpen } from 'lucide-react';
-
-interface Section {
-  heading: string;
-  content: string;
-}
 
 interface Chapter {
   _id: string;
   title: string;
   description: string;
-  sections: Section[];
 }
 
 export default function ChaptersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
   const [chapters, setChapters] = useState<Chapter[]>([]);
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (!session?.user) {
+    if (status !== 'loading' && !session?.user) {
       router.push('/auth/login');
     }
   }, [status, session, router]);
@@ -36,34 +27,34 @@ export default function ChaptersPage() {
       fetch('/api/chapters')
         .then((res) => res.json())
         .then(setChapters)
-        .catch((err) => console.error('Failed to load chapters:', err));
+        .catch(console.error);
     }
   }, [session]);
 
   if (status === 'loading' || !session?.user) {
-    return <p className="p-6 text-gray-400">Loading...</p>;
+    return <p className="p-6 text-zinc-500">Loading...</p>;
   }
 
   return (
-    <div className="max-w-6xl p-6 mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <BookOpen className="w-7 h-7 text-text" />
-        <h1 className="text-3xl font-bold text-text">All DSA Chapters</h1>
-      </div>
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 mb-6">
+        All DSA Chapters
+      </h1>
 
       {chapters.length === 0 ? (
-        <p className="text-gray-400">No chapters found. Please check back later.</p>
+        <p className="text-zinc-500">No chapters found.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {chapters.map((chapter) => (
+        <div className="space-y-4">
+          {chapters.map((chapter, index) => (
             <ChapterCard
               key={chapter._id}
               id={chapter._id}
               title={chapter.title}
               description={chapter.description}
-              sections={chapter.sections}
+              chapterNumber={index + 1}
             />
           ))}
+
         </div>
       )}
     </div>

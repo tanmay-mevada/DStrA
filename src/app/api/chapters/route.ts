@@ -1,4 +1,4 @@
-import { connectDB } from '@/lib/db';
+import connectDB from '@/lib/db';
 import { Chapter } from '@/models/chapter';
 import { NextRequest, NextResponse } from 'next/server';
 

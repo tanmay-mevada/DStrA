@@ -6,32 +6,38 @@ interface ChapterCardProps {
   id: string;
   title: string;
   description: string;
-  sections?: { heading: string; content: string }[];
+  chapterNumber: number;
 }
 
-export default function ChapterCard({ id, title, description, sections }: ChapterCardProps) {
-  const firstSection = sections?.[0];
-
+export default function ChapterCard({ id, title, description, chapterNumber }: ChapterCardProps) {
   return (
-    <div className="p-4 border rounded shadow bg-surface dark:bg-surfaceDark border-border dark:border-borderDark">
-      <h2 className="text-xl font-bold text-primary dark:text-darkPrimary">{title}</h2>
-      <p className="mb-2 text-sm text-text/70 dark:text-textDark/70">{description}</p>
+    <div className="relative flex border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:shadow-md transition h-60">
 
-      {firstSection && (
-        <div className="text-sm text-text/60 dark:text-textDark/60 line-clamp-3">
-          <strong>{firstSection.heading}:</strong>{' '}
-          {firstSection.content.length > 120
-            ? firstSection.content.slice(0, 120) + '...'
-            : firstSection.content}
-        </div>
-      )}
+      {/* Large Chapter Number on Left */}
+      <div className="w-32 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 border-r border-zinc-300 dark:border-zinc-700">
+        <span className="text-[12rem] font-extrabold text-black dark:text-black opacity-60 leading-none select-none">
+          {chapterNumber}
+        </span>
+      </div>
 
+      {/* Main Content */}
+      <div className="flex-1 p-4 flex flex-col justify-center z-10">
+        <h2 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+          {title}
+        </h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 line-clamp-7">
+          {description}
+        </p>
+      </div>
+
+      {/* Right-side Open Button */}
       <Link
         href={`/chapters/${id}`}
-        className="inline-block mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+        className="w-28 sm:w-32 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-800 flex items-center justify-center text-sm font-medium transition z-10"
       >
-        Read More →
+        Open →
       </Link>
+
     </div>
   );
 }

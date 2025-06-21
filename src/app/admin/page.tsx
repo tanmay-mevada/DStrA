@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, Code, BarChart3, Plus } from 'lucide-react';
+import { BookOpen, Code, Code2, BarChart3, Plus } from 'lucide-react';
 
 const adminSections = [
   {
@@ -17,6 +17,12 @@ const adminSections = [
     title: 'Manage Snippets',
     description: 'Add and organize code snippets per chapter.',
     href: '/admin/snippets',
+    icon: <Code2 className="w-6 h-6 text-green-400" />,
+  },
+  {
+    title: 'Manage Programs',
+    description: 'Add and organize program codes and description.',
+    href: '/admin/programs',
     icon: <Code className="w-6 h-6 text-green-400" />,
   },
   {
