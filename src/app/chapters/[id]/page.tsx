@@ -8,8 +8,8 @@ import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import { useTheme } from 'next-themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { github as lightStyle } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { vscDarkPlus as darkStyle } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface Section {
   heading: string;
@@ -35,9 +35,7 @@ export default function ChapterDetail() {
     if (!id) return;
     fetch(`/api/chapters/${id}`)
       .then(async (res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
       })
       .then(setChapter)
@@ -54,7 +52,6 @@ export default function ChapterDetail() {
         {chapter.title}
       </h1>
 
-      <br />
       {chapter.sections.map((section, index) => (
         <div key={index} className="mb-10">
           <h2 className="mb-2 text-4xl font-semibold underline text-text dark:text-textDark">
@@ -65,28 +62,14 @@ export default function ChapterDetail() {
               remarkPlugins={[remarkGfm, remarkBreaks]}
               rehypePlugins={[rehypeRaw]}
               components={{
-                h1: ({ node, ...props }) => (
-                  <h1 className="mb-4 text-3xl font-bold underline text-text dark:text-textDark" {...props} />
-                ),
-                h2: ({ node, ...props }) => (
-                  <h2 className="mb-3 text-2xl font-semibold underline text-text dark:text-textDark" {...props} />
-                ),
-                h3: ({ node, ...props }) => (
-                  <h3 className="mb-2 text-xl font-medium underline text-text dark:text-textDark" {...props} />
-                ),
-                h4: ({ node, ...props }) => (
-                  <h4 className="mb-1 text-lg font-medium underline text-text dark:text-textDark" {...props} />
-                ),
-                p: ({ node, ...props }) => (
-                  <p className="mb-4 leading-relaxed text-text dark:text-textDark" {...props} />
-                ),
-                ul: ({ node, ...props }) => (
-                  <ul className="mb-4 space-y-1 list-disc list-inside text-text dark:text-textDark" {...props} />
-                ),
-                ol: ({ node, ...props }) => (
-                  <ol className="mb-4 space-y-1 list-decimal list-inside text-text dark:text-textDark" {...props} />
-                ),
-                li: ({ node, ...props }) => <li {...props} />,
+                h1: (props) => <h1 className="mb-4 text-3xl font-bold underline" {...props} />,
+                h2: (props) => <h2 className="mb-3 text-2xl font-semibold underline" {...props} />,
+                h3: (props) => <h3 className="mb-2 text-xl font-medium underline" {...props} />,
+                h4: (props) => <h4 className="mb-1 text-lg font-medium underline" {...props} />,
+                p: (props) => <p className="mb-4 leading-relaxed" {...props} />,
+                ul: (props) => <ul className="mb-4 space-y-1 list-disc list-inside" {...props} />,
+                ol: (props) => <ol className="mb-4 space-y-1 list-decimal list-inside" {...props} />,
+                li: (props) => <li {...props} />,
                 table: ({ node, ...props }) => {
                   const isSmallTable =
                     node?.children?.length &&
@@ -107,14 +90,14 @@ export default function ChapterDetail() {
                     </div>
                   );
                 },
-                thead: ({ node, ...props }) => (
+                thead: (props) => (
                   <thead className="bg-surface dark:bg-surfaceDark text-text dark:text-textDark" {...props} />
                 ),
-                tbody: ({ node, ...props }) => <tbody {...props} />,
-                th: ({ node, ...props }) => (
+                tbody: (props) => <tbody {...props} />,
+                th: (props) => (
                   <th className="px-4 py-2 font-semibold text-left border border-[1px] border-borderL dark:border-borderDark" {...props} />
                 ),
-                td: ({ node, ...props }) => (
+                td: (props) => (
                   <td className="px-4 py-2 border border-[1px] text-text dark:text-textDark border-borderL dark:border-borderDark" {...props} />
                 ),
                 code({ inline, className, children, ...props }) {
@@ -133,7 +116,7 @@ export default function ChapterDetail() {
                   return (
                     <SyntaxHighlighter
                       language={match[1]}
-                      style={theme === 'dark' ? darkStyle : lightStyle}
+                      style={theme === 'dark' ? vscDarkPlus : oneLight}
                       customStyle={{
                         padding: '1rem',
                         borderRadius: '0.5rem',
@@ -148,11 +131,11 @@ export default function ChapterDetail() {
                     </SyntaxHighlighter>
                   );
                 },
-                img: ({ node, ...props }) => (
+                img: (props) => (
                   <img className="my-4 rounded-lg border-borderL dark:border-borderDark" {...props} />
                 ),
-                blockquote: ({ node, ...props }) => (
-                  <blockquote className="pl-4 my-4 italic border-l-4 text-text dark:text-textDark border-primary dark:border-darkPrimary" {...props} />
+                blockquote: (props) => (
+                  <blockquote className="pl-4 my-4 italic border-l-4 border-primary dark:border-darkPrimary" {...props} />
                 ),
               }}
             >

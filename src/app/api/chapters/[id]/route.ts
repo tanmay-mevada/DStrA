@@ -3,45 +3,58 @@ import connectDB from '@/lib/db';
 import { Chapter } from '@/models/chapter';
 
 // 🟢 GET /api/chapters/:id
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
   await connectDB();
+  const { id } = context.params; // ✅ Access after await
 
   try {
-    const chapter = await Chapter.findById(params.id);
+    const chapter = await Chapter.findById(id);
     if (!chapter) {
       return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
     }
 
     return NextResponse.json(chapter);
   } catch (error) {
-    console.error(error);
+    console.error('GET error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
 // 🟡 PUT /api/chapters/:id
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   await connectDB();
-  const data = await req.json();
+  const { id } = context.params; // ✅ Access after await
 
-  const updated = await Chapter.findByIdAndUpdate(params.id, data, { new: true });
+  try {
+    const data = await req.json();
+    const updated = await Chapter.findByIdAndUpdate(id, data, { new: true });
 
-  if (!updated) {
-    return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+    if (!updated) {
+      return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('PUT error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
-
-  return NextResponse.json(updated);
 }
 
-// 🔴 Optionally: DELETE handler
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+// 🔴 DELETE /api/chapters/:id
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
   await connectDB();
+  const { id } = context.params; // ✅ Access after await
 
-  const deleted = await Chapter.findByIdAndDelete(params.id);
+  try {
+    const deleted = await Chapter.findByIdAndDelete(id);
 
-  if (!deleted) {
-    return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+    if (!deleted) {
+      return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Chapter deleted successfully' });
+  } catch (error) {
+    console.error('DELETE error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
-
-  return NextResponse.json({ message: 'Chapter deleted' });
 }

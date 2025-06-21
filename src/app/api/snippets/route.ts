@@ -1,4 +1,4 @@
-import { connectDB } from '@/lib/db';
+import connectDB from '@/lib/db';
 import { Snippet } from '@/models/snippet';
 import { NextRequest, NextResponse } from 'next/server';
 import '@/models/chapter'; // ✅ Ensure Chapter model is registered for populate()
