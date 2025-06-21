@@ -72,10 +72,12 @@ export default function ChapterDetail() {
                 li: (props) => <li {...props} />,
                 table: ({ node, ...props }) => {
                   const isSmallTable =
-                    node?.children?.length &&
+                    Array.isArray(node?.children) &&
                     node.children.length <= 3 &&
-                    node.children[0]?.children?.length &&
-                    node.children[0].children.length <= 6;
+                    node.children[0] &&
+                    'children' in node.children[0] &&
+                    Array.isArray((node.children[0] as any).children) &&
+                    (node.children[0] as any).children.length <= 6;
 
                   return (
                     <div className="my-4">
