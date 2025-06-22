@@ -17,12 +17,12 @@ export default async function ProgramDetailPage({ params }: Props) {
   if (!id) return notFound();
 
   const program = await Program.findById(id).lean();
-  if (!program) return notFound();
+  if (!program || Array.isArray(program)) return notFound();
 
   return (
     <ProgramViewer
       title={program.title}
-      chapterNumber={program.chapterNumber}
+      chapter={program.chapterNumber}
       language={program.language}
       description={program.description}
       code={program.code}
