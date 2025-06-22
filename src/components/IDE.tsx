@@ -2,7 +2,7 @@
 
 import Editor from '@monaco-editor/react';
 import { useState } from 'react';
-import { Moon, Sun, Play, Bug } from 'lucide-react';
+import { Moon, Sun, Play, Bug, RotateCcw } from 'lucide-react';
 import Split from 'react-split';
 
 export default function IDE({
@@ -10,17 +10,23 @@ export default function IDE({
   code,
   setCode,
   onRun,
+  onDebug,
   loading,
-  terminalContent,
-  setTerminalContent,
+  output,
+  input,
+  setInput,
+  onReset,
 }: {
   language: string;
   code: string;
   setCode: (value: string) => void;
-  terminalContent: string;
-  setTerminalContent: (value: string) => void;
   onRun: () => void;
+  onDebug: () => void;
   loading: boolean;
+  output: string;
+  input: string;
+  setInput: (value: string) => void;
+  onReset: () => void;
 }) {
   const [theme, setTheme] = useState<'vs-dark' | 'light'>('vs-dark');
   const [fontSize, setFontSize] = useState(14);
@@ -30,7 +36,7 @@ export default function IDE({
   };
 
   return (
-    <div className="bg-zinc-900 rounded-xl p-4 space-y-4 shadow-md h-full flex flex-col">
+    <div className="bg-zinc-900 rounded-xl ml-2 p-4 space-y-4 shadow-md h-full flex flex-col">
       {/* Toolbar */}
       <div className="flex justify-between items-center text-white text-sm">
         <div className="flex gap-2 items-center">
@@ -67,21 +73,28 @@ export default function IDE({
           </button>
 
           <button
-            onClick={() => alert('Debug not implemented')}
+            onClick={onDebug}
             className="bg-amber-600 px-3 py-1 rounded text-white hover:bg-amber-700 flex items-center gap-1"
           >
             <Bug size={16} />
             Debug
           </button>
+
+          <button
+            onClick={onReset}
+            className="px-3 py-1 rounded text-white hover:bg-red-700 flex items-center gap-1"
+          >
+            <RotateCcw size={16} />
+          </button>
         </div>
       </div>
 
-      {/* Split: Editor + Terminal */}
+      {/* Editor + I/O */}
       <div className="flex-1">
         <Split
           className="flex flex-col h-full"
           direction="vertical"
-          sizes={[70, 30]}
+          sizes={[80, 16]}
           minSize={[200, 100]}
           gutterSize={6}
           gutterAlign="center"
@@ -91,7 +104,6 @@ export default function IDE({
             return g;
           }}
         >
-          {/* Code Editor */}
           <div className="h-full">
             <Editor
               key={language}
@@ -110,19 +122,24 @@ export default function IDE({
             />
           </div>
 
-          {/* Simulated Terminal */}
-          <div className="bg-black text-white text-sm font-mono p-3 rounded overflow-auto h-full">
-            <textarea
-              className="bg-black text-green-400 w-full h-full resize-none outline-none"
-              value={terminalContent}
-              onChange={(e) => setTerminalContent(e.target.value)}
-              placeholder={`$ Enter input here and press Run...`}
-            />
+          <div className=''>
+          <input
+            type="text"
+            className="bg-black text-green-400 w-full p-3 py-0.5 my-1 rounded outline-none placeholder:text-zinc-500"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Enter space-separated input (e.g., 1 2 3 4 5 3)"
+            disabled={loading}
+          />
+
+          <div className="bg-zinc-800 text-white text-sm font-mono p-3 rounded overflow-auto h-full">
+            <pre>{output || '> Output will appear here.'}</pre>
+          </div>
           </div>
         </Split>
       </div>
+      
 
-      {/* Gutter style */}
       <style jsx global>{`
         .vertical-gutter {
           height: 6px;
@@ -130,7 +147,6 @@ export default function IDE({
           cursor: row-resize;
           position: relative;
         }
-
         .vertical-gutter::before {
           content: '';
           position: absolute;
@@ -144,7 +160,6 @@ export default function IDE({
           border-radius: 1px;
           transition: background-color 0.3s ease;
         }
-
         .vertical-gutter:hover::before {
           background-color: #3b82f6;
         }

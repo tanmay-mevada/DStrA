@@ -1,4 +1,3 @@
-// app/api/execute/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 const JUDGE0_API = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true';
@@ -6,7 +5,7 @@ const JUDGE0_API_KEY = process.env.NEXT_PUBLIC_JUDGE0_API_KEY;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { language, source_code, stdin } = body;
+  const { language, source_code, stdin, debug } = body;
 
   const langMap: Record<string, number> = {
     python: 71,
@@ -17,6 +16,8 @@ export async function POST(req: NextRequest) {
   const language_id = langMap[language];
   if (!language_id) return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
 
+  const debugPrefix = debug ? '# Debug Mode\n' : '';
+
   const response = await fetch(JUDGE0_API, {
     method: 'POST',
     headers: {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       language_id,
-      source_code,
+      source_code: debugPrefix + source_code,
       stdin,
     }),
   });

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
   await connectDB();
-  const chapters = await Chapter.find().sort({ createdAt: -1 });
+  const chapters = await Chapter.find().sort({ createdAt: 1 });
   return NextResponse.json(chapters);
 }
 
