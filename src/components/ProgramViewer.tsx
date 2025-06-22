@@ -26,14 +26,41 @@ export default function ProgramViewer({
     availableLangs.includes(language) ? language : availableLangs[0]
   );
   const [codeMap, setCodeMap] = useState(code);
+  const [terminalContent, setTerminalContent] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleCodeChange = (newCode: string) => {
     setCodeMap((prev) => ({ ...prev, [lang]: newCode }));
   };
 
+  const onRun = async () => {
+    setLoading(true);
+    const input = terminalContent;
+
+    try {
+      const res = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: lang,
+          source_code: codeMap[lang],
+          stdin: input,
+        }),
+      });
+
+      const data = await res.json();
+      const result = data?.output || data?.stderr || 'No output returned.';
+
+      setTerminalContent((prev) => prev + `\n\n$ ${result}`);
+    } catch (err) {
+      setTerminalContent((prev) => prev + `\n\n$ Error executing code.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-6 space-y-6 h-[90vh]">
-      {/* Resizable Split Layout */}
       <div className="h-full">
         <Split
           className="flex h-full"
@@ -49,7 +76,6 @@ export default function ProgramViewer({
         >
           {/* Left Panel: Header + Description */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-sm overflow-auto flex flex-col space-y-4">
-            {/* Header moved here */}
             <div>
               <h1 className="text-2xl font-bold mb-1">{title}</h1>
               <p className="text-zinc-500 text-sm">
@@ -73,7 +99,6 @@ export default function ProgramViewer({
               </div>
             </div>
 
-            {/* Description */}
             <div className="prose dark:prose-invert text-sm">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {description?.[lang] ?? 'No description available.'}
@@ -81,14 +106,15 @@ export default function ProgramViewer({
             </div>
           </div>
 
-          {/* Right Panel: Code Editor */}
+          {/* Right Panel: Code + Terminal */}
           <IDE
             language={lang}
             code={codeMap?.[lang] ?? ''}
             setCode={handleCodeChange}
-            output=""
-            loading={false}
-            onRun={() => {}}
+            onRun={onRun}
+            loading={loading}
+            terminalContent={terminalContent}
+            setTerminalContent={setTerminalContent}
           />
         </Split>
       </div>

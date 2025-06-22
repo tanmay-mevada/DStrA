@@ -9,14 +9,16 @@ export default function IDE({
   language,
   code,
   setCode,
-  output,
   onRun,
   loading,
+  terminalContent,
+  setTerminalContent,
 }: {
   language: string;
   code: string;
   setCode: (value: string) => void;
-  output: string;
+  terminalContent: string;
+  setTerminalContent: (value: string) => void;
   onRun: () => void;
   loading: boolean;
 }) {
@@ -33,20 +35,15 @@ export default function IDE({
       <div className="flex justify-between items-center text-white text-sm">
         <div className="flex gap-2 items-center">
           <span className="font-mono">Language: {language}</span>
-          <button
-            onClick={toggleTheme}
-            className="text-white hover:text-yellow-300"
-            title="Toggle Theme"
-          >
+          <button onClick={toggleTheme} className="hover:text-yellow-300" title="Toggle Theme">
             {theme === 'vs-dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
 
         <div className="flex gap-2 items-center">
-          {/* Font Size */}
           <button
             onClick={() => setFontSize((s) => Math.max(10, s - 1))}
-            className="bg-zinc-700 px-2 rounded text-white"
+            className="bg-zinc-700 px-2 rounded"
             title="Decrease font size"
           >
             –
@@ -54,13 +51,12 @@ export default function IDE({
           <span className="w-6 text-center">{fontSize}</span>
           <button
             onClick={() => setFontSize((s) => Math.min(32, s + 1))}
-            className="bg-zinc-700 px-2 rounded text-white"
+            className="bg-zinc-700 px-2 rounded"
             title="Increase font size"
           >
             +
           </button>
 
-          {/* Run */}
           <button
             onClick={onRun}
             disabled={loading}
@@ -70,9 +66,8 @@ export default function IDE({
             {loading ? 'Running...' : 'Run'}
           </button>
 
-          {/* Debug */}
           <button
-            onClick={() => alert('Debug: Compilation started (placeholder).')}
+            onClick={() => alert('Debug not implemented')}
             className="bg-amber-600 px-3 py-1 rounded text-white hover:bg-amber-700 flex items-center gap-1"
           >
             <Bug size={16} />
@@ -81,12 +76,12 @@ export default function IDE({
         </div>
       </div>
 
-      {/* Vertical Split between Editor and Terminal */}
+      {/* Split: Editor + Terminal */}
       <div className="flex-1">
         <Split
           className="flex flex-col h-full"
           direction="vertical"
-          sizes={[75, 25]}
+          sizes={[70, 30]}
           minSize={[200, 100]}
           gutterSize={6}
           gutterAlign="center"
@@ -102,7 +97,7 @@ export default function IDE({
               key={language}
               height="100%"
               language={language}
-              defaultValue={code}
+              value={code}
               theme={theme}
               options={{
                 fontSize,
@@ -115,14 +110,14 @@ export default function IDE({
             />
           </div>
 
-          {/* Terminal */}
-          <div className="bg-zinc-800 rounded-lg shadow-inner overflow-auto h-full">
-            <div className="px-4 py-2 border-b border-zinc-700 text-sm text-white font-semibold">
-              Terminal
-            </div>
-            <div className="px-4 py-3 text-green-400 text-sm whitespace-pre-wrap">
-              {output || 'No output yet'}
-            </div>
+          {/* Simulated Terminal */}
+          <div className="bg-black text-white text-sm font-mono p-3 rounded overflow-auto h-full">
+            <textarea
+              className="bg-black text-green-400 w-full h-full resize-none outline-none"
+              value={terminalContent}
+              onChange={(e) => setTerminalContent(e.target.value)}
+              placeholder={`$ Enter input here and press Run...`}
+            />
           </div>
         </Split>
       </div>
