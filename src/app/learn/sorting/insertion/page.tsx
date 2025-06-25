@@ -5,13 +5,13 @@ import { RefreshCcw, Play, Pause, Timer } from 'lucide-react';
 
 export default function InsertionSortPage() {
   const SIZE = 30;
+  const BAR_WIDTH = 14; // px
 
   const [array, setArray] = useState<number[]>([]);
   const [comparing, setComparing] = useState<number[]>([]);
   const [swapping, setSwapping] = useState<number[]>([]);
   const [sortedIndices, setSortedIndices] = useState<number[]>([]);
   const [keyIndex, setKeyIndex] = useState<number | null>(null);
-  const [outerIndex, setOuterIndex] = useState<number | null>(null); // used to mark sorted vs waiting
 
   const [isSorting, setIsSorting] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -31,7 +31,6 @@ export default function InsertionSortPage() {
     setPaused(false);
     setIsSorting(false);
     setKeyIndex(null);
-    setOuterIndex(null);
     setComparing([]);
     setSwapping([]);
     setSortedIndices([]);
@@ -56,7 +55,6 @@ export default function InsertionSortPage() {
     setComparing([]);
     setSwapping([]);
     setKeyIndex(null);
-    setOuterIndex(null);
     setPaused(false);
     isPaused.current = false;
   };
@@ -72,33 +70,32 @@ export default function InsertionSortPage() {
     for (let i = 1; i < n; i++) {
       if (resetVersion.current !== version) break;
 
-      let key = arr[i];
-      let j = i - 1;
-
-      setOuterIndex(i);       // ✅ for "waiting" section
-      setKeyIndex(i);         // ✅ current key
-
+      let j = i;
+      setKeyIndex(i);
       await delay(speedRef.current);
 
-      while (j >= 0 && arr[j] > key) {
+      setComparing([]);
+      setSwapping([]);
+
+      while (j > 0 && arr[j - 1] > arr[j]) {
         if (resetVersion.current !== version) break;
 
-        setComparing([j]);
+        setComparing([j - 1, j]);
         await waitIfPaused(version);
         await delay(speedRef.current);
 
-        arr[j + 1] = arr[j];
+        setSwapping([j - 1, j]);
+        // Swap values in arr
+        [arr[j - 1], arr[j]] = [arr[j], arr[j - 1]];
         setArray([...arr]);
-        setSwapping([j + 1]);
         await delay(speedRef.current);
+
+        setSwapping([]);
+        setComparing([]);
+
         j--;
       }
 
-      arr[j + 1] = key;
-      setArray([...arr]);
-
-      setSwapping([]);
-      setComparing([]);
       setSortedIndices((prev) => [...new Set([...prev, ...Array(i + 1).keys()])]);
     }
 
@@ -171,29 +168,32 @@ export default function InsertionSortPage() {
             const isComparing = comparing.includes(i);
             const isSwapping = swapping.includes(i);
             const isSorted = sortedIndices.includes(i);
-            const isKey = keyIndex === i;
 
-            let barColor = 'bg-blue-400'; // 🔵 waiting
-
-            if (outerIndex !== null && i < outerIndex) barColor = 'bg-green-500'; // 🟢 sorted
-            if (i > (outerIndex ?? SIZE)) barColor = 'bg-blue-400'; // 🔵 still waiting
-
-            if (isKey) barColor = 'bg-purple-500'; // 🟣 key
-            if (isComparing) barColor = 'bg-yellow-400'; // 🟡 comparing
-            if (isSwapping) barColor = 'bg-red-500'; // 🔴 shifting
+            const barColor = isSwapping
+              ? 'bg-red-500'
+              : isComparing
+              ? 'bg-yellow-400'
+              : isSorted
+              ? 'bg-green-500'
+              : 'bg-blue-500';
 
             return (
               <div
                 key={i}
-                className="relative mx-[3.9px] w-[10px] sm:w-[12px] md:w-[14px] flex flex-col items-center justify-end"
+                className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
               >
+                {/* Value above */}
                 <div className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none">
                   {val}
                 </div>
+
+                {/* Bar */}
                 <div
                   className={`w-full transition-all duration-100 ${barColor}`}
                   style={{ height: `${val * 3}px` }}
                 />
+
+                {/* Index below */}
                 <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
                   {i}
                 </div>
