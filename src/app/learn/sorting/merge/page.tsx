@@ -26,8 +26,9 @@ export default function MergeSortPage() {
   }, []);
 
   const reset = () => {
-    // Split 30 elements into two sorted arrays of 15 each
-    const arr = Array.from({ length: SIZE }, () => Math.floor(Math.random() * 90) + 10).sort((a, b) => a - b);
+    const arr = Array.from({ length: SIZE }, () =>
+      Math.floor(Math.random() * 40) + 10
+    ).sort((a, b) => a - b);
     const arr1 = arr.slice(0, SIZE / 2);
     const arr2 = arr.slice(SIZE / 2);
     setA1(arr1);
@@ -54,39 +55,35 @@ export default function MergeSortPage() {
     while (i < arr1.length && j < arr2.length) {
       await delay(speedRef.current);
       if (arr1[i] < arr2[j]) {
-        arr3[k] = arr1[i];
-        i++;
-        k++;
+        arr3[k] = arr1[i++];
       } else {
-        arr3[k] = arr2[j];
-        j++;
-        k++;
+        arr3[k] = arr2[j++];
       }
+      k++;
       setA3([...arr3]);
       setC1(i);
       setC2(j);
       setC3(k);
     }
+
     while (i < arr1.length) {
       await delay(speedRef.current);
-      arr3[k] = arr1[i];
-      i++;
-      k++;
+      arr3[k++] = arr1[i++];
       setA3([...arr3]);
       setC1(i);
       setC2(j);
       setC3(k);
     }
+
     while (j < arr2.length) {
       await delay(speedRef.current);
-      arr3[k] = arr2[j];
-      j++;
-      k++;
+      arr3[k++] = arr2[j++];
       setA3([...arr3]);
       setC1(i);
       setC2(j);
       setC3(k);
     }
+
     setDone(true);
     setMerging(false);
   };
@@ -96,6 +93,7 @@ export default function MergeSortPage() {
       <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100">
         Merge Two Sorted Arrays Visualization
       </h1>
+
       <div className="flex flex-wrap gap-4 items-center">
         <button
           onClick={reset}
@@ -132,10 +130,19 @@ export default function MergeSortPage() {
         </div>
       </div>
 
+      {/* Layout change: A1 and A2 side by side, A3 below */}
       <div className="space-y-8">
-        <ArrayBarRow arr={a1} highlight={c1 < a1.length ? c1 : null} label="A1" />
-        <ArrayBarRow arr={a2} highlight={c2 < a2.length ? c2 : null} label="A2" />
-        <ArrayBarRow arr={a3} highlight={c3 < a3.length ? c3 : null} label="A3" isMerged />
+        <div className="flex flex-row gap-8">
+          <div className="flex-1">
+            <ArrayBarRow arr={a1} highlight={c1 < a1.length ? c1 : null} label="A1" />
+          </div>
+          <div className="flex-1">
+            <ArrayBarRow arr={a2} highlight={c2 < a2.length ? c2 : null} label="A2" />
+          </div>
+        </div>
+        <div>
+          <ArrayBarRow arr={a3} highlight={c3 < a3.length ? c3 : null} label="A3" isMerged />
+        </div>
       </div>
     </div>
   );
@@ -153,52 +160,34 @@ function ArrayBarRow({
   isMerged?: boolean;
 }) {
   return (
-    <div className="flex items-end mb-4">
-      <span className="w-12 font-bold mr-4 text-lg text-blue-700 dark:text-blue-300">{label}</span>
-      <div className="flex items-end h-[200px] bg-gradient-to-b from-zinc-100/80 to-zinc-200/60 dark:from-zinc-900/80 dark:to-zinc-800/60 rounded-lg px-3 py-3 shadow-inner border border-zinc-200 dark:border-zinc-700">
+    <div className="mb-6">
+      <div className="mb-2 text-blue-500 font-semibold text-lg">{label}</div>
+      <div className="flex gap-1 items-end h-[200px] px-2 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-sm shadow-inner border border-zinc-300 dark:border-zinc-700 overflow-x-auto">
         {arr.map((val, i) => {
           const isBar = val !== null;
-          const barColor =
-            highlight === i
-              ? isMerged
-                ? 'bg-purple-500'
-                : 'bg-yellow-400'
-              : 'bg-blue-500';
+          const isHighlighted = highlight === i;
 
           return (
-            <div
-              key={i}
-              className={`relative mx-[6px] w-[18px] flex flex-col items-center justify-end rounded-lg shadow-md transition-all duration-200 group ${
-                isBar ? barColor : 'bg-zinc-200 dark:bg-zinc-700'
-              } ${highlight === i ? 'ring-2 ring-purple-400' : ''}`}
-              style={{
-                minHeight: 20,
-                height: isBar ? `${val! * 4}px` : '20px',
-                opacity: isBar ? 1 : 0.3,
-                border: '1.5px solid #e5e7eb',
-                transition: 'background 0.2s, height 0.2s, box-shadow 0.2s, border 0.2s',
-              }}
-            >
-              {/* Value above */}
-              <div className="text-[11px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-bold select-none drop-shadow group-hover:scale-110 transition-transform">
+            <div key={i} className="flex flex-col items-center w-[20px]">
+              <div className="text-[11px] mb-1 text-zinc-800 dark:text-zinc-100 font-medium">
                 {isBar ? val : ''}
               </div>
-              {/* Bar */}
               <div
-                className={`w-full ${isMerged ? '' : 'invisible'} rounded-b`}
+                className={`w-full rounded-sm transition-all duration-200 ${
+                  isHighlighted
+                    ? isMerged
+                      ? 'bg-purple-400'
+                      : 'bg-yellow-400'
+                    : isMerged
+                    ? 'bg-blue-400'
+                    : 'bg-blue-500'
+                }`}
                 style={{
-                  height: isMerged && val != null ? `${val * 4}px` : 0,
-                  background: isMerged
-                    ? highlight === i
-                      ? '#a78bfa'
-                      : 'linear-gradient(180deg, #60a5fa 60%, #3b82f6 100%)'
-                    : 'transparent',
-                  borderRadius: 4,
-                  transition: 'background 0.2s, height 0.2s',
+                  height: isBar ? `${val * 3}px` : '20px',
+                  opacity: isBar ? 1 : 0.3,
                 }}
               />
-              {/* Index below */}
-              <div className="text-[12px] text-zinc-500 dark:text-zinc-400 mt-1 select-none font-mono group-hover:text-blue-600">
+              <div className="text-[10px] mt-1 text-zinc-500 font-mono">
                 {i}
               </div>
             </div>
@@ -208,58 +197,3 @@ function ArrayBarRow({
     </div>
   );
 }
-       
-
-//       {/* Active Merge Label */}
-//       {activeRange && (
-//         <div className="text-center text-md font-semibold text-purple-600 dark:text-purple-400">
-//           Merging indices {activeRange[0]} to {activeRange[1]}
-//         </div>
-//       )}
-
-//       {/* Visualizer */}
-//       <div className="flex justify-center">
-//         <div className="flex items-end h-[500px] w-full max-w-5xl bg-zinc-100 dark:bg-zinc-900 rounded-lg shadow-inner overflow-hidden px-4 py-4">
-//           {array.map((val, i) => {
-//             const isMerging = mergingIndices.includes(i);
-//             const isSorted = sortedIndices.includes(i);
-//             const isActive =
-//               activeRange && i >= activeRange[0] && i <= activeRange[1];
-//             const isFaded = activeRange && (i < activeRange[0] || i > activeRange[1]);
-
-//             const barColor = isMerging
-//               ? 'bg-purple-500'
-//               : isSorted
-//               ? 'bg-green-500'
-//               : isActive
-//               ? 'bg-yellow-400'
-//               : 'bg-blue-500';
-
-//             return (
-//               <div
-//                 key={i}
-//                 className={`relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end${isFaded ? ' opacity-30' : ''}`}
-//               >
-//                 {/* Value above */}
-//                 <div className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none">
-//                   {val}
-//                 </div>
-
-//                 {/* Bar */}
-//                 <div
-//                   className={`w-full transition-all duration-200 ${barColor}`}
-//                   style={{ height: `${val * 3}px` }}
-//                 />
-
-//                 {/* Index below */}
-//                 <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
-//                   {i}
-//                 </div>
-//               </div>
-//             );
-//           })}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

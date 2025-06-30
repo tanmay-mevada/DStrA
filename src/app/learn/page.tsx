@@ -41,11 +41,11 @@ const learnTopics = [
     title: 'Graph Algorithms',
     description: 'Visual BFS, DFS traversals, and types of graphs (directed/weighted).',
   },
-  {
-    id: 'recursion',
-    title: 'Recursion Tree',
-    description: 'Trace how recursive functions break down and build back with visual stacks.',
-  },
+  // {
+  //   id: 'recursion',
+  //   title: 'Recursion Tree',
+  //   description: 'Trace how recursive functions break down and build back with visual stacks.',
+  // },
   {
     id: 'searching',
     title: 'Searching Algorithms',
