@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { JSX } from 'react';
 import { Play, RefreshCcw } from 'lucide-react';
 
 type TreeNode = {
