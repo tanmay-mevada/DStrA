@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ChapterCard from '@/components/ChapterCard';
+import Spinner from '@/components/Spinner';
 
 interface Chapter {
   _id: string;
@@ -32,31 +33,37 @@ export default function ChaptersPage() {
   }, [session]);
 
   if (status === 'loading' || !session?.user) {
-    return <p className="p-6 text-zinc-500">Loading...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background dark:bg-backgroundDark">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100 mb-6">
-        All DSA Chapters
-      </h1>
-
-      {chapters.length === 0 ? (
-        <p className="text-zinc-500">No chapters found.</p>
-      ) : (
-        <div className="space-y-4">
-          {chapters.map((chapter, index) => (
-            <ChapterCard
-              key={chapter._id}
-              id={chapter._id}
-              title={chapter.title}
-              description={chapter.description}
-              chapterNumber={index + 1}
-            />
-          ))}
-
-        </div>
-      )}
+    <div className="relative min-h-screen w-full bg-background dark:bg-backgroundDark flex items-center justify-center overflow-x-hidden">
+      <main className="w-full max-w-4xl mx-auto px-2 sm:px-6 py-10 sm:py-12 animate-fadeIn">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-darkPrimary mb-8 tracking-tight">
+          All DSA Chapters
+        </h1>
+        {chapters.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 bg-surface/70 dark:bg-surfaceDark/70 rounded-xl shadow border border-borderL dark:border-borderDark">
+            <p className="text-lg text-text dark:text-textDark/80">No chapters found.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {chapters.map((chapter, index) => (
+              <ChapterCard
+                key={chapter._id}
+                id={chapter._id}
+                title={chapter.title}
+                description={chapter.description}
+                chapterNumber={index + 1}
+              />
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

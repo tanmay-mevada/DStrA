@@ -1,8 +1,10 @@
 // components/Spinner.tsx
-export default function Spinner() {
+export default function Spinner({ className = '' }: { className?: string }) {
   return (
-    <div className="flex items-center justify-center w-full h-full">
-      <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-    </div>
+    <span
+      className={`inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin ${className}`}
+      role="status"
+      aria-label="Loading..."
+    />
   );
 }

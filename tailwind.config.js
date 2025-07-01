@@ -13,12 +13,12 @@ module.exports = {
         surfaceDark: '#1e293b',
         text: '#111827',
         textDark: '#e2e8f0',
-        borderL: '#64748b', // 👈 light border
+        borderL: '#64748b',
         borderDark: '#334155',
       },
       borderColor: theme => ({
         ...theme('colors'),
-        DEFAULT: theme('colors.borderL'),           // 👈 optional fallback
+        DEFAULT: theme('colors.borderL'),
         borderL: theme('colors.borderL'),
         borderDark: theme('colors.borderDark'),
       }),
