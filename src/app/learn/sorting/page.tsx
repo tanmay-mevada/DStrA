@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { PlayCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const sortingAlgorithms = [
@@ -99,7 +100,7 @@ function UniversalSortPreview() {
 
 	return (
 		<div className="flex flex-col items-center mb-8 w-full">
-			<div className="flex items-end gap-2 h-20 w-48 sm:w-56 md:w-64 rounded-xl shadow-inner px-1 py-1 transition-all duration-300">
+			<div className="flex items-end gap-2 h-20 w-48 sm:w-56 md:w-64 rounded-xl shadow-inner px-1 py-1 transition-all duration-300 bg-gradient-to-br from-primary/10 via-white/60 to-blue-200 dark:from-darkPrimary/10 dark:via-black/30 dark:to-blue-900/10 border border-primary/20 dark:border-darkPrimary/20">
 				{arr.map((v, i) => (
 					<div
 						key={i}
@@ -108,7 +109,7 @@ function UniversalSortPreview() {
 							? 'bg-yellow-400 scale-110 shadow-lg'
 							: phase === 'done'
 								? 'bg-green-400'
-								: 'bg-blue-500'}
+								: 'bg-primary dark:bg-darkPrimary'}
             `}
 						style={{
 							height: `${v * 12 }px`,
@@ -117,21 +118,19 @@ function UniversalSortPreview() {
 					/>
 				))}
 			</div>
-			<div className="text-xs text-zinc-500 mt-2 tracking-wide font-medium">
-				{phase === 'sorting' ? '' : ''}
-			</div>
 		</div>
 	);
 }
 
 export default function SortingIntroPage() {
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-zinc-100 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900 py-0">
+		<div className="min-h-screen w-full bg-background dark:bg-backgroundDark py-0">
 			<div className="max-w-4xl mx-auto px-4 pt-6 pb-4">
 				{/* Animation, title, and description in a card */}
-				<div className="bg-white/80 dark:bg-zinc-900/80 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 px-3 py-4 mb-6 flex flex-col items-center">
-					<br></br><UniversalSortPreview />
-					<h1 className="text-4xl sm:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 text-center drop-shadow">
+				<div className="bg-white/40 dark:bg-zinc-900/25 rounded-2xl shadow-lg border border-primary/20 dark:border-darkPrimary/20 px-3 py-4 mb-6 flex flex-col items-center backdrop-blur-md glass-gradient">
+					<br></br>
+					<UniversalSortPreview />
+					<h1 className="text-3xl sm:text-5xl font-bold text-primary dark:text-darkPrimary mb-2 text-center drop-shadow">
 						Sorting Algorithms
 					</h1>
 				</div>
@@ -142,15 +141,14 @@ export default function SortingIntroPage() {
 						<Link
 							href={`/learn/sorting/${algo.id}`}
 							key={algo.id}
-							className="block border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition-all group"
+							className="block border border-primary/20 dark:border-darkPrimary/20 bg-white/40 dark:bg-zinc-900/40 p-5 rounded-2xl shadow hover:shadow-xl hover:-translate-y-1 transition-all group backdrop-blur-md"
 						>
-							<h2 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mb-1 group-hover:underline">
+							<h2 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-1 group-hover:underline">
 								{algo.name}
 							</h2>
-							<p className="text-sm text-zinc-600 dark:text-zinc-400">{algo.desc}</p>
-							<div className="mt-3 text-sm text-blue-500 dark:text-blue-300 font-medium flex items-center gap-1">
-								<span className="transition-transform group-hover:translate-x-1">▶</span>{' '}
-								Visualize
+							<p className="text-sm text-text dark:text-textDark/80">{algo.desc}</p>
+							<div className="mt-3 text-sm text-primary dark:text-darkPrimary font-medium flex items-center gap-1">
+								<PlayCircle className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> Visualize
 							</div>
 						</Link>
 					))}

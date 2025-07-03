@@ -37,19 +37,9 @@ function QueueVisualizer({
   queue: string[];
   maxSize: number;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollLeft = containerRef.current.scrollWidth;
-    }
-  }, [queue.length]);
-
   return (
     <div
-      ref={containerRef}
-      className="flex flex-nowrap justify-center items-end gap-3 min-h-[100px] mt-6 overflow-x-auto pb-2"
-      style={{ scrollBehavior: 'smooth' }}
+      className="flex flex-nowrap justify-center items-end gap-3 min-h-[150px] mt-1 pb-4 w-full overflow-x-visible"
     >
       {queue.length === 0 ? (
         <p className="text-zinc-400">Queue is empty</p>
