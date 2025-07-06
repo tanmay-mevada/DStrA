@@ -204,10 +204,10 @@ function UniversalSearchPreview() {
 
 export default function SearchingIntroPage() {
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-zinc-100 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900 py-0">
+		<div className="min-h-screen  py-0">
 			<div className="max-w-4xl mx-auto px-4 pt-6 pb-4">
 				{/* Title and description in a card */}
-				<div className="bg-white/80 dark:bg-zinc-900/80 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 px-3 py-4 mb-6 flex flex-col items-center">
+				<div className="bg-white/10 dark:bg-zinc-900/20 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 px-3 py-4 mb-6 flex flex-col items-center">
 					<h1 className="text-4xl sm:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 text-center drop-shadow">
 						Searching Algorithms
 					</h1>
@@ -222,7 +222,7 @@ export default function SearchingIntroPage() {
 						<Link
 							href={`/learn/searching/${algo.id}`}
 							key={algo.id}
-							className="block border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 p-5 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition-all group"
+							className="block border border-zinc-200 dark:border-zinc-800 bg-white/20 dark:bg-zinc-900/0 p-5 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition-all group"
 						>
 							<h2 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mb-1 group-hover:underline">
 								{algo.name}

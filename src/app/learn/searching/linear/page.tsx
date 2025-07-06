@@ -61,7 +61,7 @@ export default function LinearSearchPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 space-y-8">
       <h1 className="text-3xl font-bold text-center text-zinc-800 dark:text-zinc-100">
-        🔍 Linear Search Visualization
+        Linear Search Visualization
       </h1>
 
       {/* Controls */}
@@ -108,16 +108,25 @@ export default function LinearSearchPage() {
       </div>
 
       {/* Array Display */}
-      <div className="flex justify-center flex-wrap gap-2 mt-6">
+      <div className="flex justify-center flex-wrap gap-2 mt-6 bg-white/20 dark:bg-zinc-900/20 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-inner px-6 py-6 backdrop-blur-md glass-gradient">
         {array.map((num, idx) => {
           let bg = 'bg-zinc-200';
-          if (foundIndex === idx) bg = 'bg-green-500 text-white';
-          else if (currentIndex === idx) bg = 'bg-yellow-400';
+          let text = 'text-zinc-900';
+          let border = 'border-primary/20 dark:border-darkPrimary/20';
+          if (foundIndex === idx) {
+            bg = 'bg-green-500';
+            text = 'text-white';
+            border = 'border-green-600';
+          } else if (currentIndex === idx) {
+            bg = 'bg-yellow-400';
+            text = 'text-zinc-900';
+            border = 'border-yellow-500';
+          }
 
           return (
             <div
               key={idx}
-              className={`w-12 h-12 rounded flex items-center justify-center font-semibold border ${bg} transition-all`}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center font-semibold border-2 ${bg} ${text} ${border} transition-all duration-300 shadow-sm`}
             >
               {num}
             </div>

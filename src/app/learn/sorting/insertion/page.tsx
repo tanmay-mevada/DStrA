@@ -108,41 +108,37 @@ export default function InsertionSortPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-10">
-      <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100">
+      <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100 mb-2">
         Insertion Sort Visualization
       </h1>
-
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="w-full max-w-5xl mx-auto flex flex-wrap gap-4 items-center bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-lg px-6 py-4 mb-2">
         <button
           onClick={generateArray}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+          className="flex items-center gap-2 glass-btn border border-blue-400/60 dark:border-blue-700/60 bg-white/40 dark:bg-zinc-800/40 text-blue-700 dark:text-blue-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-100/60 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60 transition disabled:opacity-50"
         >
           <RefreshCcw size={16} /> Generate New Array
         </button>
-
         <button
           onClick={insertionSort}
           disabled={isSorting}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 disabled:opacity-50"
+          className="flex items-center gap-2 glass-btn border border-green-400/60 dark:border-green-700/60 bg-white/40 dark:bg-zinc-800/40 text-green-700 dark:text-green-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-green-100/60 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-green-400/60 transition disabled:opacity-50"
         >
           <Play size={16} /> Start Insertion Sort
         </button>
-
         <button
           onClick={() => {
             isPaused.current = !isPaused.current;
             setPaused(isPaused.current);
           }}
           disabled={!isSorting}
-          className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded shadow hover:bg-yellow-600 disabled:opacity-50"
+          className="flex items-center gap-2 glass-btn border border-yellow-400/60 dark:border-yellow-700/60 bg-white/40 dark:bg-zinc-800/40 text-yellow-700 dark:text-yellow-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-yellow-100/60 dark:hover:bg-yellow-900/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/60 transition disabled:opacity-50"
         >
           <Pause size={16} /> {paused ? 'Resume' : 'Pause'}
         </button>
-
-        <div className="flex items-center gap-2">
-          <Timer size={16} className="text-zinc-600 dark:text-zinc-300" />
-          <label className="text-sm text-zinc-600 dark:text-zinc-300">
+        <div className="flex items-center gap-2 ml-2">
+          <Timer size={16} className="text-blue-500 dark:text-blue-300" />
+          <label className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">
             Speed: {speed}ms
           </label>
           <input
@@ -156,50 +152,47 @@ export default function InsertionSortPage() {
               setSpeed(newSpeed);
               speedRef.current = newSpeed;
             }}
-            className="w-32 accent-blue-500"
+            className="w-32 accent-blue-500 dark:accent-blue-400"
           />
         </div>
       </div>
-
       {/* Visualizer */}
-      <div className="flex justify-center">
-        <div className="flex items-end h-[500px] w-full max-w-5xl bg-zinc-100 dark:bg-zinc-900 rounded-lg shadow-inner overflow-hidden px-4 py-4">
-          {array.map((val, i) => {
-            const isComparing = comparing.includes(i);
-            const isSwapping = swapping.includes(i);
-            const isSorted = sortedIndices.includes(i);
-
-            const barColor = isSwapping
-              ? 'bg-red-500'
-              : isComparing
-              ? 'bg-yellow-400'
-              : isSorted
-              ? 'bg-green-500'
-              : 'bg-blue-500';
-
-            return (
-              <div
-                key={i}
-                className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
-              >
-                {/* Value above */}
-                <div className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none">
-                  {val}
-                </div>
-
-                {/* Bar */}
+      <div className="flex justify-center w-full">
+        <div className="flex items-end h-[500px] w-full max-w-5xl mx-auto bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg rounded-2xl border border-blue-300/40 dark:border-blue-900/40 shadow-xl overflow-hidden px-4 py-4 transition-all duration-300">
+          <div className="flex w-full justify-center">
+            {array.map((val, i) => {
+              const isComparing = comparing.includes(i);
+              const isSwapping = swapping.includes(i);
+              const isSorted = sortedIndices.includes(i);
+              const barColor = isSwapping
+                ? 'bg-red-400/90 border-red-500/80 shadow-red-200/40'
+                : isComparing
+                ? 'bg-yellow-300/90 border-yellow-400/80 shadow-yellow-200/40'
+                : isSorted
+                ? 'bg-green-400/90 border-green-500/80 shadow-green-200/40'
+                : 'bg-blue-400/80 border-blue-500/60 shadow-blue-200/30';
+              return (
                 <div
-                  className={`w-full transition-all duration-100 ${barColor}`}
-                  style={{ height: `${val * 3}px` }}
-                />
-
-                {/* Index below */}
-                <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
-                  {i}
+                  key={i}
+                  className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
+                >
+                  {/* Value above */}
+                  <div className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none drop-shadow">
+                    {val}
+                  </div>
+                  {/* Bar */}
+                  <div
+                    className={`w-full transition-all duration-200 rounded-lg border ${barColor}`}
+                    style={{ height: `${val * 3}px` }}
+                  />
+                  {/* Index below */}
+                  <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
+                    {i}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

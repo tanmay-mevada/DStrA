@@ -110,11 +110,34 @@ export default function TreeVisualizer() {
       <p className="text-center text-zinc-500 dark:text-zinc-400">Visualize Preorder, Inorder, and Postorder traversal over a tree with curved connections</p>
 
       {/* Buttons */}
-      <div className="flex justify-center flex-wrap gap-4">
-        <button onClick={() => traverse(treeData, 'pre')} disabled={running} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">Preorder</button>
-        <button onClick={() => traverse(treeData, 'in')} disabled={running} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50">Inorder</button>
-        <button onClick={() => traverse(treeData, 'post')} disabled={running} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50">Postorder</button>
-        <button onClick={reset} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"><RefreshCcw size={16} /></button>
+      <div className="flex flex-wrap justify-center gap-3 md:gap-5 my-4 w-full max-w-2xl mx-auto">
+        <button
+          onClick={() => traverse(treeData, 'pre')}
+          disabled={running}
+          className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 disabled:opacity-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <Play className="w-4 h-4" /> Preorder
+        </button>
+        <button
+          onClick={() => traverse(treeData, 'in')}
+          disabled={running}
+          className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-green-700 disabled:opacity-50 transition-all focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+          <Play className="w-4 h-4" /> Inorder
+        </button>
+        <button
+          onClick={() => traverse(treeData, 'post')}
+          disabled={running}
+          className="flex items-center gap-2 bg-purple-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-purple-700 disabled:opacity-50 transition-all focus:outline-none focus:ring-2 focus:ring-purple-400"
+        >
+          <Play className="w-4 h-4" /> Postorder
+        </button>
+        <button
+          onClick={reset}
+          className="flex items-center gap-2 bg-gray-500 text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-gray-600 transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          <RefreshCcw className="w-4 h-4" /> Reset
+        </button>
       </div>
 
       {/* Tree */}

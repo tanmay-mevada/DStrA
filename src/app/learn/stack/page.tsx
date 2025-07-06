@@ -45,7 +45,7 @@ function StackVisualizer({
   return (
     <div
       ref={containerRef}
-      className="border border-primary/20 dark:border-darkPrimary/20 rounded-2xl p-6 bg-white/70 dark:bg-zinc-900/70 min-h-[220px] max-h-[400px] overflow-y-auto shadow-lg backdrop-blur-md glass-gradient flex flex-col items-center w-full max-w-lg mx-auto"
+      className="border border-primary/20 dark:border-darkPrimary/20 rounded-2xl p-6 bg-white/70 dark:bg-zinc-900/70 min-h-[220px] max-h-[400px] overflow-y-auto shadow-lg backdrop-blur-md glass-gradient flex flex-col items-center"
     >
       <div className="flex flex-col-reverse items-center w-full">
         {stack.map((item, idx) => (

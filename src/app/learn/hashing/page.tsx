@@ -50,69 +50,58 @@ export default function HashingVisualizer() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-      <h1 className="text-3xl font-bold text-center text-zinc-800 dark:text-zinc-100">
-        🧩 Hashing (Division Method + Linear Probing)
-      </h1>
+    <div className="min-h-screen w-full bg-background dark:bg-backgroundDark flex items-center justify-center py-0">
+      <div className="max-w-3xl w-full mx-auto px-4 py-10 space-y-10">
+        <h1 className="text-3xl font-bold text-center text-primary dark:text-darkPrimary mb-2 drop-shadow">
+           Hashing (Division Method + Linear Probing)
+        </h1>
 
-      {/* Controls */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter value to insert"
-          className="border px-3 py-2 rounded w-48"
-        />
-        <button
-          onClick={insert}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          <PlusCircle size={16} className="inline-block mr-1" />
-          Insert
-        </button>
-        <button
-          onClick={resetTable}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          <RefreshCcw size={16} className="inline-block mr-1" />
-          Reset
-        </button>
-      </div>
-
-      {/* Table */}
-      <div className="grid grid-cols-5 gap-4 justify-center mt-6">
-        {table.map((val, idx) => (
-          <div
-            key={idx}
-            className={`w-24 h-16 flex flex-col items-center justify-center border-2 rounded-md text-sm font-medium transition-all
-              ${highlight.includes(idx) ? 'bg-yellow-300 border-yellow-500' :
-              val !== null ? 'bg-blue-100 border-blue-400' : 'bg-white border-zinc-300'}
-            `}
+        {/* Controls */}
+        <div className="flex flex-wrap items-center justify-center gap-4 bg-white/80 dark:bg-zinc-900/80 border border-primary/15 dark:border-darkPrimary/15 rounded-2xl shadow-md px-6 py-5 mb-4 backdrop-blur-md glass-gradient">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter value to insert"
+            className="border border-primary/20 dark:border-darkPrimary/20 px-3 py-2 rounded-lg w-48 bg-white/90 dark:bg-zinc-900/90 focus:ring-2 focus:ring-accent dark:focus:ring-accentDark outline-none transition"
+          />
+          <button
+            onClick={insert}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition-all"
           >
-            <div className="text-xs text-zinc-500 mb-1">Index {idx}</div>
-            <div>{val !== null ? val : '—'}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Message */}
-      {message && (
-        <div className="text-center text-lg mt-4 text-zinc-700 dark:text-zinc-300">
-          {message}
+            <PlusCircle size={16} /> Insert
+          </button>
+          <button
+            onClick={resetTable}
+            className="flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-600 transition-all"
+          >
+            <RefreshCcw size={16} /> Reset
+          </button>
         </div>
-      )}
 
-      {/* Logic review:
-      - Uses division method: index = num % TABLE_SIZE
-      - Linear probing for collision: tries next slot (circularly)
-      - Handles full table (shows message)
-      - Highlights probed slots
-      - Resets table and highlights
-      - UI and async animation are correct
+        {/* Table */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 justify-center mt-6 bg-white/80 dark:bg-zinc-900/80 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-inner px-6 py-6 backdrop-blur-md glass-gradient">
+          {table.map((val, idx) => (
+            <div
+              key={idx}
+              className={`w-24 h-16 flex flex-col items-center justify-center border-2 rounded-xl text-base font-semibold transition-all duration-300 shadow-sm
+                ${highlight.includes(idx) ? 'bg-yellow-300 border-yellow-500' :
+                val !== null ? 'bg-blue-100 border-blue-400' : 'bg-white border-primary/20 dark:bg-zinc-900/40 dark:border-darkPrimary/20'}
+              `}
+            >
+              <div className="text-xs text-zinc-500 mb-1">Index {idx}</div>
+              <div>{val !== null ? val : '—'}</div>
+            </div>
+          ))}
+        </div>
 
-      The logic for insertion, collision handling, and UI feedback is correct for division method + linear probing.
-      No issues found. */}
+        {/* Message */}
+        {message && (
+          <div className="text-center mt-4 text-lg font-medium text-primary dark:text-darkPrimary bg-white/80 dark:bg-zinc-900/80 border border-primary/10 dark:border-darkPrimary/10 rounded-xl px-4 py-3 shadow-sm backdrop-blur-md glass-gradient">
+            {message}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

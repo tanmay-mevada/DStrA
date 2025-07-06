@@ -90,28 +90,28 @@ export default function MergeSortPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 space-y-10">
-      <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100">
+      <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100 mb-2">
         Merge Two Sorted Arrays Visualization
       </h1>
-
-      <div className="flex flex-wrap gap-4 items-center">
+      {/* Controls */}
+      <div className="w-full max-w-5xl mx-auto flex flex-wrap gap-4 items-center bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-lg px-6 py-4 mb-2">
         <button
           onClick={reset}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+          className="flex items-center gap-2 glass-btn border border-blue-400/60 dark:border-blue-700/60 bg-white/40 dark:bg-zinc-800/40 text-blue-700 dark:text-blue-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-100/60 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60 transition disabled:opacity-50"
           disabled={merging}
         >
           <RefreshCcw size={16} /> Generate New Arrays
         </button>
         <button
           onClick={mergeStep}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 disabled:opacity-50"
+          className="flex items-center gap-2 glass-btn border border-green-400/60 dark:border-green-700/60 bg-white/40 dark:bg-zinc-800/40 text-green-700 dark:text-green-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-green-100/60 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-green-400/60 transition disabled:opacity-50"
           disabled={merging || done}
         >
           <Play size={16} /> Start Merge
         </button>
-        <div className="flex items-center gap-2">
-          <Timer size={16} className="text-zinc-600 dark:text-zinc-300" />
-          <label className="text-sm text-zinc-600 dark:text-zinc-300">
+        <div className="flex items-center gap-2 ml-2">
+          <Timer size={16} className="text-blue-500 dark:text-blue-300" />
+          <label className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">
             Speed: {speed}ms
           </label>
           <input
@@ -125,22 +125,21 @@ export default function MergeSortPage() {
               setSpeed(newSpeed);
               speedRef.current = newSpeed;
             }}
-            className="w-32 accent-blue-500"
+            className="w-32 accent-blue-500 dark:accent-blue-400"
           />
         </div>
       </div>
-
       {/* Layout change: A1 and A2 side by side, A3 below */}
       <div className="space-y-8">
-        <div className="flex flex-row gap-8">
-          <div className="flex-1">
+        <div className="flex flex-row gap-2 md:gap-4 lg:gap-6 xl:gap-8 justify-center items-end w-full">
+          <div className="flex flex-col items-center flex-1 min-w-0 max-w-[420px]">
             <ArrayBarRow arr={a1} highlight={c1 < a1.length ? c1 : null} label="A1" />
           </div>
-          <div className="flex-1">
+          <div className="flex flex-col items-center flex-1 min-w-0 max-w-[420px]">
             <ArrayBarRow arr={a2} highlight={c2 < a2.length ? c2 : null} label="A2" />
           </div>
         </div>
-        <div>
+        <div className="flex justify-center w-full">
           <ArrayBarRow arr={a3} highlight={c3 < a3.length ? c3 : null} label="A3" isMerged />
         </div>
       </div>
@@ -160,28 +159,27 @@ function ArrayBarRow({
   isMerged?: boolean;
 }) {
   return (
-    <div className="mb-6">
-      <div className="mb-2 text-blue-500 font-semibold text-lg">{label}</div>
-      <div className="flex gap-1 items-end h-[200px] px-2 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-sm shadow-inner border border-zinc-300 dark:border-zinc-700 overflow-x-auto">
+    <div className="mb-6 flex flex-col items-center">
+      <div className="mb-2 text-blue-500 font-semibold text-lg text-center">{label}</div>
+      <div className="flex gap-1 items-end h-[200px] px-2 py-2 bg-white/60 dark:bg-zinc-800/60 backdrop-blur rounded-lg border border-blue-300/40 dark:border-blue-900/40 shadow-inner overflow-x-auto justify-center">
         {arr.map((val, i) => {
           const isBar = val !== null;
           const isHighlighted = highlight === i;
-
           return (
             <div key={i} className="flex flex-col items-center w-[20px]">
               <div className="text-[11px] mb-1 text-zinc-800 dark:text-zinc-100 font-medium">
                 {isBar ? val : ''}
               </div>
               <div
-                className={`w-full rounded-sm transition-all duration-200 ${
+                className={`w-full rounded transition-all duration-200 ${
                   isHighlighted
                     ? isMerged
-                      ? 'bg-purple-400'
-                      : 'bg-yellow-400'
+                      ? 'bg-purple-400/90 border-purple-500/80 shadow-purple-200/40'
+                      : 'bg-yellow-300/90 border-yellow-400/80 shadow-yellow-200/40'
                     : isMerged
-                    ? 'bg-blue-400'
-                    : 'bg-blue-500'
-                }`}
+                    ? 'bg-blue-400/80 border-blue-500/60 shadow-blue-200/30'
+                    : 'bg-blue-500/80 border-blue-700/60 shadow-blue-200/20'
+                } border`}
                 style={{
                   height: isBar ? `${val * 3}px` : '20px',
                   opacity: isBar ? 1 : 0.3,

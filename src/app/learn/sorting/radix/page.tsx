@@ -161,31 +161,28 @@ export default function RadixSortPage() {
         ? buckets
         : Array.from({ length: bucketCount }, (_, i) => buckets[i] || []);
     return (
-      <div className="w-full max-w-5xl mx-auto mt-6">
-        <div className="flex flex-row justify-between gap-1">
+      <div className="w-full max-w-5xl mx-auto mt-8 flex flex-col items-center">
+        <div className="flex flex-row justify-center gap-4 md:gap-6 lg:gap-8 xl:gap-10 w-full">
           {displayBuckets.map((bucket, idx) => (
-            <div key={idx} className="flex-1 flex flex-col items-center min-w-0">
-              <div className={`text-xs font-bold mb-1 truncate ${highlightDigit === idx ? 'text-blue-600' : 'text-zinc-500'}`}>
-                {idx}
-              </div>
-              <div className={`min-h-[18px] w-full flex flex-row flex-wrap justify-center gap-0.5 bg-blue-50 dark:bg-zinc-800 rounded p-0.5 border ${highlightDigit === idx ? 'border-blue-400' : 'border-zinc-300 dark:border-zinc-700'}`}>
-                {bucket.map((val, i) => (
-                  <span
-                    key={i}
-                    className="inline-block text-[9px] font-mono bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-100 rounded px-0.5 py-0 m-0.5 truncate max-w-[22px]"
-                  >
-                    {val}
-                  </span>
-                ))}
+            <div key={idx} className={`flex flex-col items-center min-w-0 w-[90px] max-w-[90px] ${highlightDigit === idx ? 'scale-105' : ''} transition-transform`}>
+              <div className={`text-base font-bold mb-2 truncate text-center ${highlightDigit === idx ? 'text-blue-600' : 'text-zinc-500'}`}>{idx}</div>
+              <div className={`min-h-[120px] w-full flex flex-col items-center justify-end bg-white/60 dark:bg-zinc-800/60 backdrop-blur rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-inner p-1 transition-all duration-200 ${highlightDigit === idx ? 'ring-2 ring-blue-400/70 dark:ring-blue-600/70' : ''}`}>
+                <div className="grid grid-cols-2 items-end justify-items-center h-full w-full gap-y-0.5 gap-x-0.5">
+                  {bucket.map((val, i) => (
+                    <span
+                      key={i}
+                      className="inline-block text-xs font-mono bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-100 rounded px-2 py-1 m-0.5 truncate max-w-[38px] shadow text-center"
+                      style={{ fontSize: bucket.length > 8 ? '10px' : '12px', padding: bucket.length > 8 ? '1px 4px' : '2px 8px' }}
+                    >
+                      {val}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="flex flex-row justify-between mt-1">
-          {displayBuckets.map((_, idx) => (
-            <div key={idx} className="flex-1 text-center text-[9px] text-zinc-400">{idx}</div>
-          ))}
-        </div>
+        {/* Removed the bottom index row */}
       </div>
     );
   }
@@ -197,36 +194,33 @@ export default function RadixSortPage() {
       </h1>
 
       {/* Controls */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="w-full max-w-5xl mx-auto flex flex-wrap gap-4 items-center bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-lg px-6 py-4 mb-2">
         <button
           onClick={generateArray}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+          className="flex items-center gap-2 glass-btn border border-blue-400/60 dark:border-blue-700/60 bg-white/40 dark:bg-zinc-800/40 text-blue-700 dark:text-blue-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-100/60 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60 transition disabled:opacity-50"
         >
           <RefreshCcw size={16} /> Generate New Array
         </button>
-
         <button
           onClick={radixSort}
           disabled={isSorting}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 disabled:opacity-50"
+          className="flex items-center gap-2 glass-btn border border-green-400/60 dark:border-green-700/60 bg-white/40 dark:bg-zinc-800/40 text-green-700 dark:text-green-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-green-100/60 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-green-400/60 transition disabled:opacity-50"
         >
           <Play size={16} /> Start Radix Sort
         </button>
-
         <button
           onClick={() => {
             isPaused.current = !isPaused.current;
             setPaused(isPaused.current);
           }}
           disabled={!isSorting}
-          className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded shadow hover:bg-yellow-600 disabled:opacity-50"
+          className="flex items-center gap-2 glass-btn border border-yellow-400/60 dark:border-yellow-700/60 bg-white/40 dark:bg-zinc-800/40 text-yellow-700 dark:text-yellow-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-yellow-100/60 dark:hover:bg-yellow-900/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/60 transition disabled:opacity-50"
         >
           <Pause size={16} /> {paused ? 'Resume' : 'Pause'}
         </button>
-
-        <div className="flex items-center gap-2">
-          <Timer size={16} className="text-zinc-600 dark:text-zinc-300" />
-          <label className="text-sm text-zinc-600 dark:text-zinc-300">
+        <div className="flex items-center gap-2 ml-2">
+          <Timer size={16} className="text-blue-500 dark:text-blue-300" />
+          <label className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">
             Speed: {speed}ms
           </label>
           <input
@@ -240,57 +234,55 @@ export default function RadixSortPage() {
               setSpeed(newSpeed);
               speedRef.current = newSpeed;
             }}
-            className="w-32 accent-blue-500"
+            className="w-32 accent-blue-500 dark:accent-blue-400"
           />
         </div>
       </div>
 
       {/* Visualizer */}
-      <div className="flex justify-center">
-        <div className="flex items-end h-[380px] w-full max-w-5xl bg-zinc-100 dark:bg-zinc-900 rounded-lg shadow-inner overflow-hidden px-4 py-4">
-          {array.map((val, i) => {
-            const isSorted = sortedIndices.includes(i);
-            // Show yellow for traversal, red for placing in bucket
-            let barColor = 'bg-blue-400';
-            if (highlighted.includes(i) && highlighted[0] === i && highlighted[1] !== -1) barColor = 'bg-yellow-400';
-            else if (highlighted.includes(i) && highlighted[1] === -1) barColor = 'bg-red-500';
-            else if (isSorted) barColor = 'bg-green-500';
-
-            // Highlight the digit being sorted
-            let label = val.toString();
-            if (currentDigitPlace !== null) {
-              const digits = label.padStart(getMaxDigits(array), '0').split('');
-              label = digits
-                .map((d, idx) =>
-                  idx === digits.length - 1 - currentDigitPlace
-                    ? `<span class="text-blue-600 font-bold">${d}</span>`
-                    : d
-                )
-                .join('');
-            }
-
-            return (
-              <div
-                key={i}
-                className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
-              >
-                {/* Value above, highlight digit */}
+      <div className="flex justify-center w-full">
+        <div className="flex items-end h-[380px] w-full max-w-5xl mx-auto bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg rounded-2xl border border-blue-300/40 dark:border-blue-900/40 shadow-xl overflow-hidden px-4 py-4 transition-all duration-300">
+          <div className="flex items-end justify-center w-full h-full">
+            {array.map((val, i) => {
+              const isSorted = sortedIndices.includes(i);
+              let barColor = 'bg-blue-400/80 border-blue-500/60 shadow-blue-200/30';
+              if (highlighted.includes(i) && highlighted[0] === i && highlighted[1] !== -1) barColor = 'bg-yellow-300/90 border-yellow-400/80 shadow-yellow-200/40';
+              else if (highlighted.includes(i) && highlighted[1] === -1) barColor = 'bg-red-400/90 border-red-500/80 shadow-red-200/40';
+              else if (isSorted) barColor = 'bg-green-400/90 border-green-500/80 shadow-green-200/40';
+              let label = val.toString();
+              if (currentDigitPlace !== null) {
+                const digits = label.padStart(getMaxDigits(array), '0').split('');
+                label = digits
+                  .map((d, idx) =>
+                    idx === digits.length - 1 - currentDigitPlace
+                      ? `<span class=\"text-blue-600 font-bold\">${d}</span>`
+                      : d
+                  )
+                  .join('');
+              }
+              return (
                 <div
-                  className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none"
-                  dangerouslySetInnerHTML={{ __html: label }}
-                />
-                {/* Bar */}
-                <div
-                  className={`w-full ${barColor} transition-all duration-200`}
-                  style={{ height: `${val * 0.6}px` }}
-                />
-                {/* Index below */}
-                <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
-                  {i}
+                  key={i}
+                  className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
+                >
+                  {/* Value above, highlight digit */}
+                  <div
+                    className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none drop-shadow"
+                    dangerouslySetInnerHTML={{ __html: label }}
+                  />
+                  {/* Bar */}
+                  <div
+                    className={`w-full transition-all duration-200 rounded-lg border ${barColor}`}
+                    style={{ height: `${val * 0.6}px` }}
+                  />
+                  {/* Index below */}
+                  <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
+                    {i}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -306,11 +298,10 @@ export default function RadixSortPage() {
       <Legend />
 
       {/* Narration */}
-      <div
+      {/* <div
         className="text-xl text-center text-blue-700 dark:text-yellow-300 font-bold bg-blue-50 dark:bg-zinc-800 rounded-lg px-4 py-4 shadow mt-6"
         dangerouslySetInnerHTML={{ __html: stepInfo }}
-      />
+      /> */}
     </div>
   );
 }
-  
