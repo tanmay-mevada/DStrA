@@ -1,4 +1,31 @@
 // src/app/programs/[id]/page.tsx
-export default function ProgramDetailPage({ params }: { params: { id: string } }) {
-  return <div>Program ID: {params.id}</div>;
+import { notFound } from 'next/navigation';
+import connectDB from '@/lib/db';
+import Program from '@/models/program';
+import ProgramViewer from '@/components/ProgramViewer';
+
+type ProgramDetailPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function ProgramDetailPage({ params }: ProgramDetailPageProps) {
+  await connectDB();
+
+  const id = params?.id;
+  if (!id) return notFound();
+
+  const program = await Program.findById(id).lean();
+  if (!program || Array.isArray(program)) return notFound();
+
+  return (
+    <ProgramViewer
+      title={program.title}
+      chapter={program.chapterNumber}
+      language={program.language}
+      description={program.description}
+      code={program.code}
+    />
+  );
 }
