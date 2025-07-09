@@ -4,13 +4,12 @@ import connectDB from '@/lib/db';
 import Program from '@/models/program';
 import ProgramViewer from '@/components/ProgramViewer';
 
-type ProgramDetailPageProps = {
-  params: {
-    id: string;
-  };
-};
+// Use the correct type for dynamic route props
+interface PageProps {
+  params: { id: string };
+}
 
-export default async function ProgramDetailPage({ params }: ProgramDetailPageProps) {
+export default async function ProgramDetailPage({ params }: PageProps) {
   await connectDB();
 
   const id = params?.id;
