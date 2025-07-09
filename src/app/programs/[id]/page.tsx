@@ -4,7 +4,8 @@ import connectDB from '@/lib/db';
 import Program from '@/models/program';
 import ProgramViewer from '@/components/ProgramViewer';
 
-export default async function ProgramDetailPage({ params }: { params: { id: string } }) {
+export default async function ProgramDetailPage(props: any) {
+  const { params } = props;
   await connectDB();
 
   const id = params?.id;
