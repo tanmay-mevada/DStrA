@@ -10,7 +10,7 @@ import { ShieldUser } from 'lucide-react';
 const navItems = [
   { label: 'Learn', href: '/learn' },
   { label: 'Chapters', href: '/chapters' },
-  { label: 'Snippets', href: '/snippets' },
+  // { label: 'Snippets', href: '/snippets' },
   { label: 'Programs', href: '/programs' },
 ];
 

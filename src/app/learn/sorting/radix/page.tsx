@@ -162,17 +162,17 @@ export default function RadixSortPage() {
         : Array.from({ length: bucketCount }, (_, i) => buckets[i] || []);
     return (
       <div className="w-full max-w-5xl mx-auto mt-8 flex flex-col items-center">
-        <div className="flex flex-row justify-center gap-4 md:gap-6 lg:gap-8 xl:gap-10 w-full">
+        <div className="flex flex-row justify-center gap-2 md:gap-4 lg:gap-6 xl:gap-8 w-full">
           {displayBuckets.map((bucket, idx) => (
-            <div key={idx} className={`flex flex-col items-center min-w-0 w-[90px] max-w-[90px] ${highlightDigit === idx ? 'scale-105' : ''} transition-transform`}>
-              <div className={`text-base font-bold mb-2 truncate text-center ${highlightDigit === idx ? 'text-blue-600' : 'text-zinc-500'}`}>{idx}</div>
-              <div className={`min-h-[120px] w-full flex flex-col items-center justify-end bg-white/60 dark:bg-zinc-800/60 backdrop-blur rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-inner p-1 transition-all duration-200 ${highlightDigit === idx ? 'ring-2 ring-blue-400/70 dark:ring-blue-600/70' : ''}`}>
-                <div className="grid grid-cols-2 items-end justify-items-center h-full w-full gap-y-0.5 gap-x-0.5">
+            <div key={idx} className={`flex flex-col items-center w-[60px] max-w-[60px] ${highlightDigit === idx ? 'scale-105' : ''} transition-transform`}>
+              <div className={`text-xs font-semibold mb-1 text-center ${highlightDigit === idx ? 'text-blue-600' : 'text-zinc-500'}`}>B{idx}</div>
+              <div className={`min-h-[80px] w-full flex flex-col items-center justify-end bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-200 dark:border-zinc-700 p-1 transition-all duration-200 ${highlightDigit === idx ? 'ring-2 ring-blue-400/70 dark:ring-blue-600/70' : ''}`}>
+                <div className="flex flex-wrap items-end justify-center h-full w-full gap-0.5">
                   {bucket.map((val, i) => (
                     <span
                       key={i}
-                      className="inline-block text-xs font-mono bg-blue-200 dark:bg-blue-900 text-blue-900 dark:text-blue-100 rounded px-2 py-1 m-0.5 truncate max-w-[38px] shadow text-center"
-                      style={{ fontSize: bucket.length > 8 ? '10px' : '12px', padding: bucket.length > 8 ? '1px 4px' : '2px 8px' }}
+                      className="inline-block text-[12px] font-mono bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 rounded px-2 py-0.5 m-0.5 text-center border border-blue-100 dark:border-blue-800 whitespace-nowrap"
+                      style={{ maxWidth: '100%', overflow: 'visible', textOverflow: 'clip' }}
                     >
                       {val}
                     </span>
@@ -182,7 +182,6 @@ export default function RadixSortPage() {
             </div>
           ))}
         </div>
-        {/* Removed the bottom index row */}
       </div>
     );
   }

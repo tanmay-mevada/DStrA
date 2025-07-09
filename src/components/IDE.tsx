@@ -36,28 +36,28 @@ export default function IDE({
   };
 
   return (
-    <div className="bg-zinc-900 rounded-xl ml-2 p-4 space-y-4 shadow-md h-full flex flex-col">
+    <div className="bg-zinc-900 rounded-2xl ml-3 p-6 space-y-5 shadow-lg h-full flex flex-col border border-zinc-800">
       {/* Toolbar */}
-      <div className="flex justify-between items-center text-white text-sm">
-        <div className="flex gap-2 items-center">
-          <span className="font-mono">Language: {language}</span>
-          <button onClick={toggleTheme} className="hover:text-yellow-300" title="Toggle Theme">
-            {theme === 'vs-dark' ? <Sun size={18} /> : <Moon size={18} />}
+      <div className="flex justify-between items-center text-white text-base mb-1">
+        <div className="flex gap-3 items-center">
+          <span className="font-mono text-blue-300 bg-zinc-800 px-2 py-1 rounded text-sm">{language.toUpperCase()}</span>
+          <button onClick={toggleTheme} className="hover:text-yellow-300 p-1 rounded transition" title="Toggle Theme">
+            {theme === 'vs-dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
         </div>
 
         <div className="flex gap-2 items-center">
           <button
             onClick={() => setFontSize((s) => Math.max(10, s - 1))}
-            className="bg-zinc-700 px-2 rounded"
+            className="bg-zinc-800 px-2 rounded text-lg hover:bg-zinc-700 border border-zinc-700"
             title="Decrease font size"
           >
             –
           </button>
-          <span className="w-6 text-center">{fontSize}</span>
+          <span className="w-7 text-center font-mono text-blue-200">{fontSize}</span>
           <button
             onClick={() => setFontSize((s) => Math.min(32, s + 1))}
-            className="bg-zinc-700 px-2 rounded"
+            className="bg-zinc-800 px-2 rounded text-lg hover:bg-zinc-700 border border-zinc-700"
             title="Increase font size"
           >
             +
@@ -66,25 +66,26 @@ export default function IDE({
           <button
             onClick={onRun}
             disabled={loading}
-            className="bg-blue-600 px-3 py-1 rounded text-white hover:bg-blue-700 flex items-center gap-1"
+            className="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-1.5 rounded-lg text-white font-bold shadow-md hover:from-blue-600 hover:to-cyan-600 flex items-center gap-1 transition disabled:opacity-60"
           >
-            <Play size={16} />
+            <Play size={18} />
             {loading ? 'Running...' : 'Run'}
           </button>
 
           <button
             onClick={onDebug}
-            className="bg-amber-600 px-3 py-1 rounded text-white hover:bg-amber-700 flex items-center gap-1"
+            className="bg-gradient-to-r from-amber-500 to-yellow-500 px-4 py-1.5 rounded-lg text-white font-bold shadow-md hover:from-amber-600 hover:to-yellow-600 flex items-center gap-1 transition"
           >
-            <Bug size={16} />
+            <Bug size={18} />
             Debug
           </button>
 
           <button
             onClick={onReset}
-            className="px-3 py-1 rounded text-white hover:bg-red-700 flex items-center gap-1"
+            className="bg-zinc-700 px-3 py-1.5 rounded-lg text-white hover:bg-red-700 flex items-center gap-1 transition"
+            title="Reset input/output"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={18} />
           </button>
         </div>
       </div>
@@ -116,25 +117,29 @@ export default function IDE({
                 minimap: { enabled: false },
                 wordWrap: 'on',
                 scrollBeyondLastLine: false,
+                fontFamily: 'Fira Mono, Menlo, Monaco, Consolas, monospace',
+                fontWeight: '500',
+                lineNumbers: 'on',
+                smoothScrolling: true,
               }}
               onChange={(val) => setCode(val || '')}
-              className="rounded overflow-hidden"
+              className="rounded-xl overflow-hidden border border-zinc-800"
             />
           </div>
 
-          <div className=''>
-          <input
-            type="text"
-            className="bg-black text-green-400 w-full p-3 py-0.5 my-1 rounded outline-none placeholder:text-zinc-500"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Enter space-separated input (e.g., 1 2 3 4 5 3)"
-            disabled={loading}
-          />
+          <div className="space-y-2">
+            <input
+              type="text"
+              className="bg-zinc-950 text-green-400 w-full p-3 py-1 rounded-lg outline-none placeholder:text-zinc-500 font-mono text-base border border-zinc-800"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Enter space-separated input (e.g., 1 2 3 4 5 3)"
+              disabled={loading}
+            />
 
-          <div className="bg-zinc-800 text-white text-sm font-mono p-3 rounded overflow-auto h-full">
-            <pre>{output || '> Output will appear here.'}</pre>
-          </div>
+            <div className="bg-zinc-800 text-white text-sm font-mono p-3 rounded-lg border border-zinc-700 overflow-auto h-full min-h-[60px]">
+              <pre className="whitespace-pre-wrap break-words">{output || '> Output will appear here.'}</pre>
+            </div>
           </div>
         </Split>
       </div>
