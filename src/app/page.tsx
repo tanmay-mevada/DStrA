@@ -16,14 +16,14 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-background dark:bg-backgroundDark flex items-center justify-center overflow-hidden">
-      {/* Decorative blurred background shapes */}
-      <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-primary/15 dark:bg-darkPrimary/15 rounded-full blur-3xl opacity-50 pointer-events-none z-0" />
-      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-pink-400/10 dark:bg-fuchsia-700/10 rounded-full blur-2xl opacity-40 pointer-events-none z-0" />
-      <main className="relative z-10 mt-16 sm:mt-20 mb-8 sm:mb-16 px-2 sm:px-4 py-8 sm:py-6 max-w-3xl mx-auto min-h-[50vh] sm:min-h-[36vh] flex flex-col justify-center animate-fadeIn rounded-2xl border border-borderL dark:border-borderDark shadow-2xl bg-white/40 dark:bg-surfaceDark/40 backdrop-blur-2xl bg-gradient-to-br from-white/80 via-primary/20 to-surface/90 dark:from-surfaceDark/80 dark:via-darkPrimary/20 dark:to-backgroundDark/90">
+    <div className="relative min-h-screen w-full overflow-hidden bg-background dark:bg-backgroundDark flex items-center justify-center">
+      {/* Smooth gradient background */}
+      <div className="absolute inset-0 z-0 bg-gradient-radial from-[#dbeafe] via-[#f0f9ff] to-white dark:from-[#1e1b4b] dark:via-[#0f172a] dark:to-[#020617]" />
+
+      <main className="relative z-10 mt-16 sm:mt-20 mb-8 sm:mb-16 px-4 py-8 sm:py-10 max-w-3xl mx-auto flex flex-col justify-center rounded-3xl border border-borderL dark:border-borderDark shadow-xl bg-white/60 dark:bg-surfaceDark/70 backdrop-blur-2xl">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-6">
           <div className="flex-1">
-            <h1 className="text-3xl sm:text-5xl font-black text-primary dark:text-darkPrimary tracking-tight drop-shadow-sm">
+            <h1 className="text-4xl sm:text-5xl font-black text-primary dark:text-darkPrimary tracking-tight drop-shadow-sm">
               Welcome to <span className="text-text dark:text-textDark">DStrA</span>
             </h1>
             <p className="mt-2 sm:mt-4 text-base sm:text-lg text-text dark:text-textDark/80 font-medium">
