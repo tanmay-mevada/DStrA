@@ -108,7 +108,7 @@ export default function ChapterDetail() {
                   td: (props) => (
                     <td className="px-4 py-2 border border-[1px] text-text dark:text-textDark border-borderL dark:border-borderDark" {...props} />
                   ),
-                  code({ inline, className, children, ...props }) {
+                  code({ inline, className, children, ...props }: { inline?: boolean; className?: string; children?: React.ReactNode }) {
                     const match = /language-(\w+)/.exec(className || '');
                     if (inline || !match) {
                       return (

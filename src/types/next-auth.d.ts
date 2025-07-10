@@ -5,14 +5,20 @@ declare module "next-auth" {
     user: {
       email: string;
       role: string;
+      image?: string;
+      name?: string;
     };
   }
 
   interface User {
     role: string;
+    image?: string;
+    name?: string;
   }
 
   interface JWT {
     role: string;
+    image?: string;
+    name?: string;
   }
 }

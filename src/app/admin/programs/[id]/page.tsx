@@ -3,14 +3,24 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+type Lang = 'python' | 'cpp' | 'c';
+
 export default function EditProgramPage() {
   const { id } = useParams();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
   const [chapterNumber, setChapterNumber] = useState(1);
-  const [code, setCode] = useState({ python: '', cpp: '', c: '' });
-  const [description, setDescription] = useState({ python: '', cpp: '', c: '' });
+  const [code, setCode] = useState<{ python: string; cpp: string; c: string }>({
+    python: '',
+    cpp: '',
+    c: '',
+  });
+  const [description, setDescription] = useState<{ python: string; cpp: string; c: string }>({
+    python: '',
+    cpp: '',
+    c: '',
+  });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -63,7 +73,7 @@ export default function EditProgramPage() {
     }
   };
 
-  const renderLanguageFields = (lang: string) => (
+  const renderLanguageFields = (lang: Lang) => (
     <div key={lang}>
       <h3 className="text-lg font-semibold capitalize mt-4">{lang}</h3>
 
@@ -111,7 +121,7 @@ export default function EditProgramPage() {
           />
         </div>
 
-        {['python', 'cpp', 'c'].map(renderLanguageFields)}
+        {(['python', 'cpp', 'c'] as const).map(renderLanguageFields)}
 
         <button
           type="submit"

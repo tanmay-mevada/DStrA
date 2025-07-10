@@ -3,7 +3,7 @@ import connectDB from '@/lib/db';
 import { Chapter } from '@/models/chapter';
 
 // 🟢 GET /api/chapters/:id
-export async function GET(req: NextRequest, context) {
+export async function GET(req: NextRequest, context: any) {
   await connectDB();
   const { id } = context.params; // ✅ Access after await
 
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, context) {
 }
 
 // 🟡 PUT /api/chapters/:id
-export async function PUT(req: NextRequest, context) {
+export async function PUT(req: NextRequest, context: any) {
   await connectDB();
   const { id } = context.params; // ✅ Access after await
 
@@ -41,7 +41,7 @@ export async function PUT(req: NextRequest, context) {
 }
 
 // 🔴 DELETE /api/chapters/:id
-export async function DELETE(req: NextRequest, context) {
+export async function DELETE(req: NextRequest, context: any) {
   await connectDB();
   const { id } = context.params; // ✅ Access after await
 
