@@ -5,6 +5,7 @@ import IDE from './IDE';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Split from 'react-split';
+import { useTheme } from 'next-themes';
 
 interface Props {
   title: string;
@@ -21,6 +22,7 @@ export default function ProgramViewer({
   description = {},
   code = {},
 }: Props) {
+  const { theme } = useTheme();
   const availableLangs = Object.keys(code).length ? Object.keys(code) : ['python'];
   const [lang, setLang] = useState(() =>
     availableLangs.includes(language) ? language : availableLangs[0]
@@ -40,27 +42,27 @@ export default function ProgramViewer({
   };
 
   const runOrDebug = async (debug = false) => {
-  setLoading(true);
-  try {
-    const res = await fetch('/api/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: lang,
-        source_code: debug ? `# Debug Mode\n${codeMap[lang]}` : codeMap[lang],
-        stdin: inputContent.trim().split(/\s+/).join('\n'), // 👈 KEY CHANGE
-      }),
-    });
+    setLoading(true);
+    try {
+      const res = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: lang,
+          source_code: debug ? `# Debug Mode\n${codeMap[lang]}` : codeMap[lang],
+          stdin: inputContent.trim().split(/\s+/).join('\n'),
+        }),
+      });
 
-    const data = await res.json();
-    const result = data?.output || data?.stderr || 'No output returned.';
-    setTerminalContent(result);
-  } catch (err) {
-    setTerminalContent('Error executing code.');
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await res.json();
+      const result = data?.output || data?.stderr || 'No output returned.';
+      setTerminalContent(result);
+    } catch (err) {
+      setTerminalContent('Error executing code.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6 h-[90vh]">
@@ -111,6 +113,7 @@ export default function ProgramViewer({
           </div>
 
           <IDE
+            theme={theme}
             language={lang}
             code={codeMap?.[lang] ?? ''}
             setCode={handleCodeChange}

@@ -16,6 +16,7 @@ export default function ChaptersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [isLoadingChapters, setIsLoadingChapters] = useState(true);
 
   useEffect(() => {
     if (status !== 'loading' && !session?.user) {
@@ -25,10 +26,17 @@ export default function ChaptersPage() {
 
   useEffect(() => {
     if (session?.user) {
+      setIsLoadingChapters(true);
       fetch('/api/chapters')
         .then((res) => res.json())
-        .then(setChapters)
-        .catch(console.error);
+        .then((data) => {
+          setChapters(data);
+          setIsLoadingChapters(false);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch chapters:', error);
+          setIsLoadingChapters(false);
+        });
     }
   }, [session]);
 
@@ -46,7 +54,12 @@ export default function ChaptersPage() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-primary dark:text-darkPrimary mb-8 tracking-tight">
           All DSA Chapters
         </h1>
-        {chapters.length === 0 ? (
+
+        {isLoadingChapters ? (
+          <div className="flex items-center justify-center py-16">
+            <Spinner />
+          </div>
+        ) : chapters.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 bg-surface/70 dark:bg-surfaceDark/70 rounded-xl shadow border border-borderL dark:border-borderDark">
             <p className="text-lg text-text dark:text-textDark/80">No chapters found.</p>
           </div>
