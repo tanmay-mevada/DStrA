@@ -2,9 +2,10 @@
 
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, Code, Code2, BarChart3, Plus } from 'lucide-react';
+import { BookOpen, Code, Code2, BarChart3 } from 'lucide-react';
+import { trackUserActivity } from '@/lib/trackUserActivity';
 
 const adminSections = [
   {
@@ -26,24 +27,29 @@ const adminSections = [
     icon: <Code className="w-6 h-6 text-green-400" />,
   },
   {
-    title: 'Analytics (Coming Soon)',
+    title: 'Analytics',
     description: 'Track student activity and page views.',
-    href: '#',
+    href: '/admin/users',
     icon: <BarChart3 className="w-6 h-6 text-yellow-400" />,
-    disabled: true,
-  },
+    disabled: false,
+  }
 ];
 
 export default function AdminHome() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (status === 'loading') return;
+
     if (!session?.user || session.user.role !== 'admin') {
       router.push('/');
+      return;
     }
-  }, [session, status, router]);
+
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
 
   if (status === 'loading' || session?.user?.role !== 'admin') {
     return <div className="p-6 text-gray-400">Loading or Unauthorized...</div>;
@@ -77,10 +83,6 @@ export default function AdminHome() {
           </Link>
         ))}
       </section>
-
-      <div className="mt-10 text-center">
-        
-      </div>
     </main>
   );
 }

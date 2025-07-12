@@ -1,4 +1,3 @@
-// lib/auth.ts
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
@@ -29,7 +28,6 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
-
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
@@ -38,9 +36,9 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        await connectDB();
+      await connectDB();
 
+      if (account?.provider === 'google') {
         const existingUser = await User.findOne({ email: user.email });
         if (!existingUser) {
           await User.create({
@@ -56,6 +54,7 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user) {
+        await connectDB();
         const dbUser = await User.findOne({ email: user.email });
         if (dbUser) {
           token.role = dbUser.role;
@@ -67,7 +66,15 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.role = token.role as string;
+
+        // Update lastSeen
+        await connectDB();
+        await User.findOneAndUpdate(
+          { email: session.user.email },
+          { $set: { lastSeen: new Date() } }
+        );
       }
+
       return session;
     },
   },
