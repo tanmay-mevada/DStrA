@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ArrowRight, RefreshCcw, X } from 'lucide-react';
+import { ArrowRight, RefreshCcw, X, Search, Plus, Trash2 } from 'lucide-react';
 
 // Node Box Component
 function NodeBox({
@@ -13,10 +13,10 @@ function NodeBox({
 }) {
   return (
     <div
-      className={`w-24 h-16 rounded flex items-center justify-center border-2 px-2 transition-all duration-200 font-semibold text-lg
+      className={`w-20 h-14 sm:w-24 sm:h-16 rounded-lg flex items-center justify-center border-2 px-2 transition-all duration-300 font-semibold text-sm sm:text-lg shadow-sm
         ${isFound
-          ? 'bg-yellow-100 border-yellow-500 dark:bg-yellow-900 dark:border-yellow-400'
-          : 'bg-white dark:bg-zinc-800 border-blue-500'}
+          ? 'bg-amber-50 border-amber-400 dark:bg-amber-900/30 dark:border-amber-400 text-amber-800 dark:text-amber-200'
+          : 'bg-white dark:bg-surfaceDark border-borderL dark:border-borderDark text-text dark:text-textDark'}
       `}
     >
       <span className="truncate">{value}</span>
@@ -47,49 +47,53 @@ function LinkedListVisualizer({
   }, [foundIndex]);
 
   return (
-    <div
-      ref={containerRef}
-      className="flex overflow-x-auto items-center gap-8 py-6 px-2 rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700"
-      style={{ minHeight: 110 }}
-    >
-      {list.length === 0 ? (
-        <div className="text-zinc-500 mx-auto">List is empty</div>
-      ) : (
-        list.map((node, i) => (
-          <div key={i} className="flex flex-col items-center gap-1 relative">
-            {/* Node box with address and pointer */}
-            <div className="flex flex-col items-center">
-              <NodeBox value={node.value} isFound={foundIndex === i} />
-              {/* Easy address: 1000, 1001, ... */}
-              <span className="text-[11px] text-zinc-400 select-none mt-1">
-                Addr: <span className="font-mono">{1000 + i}</span>
-              </span>
-            </div>
-            {/* Pointer to next node */}
-            {i !== list.length - 1 ? (
-              <div className="flex flex-col items-center">
-                <div className="flex items-center">
-                  <span className="text-xs text-blue-400 font-mono mr-1">next ➔</span>
-                  <span className="text-[11px] text-zinc-400 font-mono">
-                    {1000 + i + 1}
-                  </span>
-                </div>
-                <ArrowRight className="text-blue-400 shrink-0 mt-1" />
-              </div>
-            ) : (
-              // Last node's next is NULL
-              <div className="flex flex-col items-center">
-                <div className="flex items-center">
-                  <span className="text-xs text-blue-400 font-mono mr-1">next ➔</span>
-                  <span className="text-[11px] text-red-400 font-mono">NULL</span>
-                </div>
-                <X className="text-blue-400 shrink-0 mt-1"/>
-              </div>
-            )}
+    <div className="bg-surface dark:bg-surfaceDark rounded-xl border border-borderL dark:border-borderDark p-4 sm:p-6 shadow-sm">
+      <div
+        ref={containerRef}
+        className="flex overflow-x-auto items-center gap-4 sm:gap-6 py-4 scrollbar-thin scrollbar-thumb-borderL dark:scrollbar-thumb-borderDark scrollbar-track-transparent"
+        style={{ minHeight: 120 }}
+      >
+        {list.length === 0 ? (
+          <div className="text-borderL dark:text-borderDark mx-auto py-8 text-center">
+            <div className="text-lg font-medium mb-2">List is empty</div>
+            <div className="text-sm opacity-75">Add some nodes to get started</div>
           </div>
-        ))
-      )
-      }
+        ) : (
+          list.map((node, i) => (
+            <div key={i} className="flex flex-col items-center gap-2 relative min-w-fit">
+              {/* Node box with address */}
+              <div className="flex flex-col items-center">
+                <NodeBox value={node.value} isFound={foundIndex === i} />
+                {/* Address */}
+                <span className="text-xs text-borderL dark:text-borderDark select-none mt-1">
+                  <span className="font-mono">{1000 + i}</span>
+                </span>
+              </div>
+              {/* Pointer to next node */}
+              {i !== list.length - 1 ? (
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-primary dark:text-primary font-medium">next</span>
+                    <ArrowRight className="text-primary dark:text-primary w-4 h-4" />
+                    <span className="text-xs text-borderL dark:text-borderDark font-mono">
+                      {1000 + i + 1}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                // Last node's next is NULL
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-primary dark:text-primary font-medium">next</span>
+                    <X className="text-red-500 w-4 h-4" />
+                    <span className="text-xs text-red-500 font-mono">NULL</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -114,27 +118,27 @@ export default function LinkedListPage() {
   };
 
   const insertAtStart = () => {
-    if (!value) return;
-    setList([{ value }, ...list]);
+    if (!value.trim()) return;
+    setList([{ value: value.trim() }, ...list]);
     setValue('');
     setFoundIndex(null);
     valueInputRef.current?.focus();
   };
 
   const insertAtEnd = () => {
-    if (!value) return;
-    setList([...list, { value }]);
+    if (!value.trim()) return;
+    setList([...list, { value: value.trim() }]);
     setValue('');
     setFoundIndex(null);
     valueInputRef.current?.focus();
   };
 
   const insertAtIndex = () => {
-    if (!value || index === '') return;
+    if (!value.trim() || index === '') return;
     const i = parseInt(index);
     if (isNaN(i) || i < 0 || i > list.length) return;
     const newList = [...list];
-    newList.splice(i, 0, { value });
+    newList.splice(i, 0, { value: value.trim() });
     setList(newList);
     setValue('');
     setIndex('');
@@ -143,18 +147,24 @@ export default function LinkedListPage() {
   };
 
   const deleteFirst = () => {
+    if (list.length === 0) return;
     setList(list.slice(1));
     setFoundIndex(null);
   };
 
   const deleteLast = () => {
+    if (list.length === 0) return;
     setList(list.slice(0, -1));
     setFoundIndex(null);
   };
 
   const searchValue = () => {
+    if (!search.trim()) {
+      setFoundIndex(null);
+      return;
+    }
     const idx = list.findIndex((node) => node.value === search.trim());
-    setFoundIndex(idx);
+    setFoundIndex(idx >= 0 ? idx : null);
   };
 
   // Focus value input on mount
@@ -163,66 +173,162 @@ export default function LinkedListPage() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
-      <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-200 mb-2">
-        🔗 Singly Linked List Visualizer
-      </h1>
-      <p className="text-center text-zinc-500 dark:text-zinc-400 mb-4 text-sm">
-        Insert, delete, and search nodes in a singly linked list.
-      </p>
+    <div className="min-h-screen bg-background dark:bg-backgroundDark text-text dark:text-textDark transition-colors duration-300">
+      <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary dark:text-primary">
+            Singly Linked List Visualizer
+          </h1>
+          <p className="text-borderL dark:text-borderDark text-sm sm:text-base max-w-2xl mx-auto">
+            Interactive visualization of singly linked list operations including insertion, deletion, and search functionality.
+          </p>
+        </div>
 
-      {/* Controls */}
-      <div className="flex flex-wrap justify-center gap-3">
-        <input
-          ref={valueInputRef}
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Value"
-          className="border px-3 py-2 rounded w-28"
-          onKeyDown={e => { if (e.key === 'Enter') insertAtEnd(); }}
-        />
-        <input
-          type="number"
-          min={0}
-          value={index}
-          onChange={(e) => setIndex(e.target.value)}
-          placeholder="Index"
-          className="border px-3 py-2 rounded w-24"
-        />
-        <button onClick={insertAtStart} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-          Insert at Start
-        </button>
-        <button onClick={insertAtEnd} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-          Insert at End
-        </button>
-        <button onClick={insertAtIndex} className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">
-          Insert at Index
-        </button>
-        <button onClick={deleteFirst} className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">
-          Delete First
-        </button>
-        <button onClick={deleteLast} className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">
-          Delete Last
-        </button>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search"
-          className="border px-3 py-2 rounded w-28"
-          onKeyDown={e => { if (e.key === 'Enter') searchValue(); }}
-        />
-        <button onClick={searchValue} className="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600">
-          Search
-        </button>
-        <button onClick={reset} className="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600">
-          <RefreshCcw size={16} />
-        </button>
+        {/* Input Controls */}
+        <div className="bg-surface dark:bg-surfaceDark rounded-xl border border-borderL dark:border-borderDark p-4 sm:p-6 shadow-sm">
+          <div className="space-y-4">
+            {/* Value and Index Inputs */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-2 text-text dark:text-textDark">
+                  Value
+                </label>
+                <input
+                  ref={valueInputRef}
+                  type="text"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder="Enter value"
+                  className="w-full px-3 py-2 border border-borderL dark:border-borderDark rounded-lg bg-white dark:bg-backgroundDark text-text dark:text-textDark placeholder-borderL dark:placeholder-borderDark focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  onKeyDown={e => { if (e.key === 'Enter') insertAtEnd(); }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-2 text-text dark:text-textDark">
+                  Index (optional)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={list.length}
+                  value={index}
+                  onChange={(e) => setIndex(e.target.value)}
+                  placeholder="Position"
+                  className="w-full px-3 py-2 border border-borderL dark:border-borderDark rounded-lg bg-white dark:bg-backgroundDark text-text dark:text-textDark placeholder-borderL dark:placeholder-borderDark focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <button 
+                onClick={insertAtStart} 
+                disabled={!value.trim()}
+                className="flex items-center gap-2 px-3 py-2 bg-primary hover:bg-darkPrimary disabled:bg-borderL disabled:cursor-not-allowed text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Plus className="w-4 h-4" />
+                Insert Start
+              </button>
+              <button 
+                onClick={insertAtEnd} 
+                disabled={!value.trim()}
+                className="flex items-center gap-2 px-3 py-2 bg-primary hover:bg-darkPrimary disabled:bg-borderL disabled:cursor-not-allowed text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Plus className="w-4 h-4" />
+                Insert End
+              </button>
+              <button 
+                onClick={insertAtIndex} 
+                disabled={!value.trim() || index === '' || parseInt(index) < 0 || parseInt(index) > list.length}
+                className="flex items-center gap-2 px-3 py-2 bg-primary hover:bg-darkPrimary disabled:bg-borderL disabled:cursor-not-allowed text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Plus className="w-4 h-4" />
+                Insert at {index || 'Index'}
+              </button>
+              <button 
+                onClick={deleteFirst} 
+                disabled={list.length === 0}
+                className="flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 disabled:bg-borderL disabled:cursor-not-allowed text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete First
+              </button>
+              <button 
+                onClick={deleteLast} 
+                disabled={list.length === 0}
+                className="flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 disabled:bg-borderL disabled:cursor-not-allowed text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Last
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Controls */}
+        <div className="bg-surface dark:bg-surfaceDark rounded-xl border border-borderL dark:border-borderDark p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-2 text-text dark:text-textDark">
+                Search Value
+              </label>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Enter value to search"
+                className="w-full px-3 py-2 border border-borderL dark:border-borderDark rounded-lg bg-white dark:bg-backgroundDark text-text dark:text-textDark placeholder-borderL dark:placeholder-borderDark focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                onKeyDown={e => { if (e.key === 'Enter') searchValue(); }}
+              />
+            </div>
+            <div className="flex gap-2 sm:items-end">
+              <button 
+                onClick={searchValue}
+                className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <Search className="w-4 h-4" />
+                Search
+              </button>
+              <button 
+                onClick={reset}
+                className="flex items-center gap-2 px-4 py-2 bg-borderL hover:bg-gray-600 text-white rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                Reset
+              </button>
+            </div>
+          </div>
+          {foundIndex !== null && (
+            <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                {foundIndex >= 0 ? `Found "${search}" at index ${foundIndex}` : `"${search}" not found in the list`}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* List Stats */}
+        <div className="bg-surface dark:bg-surfaceDark rounded-xl border border-borderL dark:border-borderDark p-4 sm:p-6 shadow-sm">
+          <div className="flex flex-wrap gap-4 sm:gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-borderL dark:text-borderDark">Length:</span>
+              <span className="font-semibold text-primary dark:text-primary">{list.length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-borderL dark:text-borderDark">Memory Usage:</span>
+              <span className="font-semibold text-primary dark:text-primary">{list.length * 8} bytes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-borderL dark:text-borderDark">Time Complexity:</span>
+              <span className="font-semibold text-primary dark:text-primary">O(n) search, O(1) insert/delete</span>
+            </div>
+          </div>
+        </div>
+
+        {/* List Visualization */}
+        <LinkedListVisualizer list={list} foundIndex={foundIndex} />
       </div>
-
-      {/* List Visualization */}
-      <LinkedListVisualizer list={list} foundIndex={foundIndex} />
     </div>
   );
 }
