@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { RefreshCcw, Play, Pause, Timer } from 'lucide-react';
+import { RefreshCcw, Play, Pause, Timer, ArrowLeft, BookOpen, Code, Zap, TrendingUp, Clock } from 'lucide-react';
 
-export default function QuickSortHoarePage() {
-  const SIZE = 30;
-  const BAR_WIDTH = 16;
+export default function QuickSortPage() {
+  const SIZE = 20;
 
   const [array, setArray] = useState<number[]>([]);
   const [pivotIndex, setPivotIndex] = useState<number | null>(null);
@@ -13,10 +12,14 @@ export default function QuickSortHoarePage() {
   const [jIndex, setJIndex] = useState<number | null>(null);
   const [swapping, setSwapping] = useState<number[]>([]);
   const [sortedIndices, setSortedIndices] = useState<number[]>([]);
-  const [stepInfo, setStepInfo] = useState<string>('Ready');
+  const [partitioning, setPartitioning] = useState<number[]>([]);
   const [isSorting, setIsSorting] = useState(false);
   const [paused, setPaused] = useState(false);
   const [speed, setSpeed] = useState(200);
+  const [currentDepth, setCurrentDepth] = useState(0);
+  const [comparisons, setComparisons] = useState(0);
+  const [swaps, setSwaps] = useState(0);
+  const [partitions, setPartitions] = useState(0);
 
   const speedRef = useRef(speed);
   const isPaused = useRef(false);
@@ -31,15 +34,19 @@ export default function QuickSortHoarePage() {
     isPaused.current = false;
     setPaused(false);
     setIsSorting(false);
+    setCurrentDepth(0);
+    setComparisons(0);
+    setSwaps(0);
+    setPartitions(0);
     setPivotIndex(null);
     setIIndex(null);
     setJIndex(null);
     setSwapping([]);
     setSortedIndices([]);
-    setStepInfo('New array generated');
+    setPartitioning([]);
 
     const newArray = Array.from({ length: SIZE }, () =>
-      Math.floor(Math.random() * 100) + 10
+      Math.floor(Math.random() * 90) + 10
     );
     setArray(newArray);
   };
@@ -58,7 +65,7 @@ export default function QuickSortHoarePage() {
     setIIndex(null);
     setJIndex(null);
     setSwapping([]);
-    setStepInfo('Done!');
+    setPartitioning([]);
     isPaused.current = false;
     setPaused(false);
   };
@@ -67,216 +74,401 @@ export default function QuickSortHoarePage() {
     const version = resetVersion.current;
     setIsSorting(true);
     const arr = [...array];
+    let totalComparisons = 0;
+    let totalSwaps = 0;
+    let totalPartitions = 0;
 
-    const sort = async (start: number, end: number) => {
+    const sort = async (start: number, end: number, depth: number = 0) => {
       if (start >= end || resetVersion.current !== version) return;
 
-      const key = arr[start];
+      setCurrentDepth(depth);
+      setPartitioning([start, end]);
+      
+      const pivotValue = arr[start];
       setPivotIndex(start);
-      setStepInfo(
-        `Choosing pivot: <span class="font-bold text-purple-600">A[${start}] = ${key}</span>`
-      );
+      totalPartitions++;
+      setPartitions(totalPartitions);
+      
+      await waitIfPaused(version);
       await delay(speedRef.current);
 
       let i = start;
       let j = end;
 
       while (i < j) {
-        while (arr[i] <= key && i < end) {
+        if (resetVersion.current !== version) return;
+
+        // Move i pointer right
+        while (arr[i] <= pivotValue && i < end) {
           setIIndex(i);
-          setStepInfo(
-            `Move <span class="font-bold text-yellow-600">i</span> right: A[i=${i}] = ${arr[i]} ≤ pivot`
-          );
+          totalComparisons++;
+          setComparisons(totalComparisons);
           await waitIfPaused(version);
           await delay(speedRef.current);
           i++;
         }
 
-        while (arr[j] > key) {
+        // Move j pointer left
+        while (arr[j] > pivotValue) {
           setJIndex(j);
-          setStepInfo(
-            `Move <span class="font-bold text-yellow-600">j</span> left: A[j=${j}] = ${arr[j]} > pivot`
-          );
+          totalComparisons++;
+          setComparisons(totalComparisons);
           await waitIfPaused(version);
           await delay(speedRef.current);
           j--;
         }
 
         if (i < j) {
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-          setStepInfo(
-            `Swap <span class="font-bold text-red-600">A[${i}]</span> and <span class="font-bold text-red-600">A[${j}]</span>`
-          );
           setSwapping([i, j]);
+          [arr[i], arr[j]] = [arr[j], arr[i]];
           setArray([...arr]);
+          totalSwaps++;
+          setSwaps(totalSwaps);
           await delay(speedRef.current);
           setSwapping([]);
         }
       }
 
-      setStepInfo(
-        `Place pivot: Swap <span class="font-bold text-purple-600">A[${start}]</span> and <span class="font-bold text-green-600">A[${j}]</span>`
-      );
-      [arr[start], arr[j]] = [arr[j], arr[start]];
+      // Place pivot in correct position
       setSwapping([start, j]);
+      [arr[start], arr[j]] = [arr[j], arr[start]];
       setArray([...arr]);
+      totalSwaps++;
+      setSwaps(totalSwaps);
       await delay(speedRef.current);
       setSwapping([]);
+      
       setSortedIndices((prev) => [...new Set([...prev, j])]);
+      setPartitioning([]);
 
-      await sort(start, j - 1);
-      await sort(j + 1, end);
+      // Recursively sort left and right partitions
+      await sort(start, j - 1, depth + 1);
+      await sort(j + 1, end, depth + 1);
     };
 
     await sort(0, array.length - 1);
 
     if (resetVersion.current === version) {
       setSortedIndices([...Array(array.length).keys()]);
-      setStepInfo('All elements sorted!');
+      setPartitioning([]);
     }
 
     resetSortingState();
   };
 
-  const Legend = () => (
-    <div className="flex flex-wrap gap-4 items-center justify-center mb-4">
-      <div className="flex items-center gap-2">
-        <span className="inline-block w-5 h-3 rounded bg-purple-500" />{' '}
-        <span className="text-xs">Pivot (P)</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="inline-block w-5 h-3 rounded bg-yellow-400" />{' '}
-        <span className="text-xs">i / j pointers</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="inline-block w-5 h-3 rounded bg-red-500" />{' '}
-        <span className="text-xs">Swapping</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="inline-block w-5 h-3 rounded bg-green-500" />{' '}
-        <span className="text-xs">Sorted</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="inline-block w-5 h-3 rounded bg-blue-400" />{' '}
-        <span className="text-xs">Unsorted</span>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 space-y-10">
-      <h1 className="text-3xl font-bold text-zinc-800 dark:text-zinc-100 mb-2">
-        Quick Sort (Hoare Partition) Visualization
-      </h1>
-      {/* Controls */}
-      <div className="w-full max-w-5xl mx-auto flex flex-wrap gap-4 items-center bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md rounded-xl border border-blue-300/40 dark:border-blue-900/40 shadow-lg px-6 py-4 mb-2">
-        <button
-          onClick={generateArray}
-          className="flex items-center gap-2 glass-btn border border-blue-400/60 dark:border-blue-700/60 bg-white/40 dark:bg-zinc-800/40 text-blue-700 dark:text-blue-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-100/60 dark:hover:bg-blue-900/40 focus:outline-none focus:ring-2 focus:ring-blue-400/60 transition disabled:opacity-50"
-        >
-          <RefreshCcw size={16} /> Generate New Array
-        </button>
-        <button
-          onClick={quickSort}
-          disabled={isSorting}
-          className="flex items-center gap-2 glass-btn border border-green-400/60 dark:border-green-700/60 bg-white/40 dark:bg-zinc-800/40 text-green-700 dark:text-green-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-green-100/60 dark:hover:bg-green-900/40 focus:outline-none focus:ring-2 focus:ring-green-400/60 transition disabled:opacity-50"
-        >
-          <Play size={16} /> Start Quick Sort
-        </button>
-        <button
-          onClick={() => {
-            isPaused.current = !isPaused.current;
-            setPaused(isPaused.current);
-          }}
-          disabled={!isSorting}
-          className="flex items-center gap-2 glass-btn border border-yellow-400/60 dark:border-yellow-700/60 bg-white/40 dark:bg-zinc-800/40 text-yellow-700 dark:text-yellow-200 font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-yellow-100/60 dark:hover:bg-yellow-900/40 focus:outline-none focus:ring-2 focus:ring-yellow-400/60 transition disabled:opacity-50"
-        >
-          <Pause size={16} /> {paused ? 'Resume' : 'Pause'}
-        </button>
-        <div className="flex items-center gap-2 ml-2">
-          <Timer size={16} className="text-blue-500 dark:text-blue-300" />
-          <label className="text-sm text-zinc-700 dark:text-zinc-200 font-medium">
-            Speed: {speed}ms
-          </label>
-          <input
-            type="range"
-            min={50}
-            max={1000}
-            step={50}
-            value={speed}
-            onChange={(e) => {
-              const newSpeed = Number(e.target.value);
-              setSpeed(newSpeed);
-              speedRef.current = newSpeed;
-            }}
-            className="w-32 accent-blue-500 dark:accent-blue-400"
-          />
+    <div className="min-h-screen bg-[#f9fafb] dark:bg-[#0f172a] py-4 sm:py-6 lg:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <button className="p-2 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-[#111827] dark:text-[#e2e8f0]" />
+            </button>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#111827] dark:text-[#e2e8f0]">
+              Quick Sort (Hoare Partition) Visualization
+            </h1>
+          </div>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-3xl">
+            Watch how Quick Sort uses divide-and-conquer to efficiently sort arrays by partitioning around pivot elements using the Hoare partition scheme.
+          </p>
         </div>
-      </div>
-      {/* Visualizer */}
-      <div className="flex justify-center w-full">
-        <div className="flex items-end h-[400px] w-full max-w-5xl mx-auto bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg rounded-2xl border border-blue-300/40 dark:border-blue-900/40 shadow-xl overflow-hidden px-4 py-4 transition-all duration-300">
-          <div className="flex w-full justify-center">
-            {array.map((val, i) => {
-              const isPivot = pivotIndex === i;
-              const isI = iIndex === i;
-              const isJ = jIndex === i;
-              const isSwap = swapping.includes(i);
-              const isSorted = sortedIndices.includes(i);
-              let barColor = 'bg-blue-400/80 border-blue-500/60 shadow-blue-200/30';
-              if (isSwap) barColor = 'bg-red-400/90 border-red-500/80 shadow-red-200/40';
-              else if (isI || isJ) barColor = 'bg-yellow-300/90 border-yellow-400/80 shadow-yellow-200/40';
-              else if (isPivot) barColor = 'bg-purple-400/90 border-purple-500/80 shadow-purple-200/40';
-              else if (isSorted) barColor = 'bg-green-400/90 border-green-500/80 shadow-green-200/40';
-              let pointer: string | null = null;
-              let pointerColor = 'text-zinc-400';
-              if (isI) {
-                pointer = 'i';
-                pointerColor = 'text-yellow-600';
-              }
-              if (isJ) {
-                pointer = pointer ? pointer + '/j' : 'j';
-                pointerColor = 'text-yellow-600';
-              }
-              if (isPivot) {
-                pointer = pointer ? pointer + '/P' : 'P';
-                pointerColor = 'text-purple-600';
-              }
-              return (
-                <div
-                  key={i}
-                  className="relative mx-[3.9px] w-[14px] flex flex-col items-center justify-end"
-                >
-                  {/* Value above */}
-                  <div className="text-[10px] sm:text-xs mb-1 text-zinc-800 dark:text-zinc-200 font-semibold select-none drop-shadow">
-                    {val}
-                  </div>
-                  {/* Bar */}
+
+        {/* Controls */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <button
+              onClick={generateArray}
+              disabled={isSorting}
+              className="flex items-center justify-center gap-2 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-[#111827] dark:text-[#e2e8f0] font-medium px-4 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-[#38bdf8] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCcw className="w-4 h-4" />
+              <span className="text-sm">Generate Array</span>
+            </button>
+            
+            <button
+              onClick={quickSort}
+              disabled={isSorting}
+              className="flex items-center justify-center gap-2 bg-[#38bdf8] dark:bg-[#0ea5e9] text-white font-medium px-4 py-2.5 rounded-lg hover:bg-[#0ea5e9] dark:hover:bg-[#38bdf8] focus:outline-none focus:ring-2 focus:ring-[#38bdf8] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Play className="w-4 h-4" />
+              <span className="text-sm">Start Sorting</span>
+            </button>
+            
+            <button
+              onClick={() => {
+                isPaused.current = !isPaused.current;
+                setPaused(isPaused.current);
+              }}
+              disabled={!isSorting}
+              className="flex items-center justify-center gap-2 bg-yellow-400 dark:bg-yellow-500 text-yellow-900 dark:text-yellow-100 font-medium px-4 py-2.5 rounded-lg hover:bg-yellow-300 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Pause className="w-4 h-4" />
+              <span className="text-sm">{paused ? 'Resume' : 'Pause'}</span>
+            </button>
+            
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+              <Timer className="w-4 h-4 text-[#38bdf8] dark:text-[#0ea5e9]" />
+              <span className="text-sm font-medium text-[#111827] dark:text-[#e2e8f0] whitespace-nowrap">
+                Speed: {speed}ms
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <input
+              type="range"
+              min={50}
+              max={1000}
+              step={50}
+              value={speed}
+              onChange={(e) => {
+                const newSpeed = Number(e.target.value);
+                setSpeed(newSpeed);
+                speedRef.current = newSpeed;
+              }}
+              className="flex-1 accent-[#38bdf8] dark:accent-[#0ea5e9]"
+            />
+            <div className="flex gap-2 text-xs text-slate-600 dark:text-slate-400">
+              <span>Fast</span>
+              <span>Slow</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6 sm:mb-8">
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Depth</div>
+            <div className="text-lg sm:text-xl font-bold text-[#38bdf8] dark:text-[#0ea5e9]">{currentDepth}</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Comparisons</div>
+            <div className="text-lg sm:text-xl font-bold text-yellow-500">{comparisons}</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Swaps</div>
+            <div className="text-lg sm:text-xl font-bold text-red-500">{swaps}</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Partitions</div>
+            <div className="text-lg sm:text-xl font-bold text-purple-500">{partitions}</div>
+          </div>
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Sorted</div>
+            <div className="text-lg sm:text-xl font-bold text-green-500">{sortedIndices.length}</div>
+          </div>
+        </div>
+
+        {/* Visualizer */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
+          <div className="flex items-end justify-center h-64 sm:h-80 md:h-96 overflow-x-auto">
+            <div className="flex items-end gap-1 sm:gap-2 min-w-fit">
+              {array.map((val, i) => {
+                const isPivot = pivotIndex === i;
+                const isI = iIndex === i;
+                const isJ = jIndex === i;
+                const isSwap = swapping.includes(i);
+                const isSorted = sortedIndices.includes(i);
+                const isPartitioning = partitioning.length === 2 && i >= partitioning[0] && i <= partitioning[1];
+                
+                let barColor = 'bg-[#38bdf8] dark:bg-[#0ea5e9]';
+                if (isSwap) barColor = 'bg-red-400 ring-2 ring-red-300';
+                else if (isPivot) barColor = 'bg-purple-400 ring-2 ring-purple-300';
+                else if (isI || isJ) barColor = 'bg-yellow-400 ring-2 ring-yellow-300';
+                else if (isSorted) barColor = 'bg-green-400 ring-2 ring-green-300';
+                else if (isPartitioning) barColor = 'bg-orange-300 ring-1 ring-orange-200';
+                
+                let pointer: string[] = [];
+                if (isI) pointer.push('i');
+                if (isJ) pointer.push('j');
+                if (isPivot) pointer.push('P');
+                
+                return (
                   <div
-                    className={`w-full transition-all duration-200 rounded-lg border ${barColor}`}
-                    style={{ height: `${val * 3}px` }}
-                  />
-                  {/* Index below */}
-                  <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 select-none">
-                    {i}
+                    key={i}
+                    className="flex flex-col items-center"
+                    style={{ minWidth: '20px' }}
+                  >
+                    {/* Value */}
+                    <div className="text-xs font-medium text-[#111827] dark:text-[#e2e8f0] mb-1 select-none">
+                      {val}
+                    </div>
+                    {/* Bar */}
+                    <div
+                      className={`w-4 sm:w-6 md:w-8 transition-all duration-200 rounded-t-lg ${barColor}`}
+                      style={{ height: `${val * 2.5}px` }}
+                    />
+                    {/* Index */}
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 select-none">
+                      {i}
+                    </div>
+                    {/* Pointer */}
+                    <div className="text-xs font-bold text-yellow-600 dark:text-yellow-400 h-4 leading-3">
+                      {pointer.length > 0 && <span>↓ {pointer.join('/')}</span>}
+                    </div>
                   </div>
-                  {/* Pointer arrow and label */}
-                  <div className={`text-[12px] font-bold h-4 leading-3 ${pointerColor}`}>
-                    {pointer && <span>↓ {pointer}</span>}
-                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Legend */}
+          <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-[#38bdf8] dark:bg-[#0ea5e9] rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Unsorted</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-orange-300 ring-1 ring-orange-200 rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Current Partition</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-purple-400 ring-2 ring-purple-300 rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Pivot (P)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-yellow-400 ring-2 ring-yellow-300 rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Pointers (i/j)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-red-400 ring-2 ring-red-300 rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Swapping</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-400 ring-2 ring-green-300 rounded"></div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Sorted</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Theory Section */}
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
+          {/* How it Works */}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <BookOpen className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
+              <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">How Quick Sort Works</h2>
+            </div>
+            <div className="space-y-3 text-sm sm:text-base text-slate-600 dark:text-slate-400">
+              <p>
+                Quick Sort is a divide-and-conquer algorithm that works by selecting a 'pivot' element and partitioning the array around it. The Hoare partition scheme uses two pointers moving towards each other.
+              </p>
+              <p>
+                The algorithm recursively applies the same process to the sub-arrays on either side of the pivot until the entire array is sorted.
+              </p>
+              <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 mt-4">
+                <h3 className="font-medium text-[#111827] dark:text-[#e2e8f0] mb-2">Hoare Partition Steps:</h3>
+                <ol className="space-y-1 text-sm">
+                  <li>1. Choose first element as pivot</li>
+                  <li>2. Move i pointer right while element ≤ pivot</li>
+                  <li>3. Move j pointer left while element {'<'}  pivot</li>
+                  <li>4. Swap elements if i {'>'} j, repeat</li>
+                  <li>5. Place pivot in correct position</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          {/* Complexity Analysis */}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
+              <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Complexity Analysis</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Avg Time Complexity</div>
+                  <div className="font-mono text-sm text-green-500">O(n log n)</div>
                 </div>
-              );
-            })}
+                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Space Complexity</div>
+                  <div className="font-mono text-sm text-blue-500">O(log n)</div>
+                </div>
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="mb-2">
+                  <strong>Best Case:</strong> O(n log n) - balanced partitions
+                </p>
+                <p className="mb-2">
+                  <strong>Average Case:</strong> O(n log n) - random pivots
+                </p>
+                <p>
+                  <strong>Worst Case:</strong> O(n²) - already sorted arrays
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pros and Cons */}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <Zap className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
+              <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Pros & Cons</h2>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium text-green-600 dark:text-green-400 mb-2">Advantages:</h3>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                  <li>• Excellent average performance O(n log n)</li>
+                  <li>• In-place sorting algorithm</li>
+                  <li>• Cache-efficient due to good locality</li>
+                  <li>• Widely used in practice</li>
+                  <li>• Parallelizable algorithm</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-medium text-red-600 dark:text-red-400 mb-2">Disadvantages:</h3>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                  <li>• Worst-case O(n²) performance</li>
+                  <li>• Not stable (relative order not preserved)</li>
+                  <li>• Recursive implementation uses stack space</li>
+                  <li>• Performance depends on pivot selection</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Code Implementation */}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <Code className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
+              <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Implementation</h2>
+            </div>
+            <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-slate-700 dark:text-slate-300">
+                <code>{`function quickSort(arr, start = 0, end = arr.length - 1) {
+  if (start >= end) return;
+  
+  const pivot = hoarePartition(arr, start, end);
+  quickSort(arr, start, pivot - 1);
+  quickSort(arr, pivot + 1, end);
+}
+
+function hoarePartition(arr, start, end) {
+  const pivotValue = arr[start];
+  let i = start;
+  let j = end;
+  
+  while (i < j) {
+    while (arr[i] <= pivotValue && i < end) i++;
+    while (arr[j] > pivotValue) j--;
+    
+    if (i < j) {
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+  
+  [arr[start], arr[j]] = [arr[j], arr[start]];
+  return j;
+}`}</code>
+              </pre>
+            </div>
           </div>
         </div>
       </div>
-      {/* Legend moved below the graph */}
-      <Legend />
-      {/* Narration - make more visible */}
-      {/* <div
-        className="text-xl text-center text-blue-700 dark:text-yellow-300 font-bold bg-blue-50 dark:bg-zinc-800 rounded-lg px-4 py-4 shadow mt-6"
-        dangerouslySetInnerHTML={{ __html: stepInfo }}
-      /> */}
     </div>
   );
 }
