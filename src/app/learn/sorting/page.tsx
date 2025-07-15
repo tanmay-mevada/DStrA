@@ -133,9 +133,9 @@ function SortingPreview() {
           </div>
         ))}
       </div>
-      <div className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+      {/* <div className="mt-4 text-sm text-slate-600 dark:text-slate-400">
         {phase === 'sorting' ? 'Sorting in progress...' : 'Sort complete!'}
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -149,7 +149,7 @@ export default function SortingIntroPage() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-6 sm:mb-8">
               <BarChart3 className="w-12 h-12 sm:w-16 sm:h-16 text-[#38bdf8] dark:text-[#0ea5e9] mx-auto mb-4" />
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary dark:text-darkPrimary mb-4">
                 Sorting Algorithms
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">

@@ -250,6 +250,7 @@ export default function StackOperationsPage() {
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </div>

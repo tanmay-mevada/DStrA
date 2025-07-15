@@ -123,7 +123,7 @@ export default function TreeVisualizer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         {/* Header */}
         <div className="text-center mb-8 lg:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary dark:text-darkPrimary mb-4">
             Binary Tree Traversals
           </h1>
           <p className="text-base sm:text-lg text-[#64748b] dark:text-[#94a3b8] max-w-2xl mx-auto leading-relaxed">

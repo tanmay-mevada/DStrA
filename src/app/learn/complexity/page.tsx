@@ -151,59 +151,64 @@ export default function ComplexityVisualizer() {
       </section>
 
       {/* Combined Chart */}
-      <section>
-        <h2 className="flex items-center gap-2 text-2xl md:text-3xl font-semibold text-text dark:text-textDark mb-3">
-          <BarChart2 className="w-6 h-6 text-primary dark:text-darkPrimary" />
-          Combined Complexity Graph
-        </h2>
-        <div className="relative bg-surface dark:bg-surfaceDark p-6 rounded-xl shadow h-[450px] border border-borderL dark:border-borderDark overflow-hidden">
-          {/* Checkbox legend */}
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 flex flex-wrap gap-2 px-3 py-1 rounded-xl bg-white/40 dark:bg-black/30 shadow-sm backdrop-blur-md">
-            {complexityInfo.map(({ label, color }) => (
-              <label
-                key={label}
-                className={`flex items-center gap-1 px-2 py-0.5 rounded-full cursor-pointer text-xs md:text-sm font-semibold ${
-                  selected.includes(label)
-                    ? 'ring-1 ring-primary/30 dark:ring-darkPrimary/30 bg-white/60 dark:bg-black/40'
-                    : 'opacity-60 hover:opacity-90'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.includes(label)}
-                  onChange={() => handleCheckbox(label)}
-                  className="accent-primary dark:accent-darkPrimary w-3.5 h-3.5 rounded border-none"
-                />
-                <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: color }} />
-                <span style={{ color }}>{label}</span>
-              </label>
-            ))}
-          </div>
-          <Line
-            data={{
-              labels,
-              datasets: complexityInfo
-                .filter(({ label }) => selected.includes(label))
-                .map(({ label, color }) => ({
-                  label,
-                  data: complexityFunctions[label](n),
-                  borderColor: color,
-                  borderWidth: 2,
-                  tension: 0.3,
-                  pointRadius: 2,
-                  fill: false,
-                })),
-            }}
-            options={{
-              ...chartOptions(),
-              plugins: {
-                ...chartOptions().plugins,
-                legend: { display: false },
-              },
-            }}
-          />
-        </div>
-      </section>
+
+<section>
+  <h2 className="flex items-center gap-2 text-2xl md:text-3xl font-semibold text-text dark:text-textDark mb-3">
+    <BarChart2 className="w-6 h-6 text-primary dark:text-darkPrimary" />
+    Combined Complexity Graph
+  </h2>
+
+  {/* Move legend outside the chart box */}
+  <div className="mb-4 flex flex-wrap justify-center gap-2 px-3 py-2 rounded-xl bg-white/10 dark:bg-black/10 shadow-sm backdrop-blur-md border border-borderL dark:border-borderDark">
+    {complexityInfo.map(({ label, color }) => (
+      <label
+        key={label}
+        className={`flex items-center gap-1 px-2 py-0.5 rounded-full cursor-pointer text-xs md:text-sm font-semibold ${
+          selected.includes(label)
+            ? 'ring-1 ring-primary/30 dark:ring-darkPrimary/30 bg-white/60 dark:bg-black/40'
+            : 'opacity-60 hover:opacity-90'
+        }`}
+      >
+        <input
+          type="checkbox"
+          checked={selected.includes(label)}
+          onChange={() => handleCheckbox(label)}
+          className="accent-primary dark:accent-darkPrimary w-3.5 h-3.5 rounded border-none"
+        />
+        <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: color }} />
+        <span style={{ color }}>{label}</span>
+      </label>
+    ))}
+  </div>
+
+  {/* Chart Container */}
+  <div className="relative bg-surface dark:bg-surfaceDark p-6 rounded-xl shadow h-[450px] border border-borderL dark:border-borderDark overflow-hidden">
+    <Line
+      data={{
+        labels,
+        datasets: complexityInfo
+          .filter(({ label }) => selected.includes(label))
+          .map(({ label, color }) => ({
+            label,
+            data: complexityFunctions[label](n),
+            borderColor: color,
+            borderWidth: 2,
+            tension: 0.3,
+            pointRadius: 2,
+            fill: false,
+          })),
+      }}
+      options={{
+        ...chartOptions(),
+        plugins: {
+          ...chartOptions().plugins,
+          legend: { display: false },
+        },
+      }}
+    />
+  </div>
+</section>
+
 
       {/* Quick List */}
       <section>
@@ -231,7 +236,7 @@ export default function ComplexityVisualizer() {
           {complexityInfo.map(({ label, meaning, desc, color, example, analogy }) => (
             <div
               key={label}
-              className="bg-white dark:bg-surfaceDark p-5 rounded-2xl shadow-lg border border-borderL dark:border-borderDark space-y-4 hover:shadow-xl"
+              className="bg-white dark:bg-gray-800/20 p-5 rounded-2xl shadow-lg border border-borderL dark:border-borderDark space-y-4 hover:shadow-xl"
             >
               <h3 className="text-lg md:text-xl font-bold text-primary dark:text-darkPrimary flex items-center gap-2">
                 <span style={{ color }}>{label}</span>

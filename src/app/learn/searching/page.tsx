@@ -30,7 +30,7 @@ export default function SearchingIntroPage() {
           <div className="flex flex-col items-center text-center">
             <div className="mb-4 sm:mb-6">
               <Search className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-[#38bdf8] dark:text-[#0ea5e9] mx-auto mb-3 sm:mb-4" />
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-3 sm:mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary dark:text-darkPrimary mb-3 sm:mb-4">
                 Searching Algorithms
               </h1>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed px-2">
