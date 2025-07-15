@@ -11,6 +11,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Spinner from '@/components/Spinner';
+import { LinkIcon, Youtube } from 'lucide-react';
 
 interface Section {
   heading: string;
@@ -78,6 +79,34 @@ export default function ChapterDetail() {
                   ul: (props) => <ul className="mb-4 space-y-1 list-disc list-inside" {...props} />,
                   ol: (props) => <ol className="mb-4 space-y-1 list-decimal list-inside" {...props} />,
                   li: (props) => <li {...props} />,
+                  a: ({ href, children, ...props }) => {
+  const isExternal = href?.startsWith('http');
+  const isYouTube = href?.includes('youtube.com') || href?.includes('youtu.be');
+
+  const icon = isYouTube ? (
+    <Youtube size={18} className="text-red-600 dark:text-red-400" />
+  ) : (
+    <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
+  );
+
+  return (
+    <a
+      href={href}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+      className={`inline-flex items-center gap-1 underline font-medium transition-colors ${
+        isYouTube
+          ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
+          : 'text-indigo-600 hover:text-indigo-800 dark:text-lime-400 dark:hover:text-lime-300'
+      }`}
+      {...props}
+    >
+      {icon}
+      {children}
+    </a>
+  );
+},
+
                   table: ({ node, ...props }) => {
                     const isSmallTable =
                       Array.isArray(node?.children) &&
