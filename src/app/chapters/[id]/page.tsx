@@ -124,8 +124,15 @@ export default function ChapterDetail() {
                     if (isInlineOrShort) {
                       return (
                         <code
-                          className="px-1 py-0.1 rounded font-mono bg-[#f0f0f0] text-[#6B21A8] dark:bg-zinc-900 dark:text-[#4ADE80] border border-purple-200 dark:border-green-700 text-[15px] tracking-tight shadow-sm"
-                          style={{ fontWeight: 600, letterSpacing: '0.01em' }}
+                          className="px-1 py-0.5 rounded font-mono 
+    bg-[#f0f0f0] dark:bg-zinc-900 
+    text-[#6B21A8] dark:text-[#4ADE80] 
+    border border-purple-200 dark:border-green-700 
+    text-[15px] tracking-tight shadow-sm
+    md:bg-[#f0f0f0] md:dark:bg-zinc-900 
+    md:border md:border-purple-200 md:dark:border-green-700 
+    bg-transparent border-0"
+                          style={{ fontWeight: 600, letterSpacing: "0.01em" }}
                           {...props}
                         >
                           {children}
