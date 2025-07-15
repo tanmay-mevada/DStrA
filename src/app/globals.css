@@ -6,4 +6,7 @@ html {
   transition: background-color 0.3s, color 0.3s;
 }
 
-
+/* Optional: ensure toast z-index is high */
+.react-hot-toast {
+  z-index: 9999;
+}

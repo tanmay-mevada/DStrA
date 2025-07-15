@@ -13,11 +13,20 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+            async authorize(credentials) {
         await connectDB();
         const user = await User.findOne({ email: credentials?.email });
 
-        if (!user || !bcrypt.compareSync(credentials!.password, user.password)) {
+        if (!user) {
+          throw new Error('Invalid email or password');
+        }
+
+        if (!user.isVerified) {
+          throw new Error('Account not verified. Please check your email.');
+        }
+
+        const isValidPassword = await bcrypt.compare(credentials!.password, user.password);
+        if (!isValidPassword) {
           throw new Error('Invalid email or password');
         }
 
