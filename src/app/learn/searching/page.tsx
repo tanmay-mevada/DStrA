@@ -1,241 +1,96 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { PlayCircle, ChevronRight, Search } from 'lucide-react';
 
-// Searching algorithms info
 const searchingAlgorithms = [
-	{
-		id: 'linear',
-		name: 'Linear Search',
-		desc: 'Checks each element in sequence until the target is found or the list ends.',
-	},
-	{
-		id: 'binary',
-		name: 'Binary Search',
-		desc: 'Efficiently searches a sorted array by repeatedly dividing the search interval in half.',
-	},
+  {
+    id: 'linear',
+    name: 'Linear Search',
+    desc: 'Checks each element in sequence until the target is found or the list ends.',
+    complexity: 'O(n)',
+    difficulty: 'Easy',
+  },
+  {
+    id: 'binary',
+    name: 'Binary Search',
+    desc: 'Efficiently searches a sorted array by repeatedly dividing the search interval in half.',
+    complexity: 'O(log n)',
+    difficulty: 'Easy',
+  },
 ];
 
-// Searching animation preview
-function UniversalSearchPreview() {
-	const [arr, setArr] = useState<number[]>([2, 4, 7, 10, 13, 18, 21, 25]);
-	const [target, setTarget] = useState<number>(10);
-	const [highlight, setHighlight] = useState<number[]>([]);
-	const [foundIdx, setFoundIdx] = useState<number | null>(null);
-	const [phase, setPhase] = useState<'linear' | 'binary'>('linear');
-	const [step, setStep] = useState(0);
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
-	const [binaryRange, setBinaryRange] = useState<[number, number]>([0, arr.length - 1]);
-	const [magnifierPos, setMagnifierPos] = useState<number>(0);
-
-	useEffect(() => {
-		setArr([2, 4, 7, 10, 13, 18, 21, 25]);
-		setTarget(10);
-		setHighlight([]);
-		setFoundIdx(null);
-		setStep(0);
-		setPhase('linear');
-		setBinaryRange([0, 7]);
-		setMagnifierPos(0);
-
-		let i = 0;
-		let left = 0;
-		let right = arr.length - 1;
-
-		function linearStep() {
-			setHighlight([i]);
-			setMagnifierPos(i);
-			if (arr[i] === target) {
-				setFoundIdx(i);
-				clearInterval(intervalRef.current!);
-				setTimeout(() => {
-					setPhase('binary');
-					setHighlight([]);
-					setFoundIdx(null);
-					setStep(0);
-					setBinaryRange([0, arr.length - 1]);
-					setMagnifierPos(Math.floor((0 + arr.length - 1) / 2));
-					left = 0;
-					right = arr.length - 1;
-					intervalRef.current = setInterval(binaryStep, 700);
-				}, 1000);
-			} else if (i === arr.length - 1) {
-				setFoundIdx(null);
-				clearInterval(intervalRef.current!);
-				setTimeout(() => {
-					setPhase('binary');
-					setHighlight([]);
-					setFoundIdx(null);
-					setStep(0);
-					setBinaryRange([0, arr.length - 1]);
-					setMagnifierPos(Math.floor((0 + arr.length - 1) / 2));
-					left = 0;
-					right = arr.length - 1;
-					intervalRef.current = setInterval(binaryStep, 700);
-				}, 1000);
-			}
-			i++;
-		}
-
-		function binaryStep() {
-			setHighlight([]);
-			if (left > right) {
-				setHighlight([]);
-				setFoundIdx(null);
-				setBinaryRange([0, arr.length - 1]);
-				setMagnifierPos(0);
-				clearInterval(intervalRef.current!);
-				setTimeout(() => {
-					setPhase('linear');
-					setHighlight([]);
-					setFoundIdx(null);
-					setStep(0);
-					setMagnifierPos(0);
-					i = 0;
-					intervalRef.current = setInterval(linearStep, 700);
-				}, 1200);
-				return;
-			}
-			setBinaryRange([left, right]);
-			const mid = Math.floor((left + right) / 2);
-			setHighlight([mid]);
-			setMagnifierPos(mid);
-			if (arr[mid] === target) {
-				setFoundIdx(mid);
-				clearInterval(intervalRef.current!);
-				setTimeout(() => {
-					setPhase('linear');
-					setHighlight([]);
-					setFoundIdx(null);
-					setStep(0);
-					setBinaryRange([0, arr.length - 1]);
-					setMagnifierPos(0);
-					i = 0;
-					intervalRef.current = setInterval(linearStep, 700);
-				}, 1200);
-			} else if (arr[mid] < target) {
-				left = mid + 1;
-			} else {
-				right = mid - 1;
-			}
-		}
-
-		intervalRef.current = setInterval(linearStep, 700);
-
-		return () => clearInterval(intervalRef.current!);
-		// eslint-disable-next-line
-	}, []);
-
-	return (
-		<div className="flex flex-col items-center mb-8 w-full relative">
-			<div className="flex items-end gap-2 h-24 w-80 sm:w-96 md:w-[28rem] rounded-xl shadow-inner px-1 py-1 transition-all duration-300 relative">
-				{arr.map((v, i) => {
-					const isInBinaryRange =
-						phase === 'binary' && i >= binaryRange[0] && i <= binaryRange[1];
-					return (
-						<div
-							key={i}
-							className={`flex-1 rounded-lg mx-0.5 flex flex-col items-center justify-end transition-all duration-300
-								${highlight.includes(i)
-									? 'bg-yellow-400 scale-110 shadow-lg'
-									: foundIdx === i
-										? 'bg-green-400'
-										: phase === 'binary' && isInBinaryRange
-											? 'bg-blue-400/80'
-											: 'bg-blue-200'}
-							`}
-							style={{
-								height: `${v * 3 + 30}px`,
-								minWidth: 28,
-								maxWidth: 40,
-								border: highlight.includes(i)
-									? '2px solid #facc15'
-									: foundIdx === i
-										? '2px solid #22c55e'
-										: phase === 'binary' && isInBinaryRange
-											? '2px solid #60a5fa'
-											: '2px solid #93c5fd',
-								boxShadow: highlight.includes(i)
-									? '0 0 0 4px #fde68a'
-									: foundIdx === i
-										? '0 0 0 4px #bbf7d0'
-										: undefined,
-								position: 'relative',
-							}}
-						>
-							<span className="text-xs text-blue-900 font-bold mb-1">{v}</span>
-							{foundIdx === i && (
-								<span className="text-[10px] text-green-900 font-bold">Found</span>
-							)}
-							{phase === 'binary' && isInBinaryRange && (
-								<span className="text-[9px] text-blue-700 font-semibold">
-									{i === binaryRange[0]
-										? 'L'
-										: i === binaryRange[1]
-											? 'R'
-											: ''}
-								</span>
-							)}
-							{/* Magnifier glass icon */}
-							{magnifierPos === i && (
-								<span
-									className="absolute -top-7 left-1/2 -translate-x-1/2"
-									style={{ pointerEvents: 'none' }}
-								>
-									<svg width="28" height="28" viewBox="0 0 28 28" className="animate-bounce" fill="none">
-										<circle cx="12" cy="12" r="9" stroke="#2563eb" strokeWidth="3" fill="#fff" />
-										<rect x="19" y="19" width="6" height="3" rx="1.5" transform="rotate(45 19 19)" fill="#2563eb" />
-									</svg>
-								</span>
-							)}
-						</div>
-					);
-				})}
-			</div>
-			<div className="text-xs text-zinc-500 mt-2 tracking-wide font-medium">
-				{phase === 'linear'
-					? 'Linear Search: Scanning left to right'
-					: 'Binary Search: Shrinking range'}
-			</div>
-		</div>
-	);
-}
 
 export default function SearchingIntroPage() {
-	return (
-		<div className="min-h-screen  py-0">
-			<div className="max-w-4xl mx-auto px-4 pt-6 pb-4">
-				{/* Title and description in a card */}
-				<div className="bg-white/10 dark:bg-zinc-900/20 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 px-3 py-4 mb-6 flex flex-col items-center">
-					<h1 className="text-4xl sm:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 text-center drop-shadow">
-						Searching Algorithms
-					</h1>
-					<p className="text-center text-zinc-500 dark:text-zinc-400 mt-2 text-base">
-						Explore and visualize classic searching algorithms.
-					</p>
-				</div>
+  return (
+    <div className="min-h-screen w-full bg-[#f9fafb] dark:bg-[#0f172a] py-4 sm:py-6 lg:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 mb-6 sm:mb-8 lg:mb-12">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4 sm:mb-6">
+              <Search className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-[#38bdf8] dark:text-[#0ea5e9] mx-auto mb-3 sm:mb-4" />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-3 sm:mb-4">
+                Searching Algorithms
+              </h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed px-2">
+                Explore interactive visualizations of fundamental searching algorithms. 
+                Learn how they work, compare their performance, and understand their real-world applications.
+              </p>
+            </div>
 
-				{/* Algorithm cards */}
-				<div className="grid md:grid-cols-2 gap-8">
-					{searchingAlgorithms.map((algo) => (
-						<Link
-							href={`/learn/searching/${algo.id}`}
-							key={algo.id}
-							className="block border border-zinc-200 dark:border-zinc-800 bg-white/20 dark:bg-zinc-900/0 p-5 rounded-xl shadow hover:shadow-xl hover:-translate-y-1 transition-all group"
-						>
-							<h2 className="text-xl font-semibold text-blue-600 dark:text-blue-300 mb-1 group-hover:underline">
-								{algo.name}
-							</h2>
-							<p className="text-sm text-zinc-600 dark:text-zinc-400">{algo.desc}</p>
-							<div className="mt-3 text-sm text-blue-500 dark:text-blue-300 font-medium flex items-center gap-1">
-								<span className="transition-transform group-hover:translate-x-1">▶</span>{' '}
-								Visualize
-							</div>
-						</Link>
-					))}
-				</div>
-			</div>
-		</div>
-	);
+          </div>
+        </div>
+
+        {/* Algorithm Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
+          {searchingAlgorithms.map((algo) => (
+            <Link
+              href={`/learn/searching/${algo.id}`}
+              key={algo.id}
+              className="group block bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 hover:border-[#38bdf8] dark:hover:border-[#0ea5e9]"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0] group-hover:text-[#38bdf8] dark:group-hover:text-[#0ea5e9] transition-colors">
+                  {algo.name}
+                </h2>
+                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  algo.difficulty === 'Easy' 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    : algo.difficulty === 'Medium'
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                }`}>
+                  {algo.difficulty}
+                </div>
+              </div>
+              
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+                {algo.desc}
+              </p>
+              
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                    Time Complexity:
+                  </span>
+                  <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs sm:text-sm font-mono text-[#38bdf8] dark:text-[#0ea5e9]">
+                    {algo.complexity}
+                  </code>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[#38bdf8] dark:text-[#0ea5e9] font-medium text-sm sm:text-base">
+                  <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Visualize</span>
+                </div>
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-[#38bdf8] dark:group-hover:text-[#0ea5e9] group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

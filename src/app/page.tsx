@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import {
   User,
@@ -31,24 +32,28 @@ export default function HomePage() {
       title: 'Structured Learning',
       description:
         'Follow GTU syllabus with organized chapters and clear progression',
+      link: '/chapters',
     },
     {
       icon: Code,
       title: 'Interactive Coding',
       description:
         'Write and test code directly in your browser with instant feedback',
+      link: '/programs',
     },
     {
       icon: Zap,
       title: 'Visual Algorithms',
       description:
         'Understand complex algorithms through interactive visualizations',
+      link: '/learn',
     },
     {
       icon: Target,
       title: 'Exam Focused',
       description:
         'Practice questions and examples tailored for GTU diploma exams',
+      link: '/production',
     },
   ];
 
@@ -73,17 +78,22 @@ export default function HomePage() {
             </p>
           </div>
 
+          
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/learn">
             <button className="group flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
               <Play className="w-5 h-5" />
               Start Learning
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
+            </Link>
 
+            <Link href="https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf" target="_blank" rel="noopener noreferrer"> 
             <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
               <BookOpen className="w-5 h-5" />
               View Syllabus
             </button>
+            </Link>
           </div>
         </div>
 
@@ -95,40 +105,52 @@ export default function HomePage() {
             </div>
             <div>
               <p className="font-medium text-gray-900 dark:text-white">
-                Welcome back!
+                Welcome back, {session.user.name || 'User'}!
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                {session.user.email}
+              <p className='text-xs text-gray-400 dark:text-gray-600 truncate'>
+                Logged in with {session.user.email}
               </p>
             </div>
           </div>
         )}
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="group p-6 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer"
-              onMouseEnter={() => setHoveredCard(index)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
-                  <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16">
+  {features.map((feature, index) => {
+    const CardContent = (
+      <div
+        className="group p-6 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+        onMouseEnter={() => setHoveredCard(index)}
+        onMouseLeave={() => setHoveredCard(null)}
+        role="link"
+        tabIndex={0}
+      >
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+            <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {feature.title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              {feature.description}
+            </p>
+          </div>
         </div>
+      </div>
+    );
+
+    return feature.link ? (
+      <Link key={index} href={feature.link}>
+        {CardContent}
+      </Link>
+    ) : (
+      <div key={index}>{CardContent}</div>
+    );
+  })}
+</div>
+
 
         {/* Call to Action */}
         <div className="text-center p-8 sm:p-12 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
