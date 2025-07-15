@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { PlayCircle, ChevronRight, BarChart3 } from 'lucide-react';
+import { PlayCircle, ChevronRight, BarChart3, ChevronDown, ArrowDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const sortingAlgorithms = [
@@ -159,6 +159,9 @@ export default function SortingIntroPage() {
             </div>
             
             <SortingPreview />
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+        <ArrowDown className="w-6 h-6 animate-bounce text-zinc-500 dark:text-zinc-400" />
+      </div>
           </div>
         </div>
 

@@ -100,11 +100,11 @@ export default function LearnPage() {
           {learnTopics.map((topic, index) => (
             <div
               key={topic.id}
-              className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 bg-white/40 dark:bg-zinc-800/20 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-md hover:shadow-zinc-200/50 dark:hover:shadow-zinc-800/50 transition-all duration-200"
+              className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 bg-white/40 dark:bg-gray-800/10 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-md hover:shadow-zinc-200/50 dark:hover:shadow-zinc-800/50 transition-all duration-200"
             >
               <div className="flex-1 mb-4 sm:mb-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
-                  <span className="flex items-center justify-center w-8 h-8 bg-zinc-100/20 dark:bg-zinc-700/20 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 shrink-0">
+                  <span className="flex items-center justify-center w-8 h-8 bg-zinc-100/10 dark:bg-gray-700/10 rounded-full text-sm font-semibold text-zinc-700 dark:text-zinc-300 shrink-0">
                     {index + 1}
                   </span>
                   <div className="min-w-0">

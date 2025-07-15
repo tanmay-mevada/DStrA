@@ -231,7 +231,7 @@ export default function ComplexityVisualizer() {
           {complexityInfo.map(({ label, meaning, desc, color, example, analogy }) => (
             <div
               key={label}
-              className="bg-white dark:bg-surfaceDark p-5 rounded-2xl shadow-lg border border-borderL dark:border-borderDark space-y-4 transition-transform hover:scale-[1.025] hover:shadow-xl"
+              className="bg-white dark:bg-surfaceDark p-5 rounded-2xl shadow-lg border border-borderL dark:border-borderDark space-y-4 hover:shadow-xl"
             >
               <h3 className="text-lg md:text-xl font-bold text-primary dark:text-darkPrimary flex items-center gap-2">
                 <span style={{ color }}>{label}</span>

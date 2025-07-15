@@ -99,7 +99,7 @@ export default function HomePage() {
 
         {/* User Session Card */}
         {session?.user && (
-          <div className="flex items-center gap-3 mb-12 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center gap-3 mb-12 p-4 bg-white/10 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
               <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
@@ -119,7 +119,7 @@ export default function HomePage() {
   {features.map((feature, index) => {
     const CardContent = (
       <div
-        className="group p-6 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+        className="group p-6 bg-white/20 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer"
         onMouseEnter={() => setHoveredCard(index)}
         onMouseLeave={() => setHoveredCard(null)}
         role="link"
@@ -153,7 +153,7 @@ export default function HomePage() {
 
 
         {/* Call to Action */}
-        <div className="text-center p-8 sm:p-12 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="text-center p-8 sm:p-12 bg-gray-100 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Ready to Master Data Structures?
