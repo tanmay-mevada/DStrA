@@ -1,14 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import Program from '@/models/program';
 import connectDB from '@/lib/db';
 
-// GET a single program by ID
+type ParamsPromise = Promise<{ id: string }>;
+
+// GET a single program
 export async function GET(
-  _req: Request,
-  context: { params: { id: string } }
+  req: NextRequest,
+  context: { params: ParamsPromise }
 ) {
+  const { id } = await context.params;
   await connectDB();
-  const { id } = context.params;
 
   try {
     const program = await Program.findById(id);
@@ -16,18 +18,18 @@ export async function GET(
       return NextResponse.json({ message: 'Program not found' }, { status: 404 });
     }
     return NextResponse.json(program);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }
 
-// UPDATE a program by ID
+// UPDATE a program
 export async function PUT(
-  req: Request,
-  context: { params: { id: string } }
+  req: NextRequest,
+  context: { params: ParamsPromise }
 ) {
+  const { id } = await context.params;
   await connectDB();
-  const { id } = context.params;
   const body = await req.json();
 
   try {
@@ -36,18 +38,18 @@ export async function PUT(
       return NextResponse.json({ message: 'Program not found' }, { status: 404 });
     }
     return NextResponse.json(updated);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: 'Update failed' }, { status: 500 });
   }
 }
 
-// DELETE a program by ID
+// DELETE a program
 export async function DELETE(
-  _req: Request,
-  context: { params: { id: string } }
+  req: NextRequest,
+  context: { params: ParamsPromise }
 ) {
+  const { id } = await context.params;
   await connectDB();
-  const { id } = context.params;
 
   try {
     const deleted = await Program.findByIdAndDelete(id);
@@ -55,7 +57,7 @@ export async function DELETE(
       return NextResponse.json({ message: 'Program not found' }, { status: 404 });
     }
     return NextResponse.json({ message: 'Program deleted successfully' });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ message: 'Delete failed' }, { status: 500 });
   }
 }
