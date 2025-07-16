@@ -85,188 +85,161 @@ export default function ProgramViewer({
     }
   };
 
-  const MarkdownRenderer = ({ content }: { content: string }) => {
-    // Handle empty or undefined content
-    if (!content || content.trim() === '') {
-      return (
-        <div className="text-zinc-500 dark:text-zinc-400 italic">
-          No description available.
-        </div>
-      );
-    }
+  const MarkdownRenderer = ({ content }: { content: string }) => (
+    <article className="prose prose-sm sm:prose lg:prose-lg max-w-none text-zinc-800 dark:text-zinc-100 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-h3:text-blue-600 dark:prose-h3:text-cyan-300 prose-h4:text-blue-500 dark:prose-h4:text-cyan-200 prose-p:mb-5 prose-p:text-base prose-p:font-normal prose-p:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-cyan-700 prose-blockquote:bg-blue-50/40 dark:prose-blockquote:bg-cyan-900/20 prose-blockquote:italic prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:rounded-r-lg">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkBreaks]}
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          h1: (props) => <h1 className="mb-4 text-3xl font-bold underline text-blue-800 dark:text-cyan-200" {...props} />,
+          h2: (props) => <h2 className="mb-3 text-2xl font-semibold underline text-blue-700 dark:text-cyan-300" {...props} />,
+          h3: (props) => <h3 className="mb-2 text-xl font-semibold text-blue-600 dark:text-cyan-300" {...props} />,
+          h4: (props) => <h4 className="mb-1 text-lg font-medium text-blue-500 dark:text-cyan-200" {...props} />,
+          p: (props) => <p className="mb-5 text-base font-normal leading-relaxed text-zinc-800 dark:text-zinc-100" {...props} />,
+          ul: (props) => <ul className="mb-4 space-y-1 list-disc list-inside" {...props} />,
+          ol: (props) => <ol className="mb-4 space-y-1 list-decimal list-inside" {...props} />,
+          li: (props) => <li {...props} />,
+          a: ({ href, children, ...props }) => {
+            const isExternal = href?.startsWith('http');
+            const isYouTube = href?.includes('youtube.com') || href?.includes('youtu.be');
 
-    return (
-      <article className="prose prose-sm sm:prose lg:prose-lg max-w-none text-zinc-800 dark:text-zinc-100 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-h1:text-blue-800 dark:prose-h1:text-cyan-200 prose-h2:text-blue-700 dark:prose-h2:text-cyan-300 prose-h3:text-blue-600 dark:prose-h3:text-cyan-300 prose-h4:text-blue-500 dark:prose-h4:text-cyan-200 prose-p:mb-5 prose-p:text-base prose-p:font-normal prose-p:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-cyan-700 prose-blockquote:bg-blue-50/40 dark:prose-blockquote:bg-cyan-900/20 prose-blockquote:italic prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:rounded-r-lg">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkBreaks]}
-          rehypePlugins={[rehypeRaw]}
-          components={{
-            h1: (props) => (
-              <h1 className="mb-4 text-3xl font-bold underline text-blue-800 dark:text-cyan-200" {...props} />
-            ),
-            h2: (props) => (
-              <h2 className="mb-3 text-2xl font-semibold underline text-blue-700 dark:text-cyan-300" {...props} />
-            ),
-            h3: (props) => (
-              <h3 className="mb-2 text-xl font-semibold text-blue-600 dark:text-cyan-300" {...props} />
-            ),
-            h4: (props) => (
-              <h4 className="mb-1 text-lg font-medium text-blue-500 dark:text-cyan-200" {...props} />
-            ),
-            p: (props) => (
-              <p className="mb-5 text-base font-normal leading-relaxed text-zinc-800 dark:text-zinc-100" {...props} />
-            ),
-            ul: (props) => (
-              <ul className="mb-4 space-y-1 list-disc list-inside" {...props} />
-            ),
-            ol: (props) => (
-              <ol className="mb-4 space-y-1 list-decimal list-inside" {...props} />
-            ),
-            li: (props) => <li {...props} />,
-            a: ({ href, children, ...props }) => {
-              const isExternal = href?.startsWith('http');
-              const isYouTube = href?.includes('youtube.com') || href?.includes('youtu.be');
+            const icon = isYouTube ? (
+              <Youtube size={18} className="text-red-600 dark:text-red-400" />
+            ) : (
+              <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
+            );
 
-              const icon = isYouTube ? (
-                <Youtube size={18} className="text-red-600 dark:text-red-400" />
-              ) : (
-                <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
-              );
+            return (
+              <a
+                href={href}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
+                className={`inline-flex items-center gap-1 underline font-medium transition-colors ${
+                  isYouTube
+                    ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
+                    : 'text-indigo-600 hover:text-indigo-800 dark:text-lime-400 dark:hover:text-lime-300'
+                }`}
+                {...props}
+              >
+                {icon}
+                {children}
+              </a>
+            );
+          },
+          table: ({ node, ...props }) => {
+            const isSmallTable =
+              Array.isArray(node?.children) &&
+              node.children.length <= 3 &&
+              node.children[0] &&
+              'children' in node.children[0] &&
+              Array.isArray((node.children[0] as any).children) &&
+              (node.children[0] as any).children.length <= 6;
 
+            return (
+              <div className="my-4 overflow-x-auto">
+                <table
+                  className={
+                    isSmallTable
+                      ? 'w-fit text-sm border border-[1px] border-gray-300 dark:border-zinc-700 rounded'
+                      : 'w-full max-w-3xl border border-[1px] border-gray-300 dark:border-zinc-700 table-auto'
+                  }
+                  {...props}
+                />
+              </div>
+            );
+          },
+          thead: (props) => (
+            <thead className="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100" {...props} />
+          ),
+          tbody: (props) => <tbody {...props} />,
+          th: (props) => (
+            <th className="px-4 py-2 font-semibold text-left border border-[1px] border-zinc-300 dark:border-zinc-700" {...props} />
+          ),
+          td: (props) => (
+            <td className="px-4 py-2 border border-[1px] text-zinc-800 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700" {...props} />
+          ),
+          code({
+            inline,
+            className,
+            children,
+            ...props
+          }: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) {
+            const match = /language-(\w+)/.exec(className || '');
+            const codeContent = String(children).trim();
+            const isInlineOrShort =
+              inline || (!match && codeContent.length < 30 && !codeContent.includes('\n'));
+
+            if (isInlineOrShort) {
               return (
-                <a
-                  href={href}
-                  target={isExternal ? '_blank' : undefined}
-                  rel={isExternal ? 'noopener noreferrer' : undefined}
-                  className={`inline-flex items-center gap-1 underline font-medium transition-colors ${
-                    isYouTube
-                      ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
-                      : 'text-indigo-600 hover:text-indigo-800 dark:text-lime-400 dark:hover:text-lime-300'
-                  }`}
+                <code
+                  className="px-1 py-0.5 rounded font-mono 
+    bg-[#f0f0f0] dark:bg-zinc-900 
+    text-[#6B21A8] dark:text-[#4ADE80] 
+    border border-purple-200 dark:border-green-700 
+    text-[15px] tracking-tight shadow-sm
+    md:bg-[#f0f0f0] md:dark:bg-zinc-900 
+    md:border md:border-purple-200 md:dark:border-green-700 
+    bg-transparent border-0"
+                  style={{ fontWeight: 600, letterSpacing: "0.01em" }}
                   {...props}
                 >
-                  {icon}
                   {children}
-                </a>
+                </code>
               );
-            },
-            table: ({ node, ...props }) => {
-              const isSmallTable =
-                Array.isArray(node?.children) &&
-                node.children.length <= 3 &&
-                node.children[0] &&
-                'children' in node.children[0] &&
-                Array.isArray((node.children[0] as any).children) &&
-                (node.children[0] as any).children.length <= 6;
+            }
 
-              return (
-                <div className="my-4 overflow-x-auto">
-                  <table
-                    className={
-                      isSmallTable
-                        ? 'w-fit text-sm border border-gray-300 dark:border-zinc-700 rounded'
-                        : 'w-full max-w-3xl border border-gray-300 dark:border-zinc-700 table-auto'
-                    }
-                    {...props}
-                  />
-                </div>
-              );
-            },
-            thead: (props) => (
-              <thead className="bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100" {...props} />
-            ),
-            tbody: (props) => <tbody {...props} />,
-            th: (props) => (
-              <th className="px-4 py-2 font-semibold text-left border border-zinc-300 dark:border-zinc-700" {...props} />
-            ),
-            td: (props) => (
-              <td className="px-4 py-2 border text-zinc-800 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700" {...props} />
-            ),
-            code: ({ inline, className, children, ...props }) => {
-              const match = /language-(\w+)/.exec(className || '');
-              const codeContent = String(children).replace(/\n$/, '');
+            const commonStyle = {
+              padding: '1.2rem',
+              borderRadius: '0.7rem',
+              fontSize: '1rem',
+              lineHeight: '1.6',
+              marginBottom: '1.2rem',
+              fontFamily: 'Fira Mono, Menlo, Monaco, Consolas, monospace',
+              boxShadow: theme === 'dark' ? '0 2px 8px #0002' : '0 2px 8px #6366f11a',
+            };
 
-              // Handle inline code
-              if (inline) {
-                return (
-                  <code
-                    className="px-2 py-1 rounded font-mono bg-zinc-100 dark:bg-zinc-800 text-purple-700 dark:text-green-400 border border-purple-200 dark:border-green-700 text-sm font-semibold"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                );
-              }
+            const styleWithTheme = {
+              ...commonStyle,
+              background: theme === 'dark' ? '#18181b' : '#f8fafc',
+              color: theme === 'dark' ? '#a6e3a1' : '#7c3aed',
+              border: theme === 'dark' ? '1.5px solid #334155' : '1.5px solid #c7d2fe',
+            };
 
-              // Handle code blocks with language specification
-              if (match) {
-                return (
-                  <SyntaxHighlighter
-                    language={match[1]}
-                    style={theme === 'dark' ? vscDarkPlus : oneLight}
-                    customStyle={{
-                      padding: '1.5rem',
-                      borderRadius: '0.75rem',
-                      fontSize: '0.95rem',
-                      lineHeight: '1.6',
-                      marginBottom: '1.5rem',
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                      background: theme === 'dark' ? '#0f172a' : '#f8fafc',
-                      border: theme === 'dark' ? '1px solid #334155' : '1px solid #e2e8f0',
-                      boxShadow: theme === 'dark' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                    }}
-                    PreTag="div"
-                    {...props}
-                  >
-                    {codeContent}
-                  </SyntaxHighlighter>
-                );
-              }
+            const stylePlain = {
+              ...commonStyle,
+              background: theme === 'dark' ? '#0f172a' : '#f1f5f9',
+              border: theme === 'dark' ? '1px solid #334155' : '1px solid #cbd5e1',
+              color: theme === 'dark' ? '#a6e3a1' : '#7e22ce',
+            };
 
-              // Handle plain code blocks (no language specified)
-              return (
-                <pre
-                  className="p-6 rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 overflow-x-auto my-4"
-                  style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.6',
-                  }}
-                >
-                  <code className="text-zinc-800 dark:text-zinc-200" {...props}>
-                    {codeContent}
-                  </code>
-                </pre>
-              );
-            },
-            img: (props) => (
-              <img 
-                className="my-4 rounded-lg border border-zinc-300 dark:border-zinc-700 max-w-full h-auto shadow-sm" 
-                {...props} 
-              />
-            ),
-            blockquote: (props) => (
-              <blockquote 
-                className="pl-6 py-4 my-6 italic border-l-4 border-blue-300 dark:border-cyan-700 bg-blue-50/40 dark:bg-cyan-900/20 rounded-r-lg text-blue-800 dark:text-cyan-200" 
-                {...props} 
-              />
-            ),
-            hr: (props) => (
-              <hr className="my-6 border-zinc-300 dark:border-zinc-700" {...props} />
-            ),
-            strong: (props) => (
-              <strong className="font-bold text-zinc-900 dark:text-zinc-100" {...props} />
-            ),
-            em: (props) => (
-              <em className="italic text-zinc-800 dark:text-zinc-200" {...props} />
-            ),
-          }}
-        >
-          {content}
-        </ReactMarkdown>
-      </article>
-    );
-  };
+            return match ? (
+              <SyntaxHighlighter
+                language={match[1]}
+                style={theme === 'dark' ? vscDarkPlus : oneLight}
+                customStyle={styleWithTheme}
+                PreTag="div"
+                {...props}
+              >
+                {codeContent}
+              </SyntaxHighlighter>
+            ) : (
+              <pre style={stylePlain}>
+                <code style={{ all: 'unset' }}>{codeContent}</code>
+              </pre>
+            );
+          },
+          img: (props) => (
+            <img className="my-4 rounded-lg border-zinc-300 dark:border-zinc-700 max-w-full h-auto" {...props} />
+          ),
+          blockquote: (props) => (
+            <blockquote className="pl-4 my-4 italic border-l-4 border-blue-300 dark:border-cyan-700 bg-blue-50/40 dark:bg-cyan-900/20 rounded-r-lg" {...props} />
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </article>
+  );
 
   if (!mounted) return null;
 
@@ -303,7 +276,7 @@ export default function ProgramViewer({
 
           {/* Description Section */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-lg border border-zinc-200 dark:border-zinc-800">
-            <MarkdownRenderer content={description?.[lang] ?? ''} />
+            <MarkdownRenderer content={description?.[lang] ?? 'No description available.'} />
           </div>
 
           {/* IDE Section */}
@@ -372,7 +345,7 @@ export default function ProgramViewer({
             </div>
 
             <div className="flex-1 min-h-0">
-              <MarkdownRenderer content={description?.[lang] ?? ''} />
+              <MarkdownRenderer content={description?.[lang] ?? 'No description available.'} />
             </div>
           </div>
 
