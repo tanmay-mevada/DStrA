@@ -7,6 +7,8 @@ const userSchema = new Schema({
   isVerified: { type: Boolean, default: false },
   otp: String,
   otpExpires: Date,
+  resetToken: String,
+  resetTokenExpiry: Date,
   lastSeen: { type: Date, default: Date.now },
   pageVisits: [
     {
@@ -15,5 +17,6 @@ const userSchema = new Schema({
     },
   ],
 });
+
 
 export const User = mongoose.models.User || mongoose.model("User", userSchema);

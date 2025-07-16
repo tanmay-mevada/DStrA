@@ -287,72 +287,79 @@ export default function Navbar() {
 
           <ThemeToggle />
 
-          {/* Profile / Auth */}
-          {status === 'loading' ? (
-            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
-          ) : (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={toggleDropdown}
-                className="overflow-hidden transition-all border-2 border-gray-300 rounded-full w-9 h-9 dark:border-gray-600 hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none"
-                aria-label="User menu"
-                aria-expanded={dropdownOpen}
-              >
-                {user?.image ? (
-                  <img src={user.image} alt="Profile" className="object-cover w-full h-full" />
-                ) : (
-                  <div className="flex items-center justify-center w-full h-full text-lg font-bold text-gray-600 bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
-                    {user?.name?.charAt(0).toUpperCase() || '?'}
-                  </div>
-                )}
-              </button>
+{/* Profile / Auth */}
+{status === 'loading' ? (
+  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+) : (
+  <div className="relative" ref={dropdownRef}>
+    <button
+      onClick={toggleDropdown}
+      className="overflow-hidden transition-all border-2 border-gray-300 rounded-full w-9 h-9 dark:border-gray-600 hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none"
+      aria-label="User menu"
+      aria-expanded={dropdownOpen}
+    >
+      {user ? (
+        user.image ? (
+          <img src={user.image} alt="Profile" className="object-cover w-full h-full" />
+        ) : (
+          // Logged in but no image: show default avatar
+          <img src="/default-avatar.png" alt="Default Avatar" className="object-cover w-full h-full" />
+        )
+      ) : (
+        // Not logged in: show ?
+        <div className="flex items-center justify-center w-full h-full text-lg font-bold text-gray-600 bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
+          ?
+        </div>
+      )}
+    </button>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 z-50 w-48 mt-2 bg-white rounded-md shadow-lg dark:bg-zinc-800 ring-1 ring-black/10 dark:ring-white/10">
-                  {user ? (
-                    <>
-                      <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
-                        {user.email}
-                      </div>
-                      <Link
-                        href="/account"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Manage Account
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          signOut({ callbackUrl: '/' });
-                        }}
-                        className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                      >
-                        Logout
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        href="/auth/login"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        href="/auth/signup"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Sign Up
-                      </Link>
-                    </>
-                  )}
-                </div>
-              )}
+    {dropdownOpen && (
+      <div className="absolute right-0 z-50 w-48 mt-2 bg-white rounded-md shadow-lg dark:bg-zinc-800 ring-1 ring-black/10 dark:ring-white/10">
+        {user ? (
+          <>
+            <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
+              {user.email}
             </div>
-          )}
+            <Link
+              href="/account"
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+              onClick={() => setDropdownOpen(false)}
+            >
+              Manage Account
+            </Link>
+            <button
+              onClick={() => {
+                setDropdownOpen(false);
+                signOut({ callbackUrl: '/' });
+              }}
+              className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/auth/login"
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+              onClick={() => setDropdownOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              href="/auth/signup"
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+              onClick={() => setDropdownOpen(false)}
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+      </div>
+    )}
+  </div>
+)}
+
 
           {/* Hide Navbar Button */}
           <button
