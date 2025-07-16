@@ -10,6 +10,12 @@ import {
   Target,
   ArrowRight,
   Play,
+  Heart,
+  Github,
+  Mail,
+  ExternalLink,
+  GraduationCap,
+  Link2,
 } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '../components/Spinner';
@@ -57,6 +63,20 @@ export default function HomePage() {
     },
   ];
 
+  const quickLinks = [
+    { label: 'Learn', href: '/learn' },
+    { label: 'Chapters', href: '/chapters' },
+    { label: 'Programs', href: '/programs' },
+    { label: 'About', href: '/about' },
+  ];
+
+  const resources = [
+    { label: 'GTU Syllabus', href: 'https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf' },
+    // { label: 'Documentation', href: '/docs' },
+    // { label: 'Support', href: '/support' },
+    // { label: 'FAQ', href: '/faq' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Mobile Screen Warning */}
@@ -72,7 +92,7 @@ export default function HomePage() {
               Master<span className="text-blue-600 dark:text-blue-400 mt-2"> D</span>ata
               <span className="text-blue-600 dark:text-blue-400 mt-2"> Str</span>uctures &
               <span className="text-blue-600 dark:text-blue-400 mt-2"> A</span>lgorithms<br></br>
-              with <span className=" text-blue-600 dark:text-blue-400 mt-2">
+              with <span className="font-techmono text-blue-600 dark:text-blue-400 mt-2">
                 DStrA
               </span>
             </h1>
@@ -82,7 +102,6 @@ export default function HomePage() {
               one place.
             </p>
           </div>
-
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/learn">
@@ -156,7 +175,6 @@ export default function HomePage() {
           })}
         </div>
 
-
         {/* Call to Action */}
         <div className="text-center p-8 sm:p-12 bg-gray-100 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="max-w-3xl mx-auto">
@@ -164,19 +182,132 @@ export default function HomePage() {
               Ready to Master Data Structures?
             </h2>
             <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-
+              Join thousands of students who have improved their DSA skills with our comprehensive learning platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="group flex items-center gap-2 px-6 py-3 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">
-                <BookOpen className="w-5 h-5" />
-                Start Your Journey
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
+              <Link href="/learn">
+                <button className="group flex items-center gap-2 px-6 py-3 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">
+                  <BookOpen className="w-5 h-5" />
+                  Start Your Journey
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Simple Footer */}
+      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* About Section */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Code className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white font-techmono">
+                  DStrA
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                A Data Structures & Algorithms learning platform for GTU diploma students. 
+                Study materials and practice exercises for subject code DI03000021.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                {quickLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link 
+                      href={link.href}
+                      className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Resources</h4>
+              <ul className="space-y-2">
+                {resources.map((resource) => (
+                  <li key={resource.href}>
+                    <Link 
+                      href={resource.href}
+                      target={resource.href.startsWith('http') ? '_blank' : '_self'}
+                      rel={resource.href.startsWith('http') ? 'noopener noreferrer' : ''}
+                      className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm flex items-center gap-1"
+                    >
+                      {resource.label}
+                      {resource.href.startsWith('http') && (
+                        <ExternalLink className="w-3 h-3" />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              
+              {/* Developer Info */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-3 h-3 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Developer's Link
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <a
+                    href="mailto:tanmaymevada24@gmail.com"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    title="Email"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="https://github.com/tanmay-mevada"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    title="GitHub"
+                  >
+                    <Github className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="https://myportfolio-nine-eta-17.vercel.app/"
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    title="Portfolio"
+                  >
+                    <Link2 className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Copyright */}
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                © 2024 DStrA v0.2.68; Educational project for GTU students.
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

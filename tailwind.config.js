@@ -33,6 +33,10 @@ module.exports = {
           "100%": { opacity: 0 },
         },
       },
+       fontFamily: {
+        michroma: ['"Michroma"', 'sans-serif'],
+        techmono: ['"Share Tech Mono"', 'monospace'],
+      },
     },
   },
   plugins: [],

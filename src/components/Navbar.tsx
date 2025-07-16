@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Learn', href: '/learn' },
   { label: 'Chapters', href: '/chapters' },
   { label: 'Programs', href: '/programs' },
+  { label: 'About', href: '/about'},
 ];
 
 // Security: Validate and sanitize image URLs
@@ -305,7 +306,7 @@ export default function Navbar() {
     }`}>
       <div className="flex items-center justify-between w-full px-4 py-3 md:px-10">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-primary dark:text-darkPrimary">
+        <Link href="/" className="font-techmono text-2xl font-bold text-primary dark:text-darkPrimary">
           DStrA
         </Link>
 
