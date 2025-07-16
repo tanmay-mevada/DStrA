@@ -1,10 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-export default function ResetPasswordPage() {
+function ResetPasswordInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
@@ -13,7 +14,6 @@ export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🔍 Fetch email associated with the token
   useEffect(() => {
     if (!token) {
       toast.error('Invalid or missing token.');
@@ -55,7 +55,6 @@ export default function ResetPasswordPage() {
       const text = await res.text();
 
       if (!res.ok) {
-        // Handle empty or non-JSON response
         try {
           const data = JSON.parse(text);
           toast.error(data.error || 'Something went wrong.');
@@ -132,5 +131,14 @@ export default function ResetPasswordPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+// ✅ Main export with <Suspense>
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-10 text-gray-500 dark:text-gray-400">Loading...</div>}>
+      <ResetPasswordInner />
+    </Suspense>
   );
 }
