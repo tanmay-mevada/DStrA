@@ -15,14 +15,13 @@ export default async function ProgramDetailPage(props: any) {
   if (!program || Array.isArray(program)) return notFound();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
-      <ProgramViewer
-        title={program.title}
-        chapter={program.chapterNumber}
-        language={program.language}
-        description={program.description}
-        code={program.code}
-      />
-    </div>
+    <ProgramViewer
+      title={program.title}
+      chapter={program.chapterNumber}
+      language={program.language}
+      description={program.description}
+      code={program.code}
+      programId={id}
+    />
   );
 }
