@@ -9,6 +9,7 @@ export default function EditLibraryPage() {
 
   const [title, setTitle] = useState('');
   const [chapterNumber, setChapterNumber] = useState(1);
+  const [algorithm, setAlgorithm] = useState(''); // ← added
   const [code, setCode] = useState({ c: '', cpp: '', python: '' });
   const [loading, setLoading] = useState(false);
 
@@ -22,6 +23,7 @@ export default function EditLibraryPage() {
 
         setTitle(data.title || '');
         setChapterNumber(data.chapterNumber || 1);
+        setAlgorithm(data.algorithm || ''); // ← added
         setCode({
           c: data.codes?.c || '',
           cpp: data.codes?.cpp || '',
@@ -46,6 +48,7 @@ export default function EditLibraryPage() {
         body: JSON.stringify({
           title,
           chapterNumber,
+          algorithm, // ← included
           codes: code,
         }),
       });
@@ -90,6 +93,18 @@ export default function EditLibraryPage() {
             value={chapterNumber}
             onChange={(e) => setChapterNumber(parseInt(e.target.value))}
             className="w-full p-3 border border-border dark:border-borderDark bg-background dark:bg-backgroundDark text-text dark:text-textDark rounded focus:outline-none focus:ring-2 focus:ring-primary/40"
+            required
+          />
+        </div>
+
+        {/* Algorithm */}
+        <div>
+          <label className="block font-semibold text-text dark:text-textDark mb-1">Algorithm</label>
+          <textarea
+            rows={6}
+            value={algorithm}
+            onChange={(e) => setAlgorithm(e.target.value)}
+            className="w-full font-mono p-3 border border-border dark:border-borderDark bg-background dark:bg-backgroundDark text-text dark:text-textDark rounded resize-y focus:outline-none focus:ring-2 focus:ring-primary/40"
             required
           />
         </div>

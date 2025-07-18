@@ -51,7 +51,7 @@ export default function ChaptersPage() {
   return (
     <div className="relative min-h-screen w-full bg-background dark:bg-backgroundDark overflow-x-hidden">
       <main className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-12 animate-fadeIn">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-michroma text-primary dark:text-darkPrimary mb-8 tracking-tight">
+        <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl font-michroma text-primary dark:text-darkPrimary mb-8 tracking-tight">
           All DSA Chapters
         </h1>
 

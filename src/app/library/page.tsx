@@ -51,7 +51,7 @@ export default function LibraryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading library...</p>
@@ -62,7 +62,7 @@ export default function LibraryPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">⚠️</div>
           <p className="text-red-600 dark:text-red-400 mb-4">Error: {error}</p>
@@ -78,7 +78,7 @@ export default function LibraryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -95,7 +95,7 @@ export default function LibraryPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
+          <div className="bg-white dark:bg-zinc-800/10 rounded-lg p-6 shadow-md">
             <div className="flex items-center gap-3">
               <Book className="h-8 w-8 text-blue-600" />
               <div>
@@ -106,7 +106,7 @@ export default function LibraryPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
+          <div className="bg-white dark:bg-zinc-800/10 rounded-lg p-6 shadow-md">
             <div className="flex items-center gap-3">
               <Hash className="h-8 w-8 text-green-600" />
               <div>
@@ -117,7 +117,7 @@ export default function LibraryPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-md">
+          <div className="bg-white dark:bg-zinc-800/10 rounded-lg p-6 shadow-md">
             <div className="flex items-center gap-3">
               <Code className="h-8 w-8 text-purple-600" />
               <div>
@@ -145,7 +145,7 @@ export default function LibraryPage() {
               <Link
                 key={item._id}
                 href={`/library/${item._id}`}
-                className="group bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200 dark:border-zinc-700 hover:border-blue-300 dark:hover:border-blue-600"
+                className="group bg-white dark:bg-zinc-800/10 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200 dark:border-zinc-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">

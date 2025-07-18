@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useTheme } from 'next-themes'; // Import useTheme
+import { useTheme } from 'next-themes';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneLight, vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import {
   ArrowLeft,
@@ -19,9 +21,11 @@ import {
   BookmarkCheck,
   AlertTriangle,
   Info,
-  // No need for Sun/Moon here anymore, as your Navbar handles the toggle UI
+  ChevronDown,
+  ChevronUp,
+  Lightbulb,
 } from 'lucide-react';
-import IDE from '@/components/IDE'; // Adjust path as needed
+import IDE from '@/components/IDE';
 
 interface LibraryItem {
   _id: string;
@@ -32,6 +36,7 @@ interface LibraryItem {
     cpp?: string;
     python?: string;
   };
+  algorithm?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,15 +56,16 @@ export default function LibraryDetailPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showAlgorithm, setShowAlgorithm] = useState(false);
   const [copiedStates, setCopiedStates] = useState<Record<Language, boolean>>({
     c: false,
     cpp: false,
     python: false,
   });
+  const [copiedAlgorithm, setCopiedAlgorithm] = useState(false);
 
-  // Use next-themes for theme management
-  const { theme } = useTheme(); // Only need 'theme' here, as 'setTheme' is in your Navbar toggle
-  const [mounted, setMounted] = useState(false); // To prevent hydration mismatch
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   // Set mounted to true after first render
   useEffect(() => {
@@ -112,7 +118,7 @@ export default function LibraryDetailPage() {
     if (item && item.codes[language]) {
       setSelectedLanguage(language);
       setCurrentCode(item.codes[language] || '');
-      setOutput(''); // Clear output when switching languages
+      setOutput('');
     }
   }, [item]);
 
@@ -126,6 +132,20 @@ export default function LibraryDetailPage() {
         }, 2000);
       } catch (err) {
         console.error('Failed to copy code:', err);
+      }
+    }
+  }, [item]);
+
+  const handleCopyAlgorithm = useCallback(async () => {
+    if (item && item.algorithm) {
+      try {
+        await navigator.clipboard.writeText(item.algorithm);
+        setCopiedAlgorithm(true);
+        setTimeout(() => {
+          setCopiedAlgorithm(false);
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy algorithm:', err);
       }
     }
   }, [item]);
@@ -146,12 +166,33 @@ export default function LibraryDetailPage() {
     }
   }, [item]);
 
+  const handleDownloadAlgorithm = useCallback(() => {
+    if (item && item.algorithm) {
+      const filename = `${item.title.replace(/\s+/g, '_')}_ch${item.chapterNumber}_algorithm.txt`;
+      const blob = new Blob([item.algorithm], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  }, [item]);
+
   const handleDownloadAll = useCallback(() => {
     if (!item) return;
 
     const availableLanguages = getAvailableLanguages(item.codes);
     const extensions = { c: 'c', cpp: 'cpp', python: 'py' };
 
+    // Download algorithm file if available
+    if (item.algorithm) {
+      handleDownloadAlgorithm();
+    }
+
+    // Download code files
     availableLanguages.forEach(lang => {
       const langKey = lang.toLowerCase() as Language;
       if (item.codes[langKey]) {
@@ -167,7 +208,7 @@ export default function LibraryDetailPage() {
         URL.revokeObjectURL(url);
       }
     });
-  }, [item]);
+  }, [item, handleDownloadAlgorithm]);
 
   const handleBookmark = useCallback(() => {
     setIsBookmarked(prev => {
@@ -198,10 +239,8 @@ export default function LibraryDetailPage() {
         console.log('Error sharing:', err);
       }
     } else {
-      // Fallback to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
-        // You could show a toast notification here
       } catch (err) {
         console.error('Failed to copy URL:', err);
       }
@@ -210,7 +249,6 @@ export default function LibraryDetailPage() {
 
   const handleRun = useCallback(async () => {
     setIsRunning(true);
-    // Simulate code execution - replace with actual execution logic
     setTimeout(() => {
       setOutput(`Executing ${selectedLanguage.toUpperCase()} code...\nInput: ${input}\nOutput: Hello World!\n\nExecution completed successfully.`);
       setIsRunning(false);
@@ -228,7 +266,6 @@ export default function LibraryDetailPage() {
       setCurrentCode(item.codes[selectedLanguage] || '');
     }
   }, [item, selectedLanguage]);
-
 
   if (!mounted || loading) {
     return (
@@ -302,7 +339,7 @@ export default function LibraryDetailPage() {
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white mb-1">Important Notice</p>
                               <p className="text-gray-600 dark:text-gray-400">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+                                This library item contains code examples and algorithms for educational purposes.
                               </p>
                             </div>
                           </div>
@@ -320,6 +357,13 @@ export default function LibraryDetailPage() {
                       <span className="hidden sm:inline">Created {new Date(item.createdAt).toLocaleDateString()}</span>
                       <span className="sm:hidden">{new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                     </div>
+                    {item.algorithm && (
+                      <div className="flex items-center gap-1">
+                        <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span className="hidden sm:inline">Algorithm included</span>
+                        <span className="sm:hidden">Algorithm</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -347,12 +391,10 @@ export default function LibraryDetailPage() {
                 <button
                   onClick={handleDownloadAll}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  title="Download all code files"
+                  title="Download all files"
                 >
                   <Download className="h-5 w-5" />
                 </button>
-
-                {/* Removed the Theme Toggle button from here, as it's in your Navbar */}
               </div>
 
               {/* Language Selector */}
@@ -382,6 +424,83 @@ export default function LibraryDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Algorithm Section */}
+      {item.algorithm && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg shadow-sm border border-purple-200 dark:border-purple-700">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg">
+                    <Lightbulb className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Algorithm</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Step-by-step approach for this topic</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleDownloadAlgorithm}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                    title="Download algorithm as txt file"
+                  >
+                    <Download className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleCopyAlgorithm}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                    title="Copy algorithm"
+                  >
+                    {copiedAlgorithm ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowAlgorithm(!showAlgorithm)}
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                    title={showAlgorithm ? 'Hide algorithm' : 'Show algorithm'}
+                  >
+                    {showAlgorithm ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              
+              {showAlgorithm && (
+                <div className="mt-4 transition-all duration-300 ease-in-out">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-purple-200 dark:border-purple-700">
+                    <SyntaxHighlighter
+                      language="text"
+                      style={theme === 'dark' ? vscDarkPlus : oneLight}
+                      customStyle={{
+                        padding: '1.5rem',
+                        margin: 0,
+                        borderRadius: '0.5rem',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.6',
+                        fontFamily: 'Fira Code, Monaco, Consolas, monospace',
+                        background: theme === 'dark' ? '#1e293b' : '#f8fafc',
+                        border: 'none',
+                      }}
+                      wrapLines={true}
+                      wrapLongLines={true}
+                    >
+                      {item.algorithm}
+                    </SyntaxHighlighter>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -459,6 +578,43 @@ export default function LibraryDetailPage() {
                 })}
               </div>
 
+              {/* Algorithm Quick Access */}
+              {item.algorithm && (
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Lightbulb className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                        <span className="text-sm font-medium text-purple-900 dark:text-purple-300">Algorithm</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={handleDownloadAlgorithm}
+                          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors p-1"
+                          title="Download algorithm"
+                        >
+                          <Download className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={handleCopyAlgorithm}
+                          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors p-1"
+                          title="Copy algorithm"
+                        >
+                          {copiedAlgorithm ? (
+                            <Check className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-purple-700 dark:text-purple-400">
+                      {item.algorithm.split('\n').length} steps available
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Quick Actions */}
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Quick Actions</h4>
@@ -479,6 +635,16 @@ export default function LibraryDetailPage() {
                     <span className="hidden sm:inline">Copy Current Code</span>
                     <span className="sm:hidden">Copy Code</span>
                   </button>
+                  {item.algorithm && (
+                    <button
+                      onClick={handleDownloadAlgorithm}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span className="hidden sm:inline">Download Algorithm</span>
+                      <span className="sm:hidden">Download Algorithm</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

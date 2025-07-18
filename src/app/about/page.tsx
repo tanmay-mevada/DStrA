@@ -92,7 +92,7 @@ export default function AboutPage() {
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                             About <span className="font-techmono text-blue-600 dark:text-blue-400 relative">
                                 DStrA
-                                
+
                             </span>
                         </h1>
                         <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
@@ -154,8 +154,7 @@ export default function AboutPage() {
                                     Developer & Student
                                 </div>
                                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                                    An Ex Diploma Computer Engineering student from the 2022 batch at B & B Institute of Technology, VVN. Currently pursuing B.Tech in Computer Science & Engineering at Nirma University, Ahmedabad.
-                                </p>
+                                    A former Diploma student from the 2022 batch in Computer Engineering at B & B Institute of Technology, Vallabh Vidyanagar. Currently pursuing B.Tech in Computer Science & Engineering at Nirma University, Ahmedabad.                                </p>
                                 <div className="flex justify-center gap-4">
                                     <a href="mailto:tanmaymevada24@gmail.com" className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
                                         <Mail className="w-5 h-5 text-white" />

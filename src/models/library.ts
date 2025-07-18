@@ -4,6 +4,7 @@ const LibrarySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     chapterNumber: { type: Number, required: true, min: 1 },
+    algorithm: { type: String, required: true },
     codes: {
       c: { type: String },
       cpp: { type: String },

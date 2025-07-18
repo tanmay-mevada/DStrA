@@ -7,6 +7,7 @@ interface LibraryItem {
   _id: string;
   title: string;
   chapterNumber: number;
+  algorithm: string;
   codes: {
     c?: string;
     cpp?: string;
@@ -19,6 +20,7 @@ export default function AdminLibraryPage() {
   const [form, setForm] = useState({
     title: '',
     chapterNumber: '',
+    algorithm: '',
     c: '',
     cpp: '',
     python: '',
@@ -38,6 +40,7 @@ export default function AdminLibraryPage() {
       body: JSON.stringify({
         title: form.title,
         chapterNumber: Number(form.chapterNumber),
+        algorithm: form.algorithm,
         codes: {
           c: form.c,
           cpp: form.cpp,
@@ -48,7 +51,7 @@ export default function AdminLibraryPage() {
 
     const newItem = await res.json();
     setItems([newItem, ...items]);
-    setForm({ title: '', chapterNumber: '', c: '', cpp: '', python: '' });
+    setForm({ title: '', chapterNumber: '', algorithm:'', c: '', cpp: '', python: '' });
   };
 
   const handleDelete = async (id: string) => {
@@ -79,6 +82,12 @@ export default function AdminLibraryPage() {
           onChange={(e) => setForm({ ...form, chapterNumber: e.target.value })}
           className="w-full p-3 rounded border border-border dark:border-borderDark bg-background dark:bg-backgroundDark text-text dark:text-textDark focus:outline-none focus:ring-2 focus:ring-primary/40"
           required
+        />
+        <textarea
+          placeholder="Algorithm"
+          value={form.algorithm}
+          onChange={(e) => setForm({ ...form, algorithm: e.target.value })}
+          className="w-full p-3 rounded border border-border dark:border-borderDark bg-background dark:bg-backgroundDark text-text dark:text-textDark focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
         <textarea
           placeholder="C code"
