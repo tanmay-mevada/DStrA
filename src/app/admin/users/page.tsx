@@ -17,10 +17,16 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
-  const fetchUsers = () => {
-    fetch('/api/admin/users')
-      .then((res) => res.json())
-      .then(setUsers);
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/admin/users');
+      if (!res.ok) throw new Error('Failed to fetch users');
+      const data = await res.json();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      alert('Error loading users');
+    }
   };
 
   const deleteUser = async (id: string) => {
@@ -28,14 +34,19 @@ export default function UsersPage() {
     if (!confirm) return;
 
     setLoading(id);
-    const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
-
-    if (res.ok) {
-      setUsers((prev) => prev.filter((u) => u._id !== id));
-    } else {
-      alert('Failed to delete user');
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchUsers(); // more consistent
+      } else {
+        alert('Failed to delete user');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Server error while deleting');
+    } finally {
+      setLoading(null);
     }
-    setLoading(null);
   };
 
   return (
@@ -51,24 +62,32 @@ export default function UsersPage() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user._id} className="border-t border-gray-700">
-              <td className="px-3 py-2">{user.email}</td>
-              <td className="px-3 py-2 capitalize">{user.role}</td>
-              <td className="px-3 py-2 text-sm text-gray-400">
-                {user.lastSeen ? new Date(user.lastSeen).toLocaleString() : '—'}
-              </td>
-              <td className="px-3 py-2">
-                <button
-                  onClick={() => deleteUser(user._id)}
-                  className="text-red-400 hover:text-red-600"
-                  disabled={loading === user._id}
-                >
-                  {loading === user._id ? 'Deleting...' : 'Delete'}
-                </button>
+          {users.length === 0 ? (
+            <tr>
+              <td colSpan={4} className="text-center py-4 text-gray-400">
+                No users found.
               </td>
             </tr>
-          ))}
+          ) : (
+            users.map((user) => (
+              <tr key={user._id} className="border-t border-gray-700">
+                <td className="px-3 py-2">{user.email}</td>
+                <td className="px-3 py-2 capitalize">{user.role}</td>
+                <td className="px-3 py-2 text-sm text-gray-400">
+                  {user.lastSeen ? new Date(user.lastSeen).toLocaleString() : '—'}
+                </td>
+                <td className="px-3 py-2">
+                  <button
+                    onClick={() => deleteUser(user._id)}
+                    className="text-red-400 hover:text-red-600"
+                    disabled={loading === user._id}
+                  >
+                    {loading === user._id ? 'Deleting...' : 'Delete'}
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

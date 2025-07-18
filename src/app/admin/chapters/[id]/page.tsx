@@ -39,7 +39,7 @@ export default function EditChapter() {
       body: JSON.stringify(form),
     });
 
-    router.push('/admin/chapters'); // redirect back after save
+    router.push('/admin/chapters');
   };
 
   if (!form) {
@@ -54,13 +54,13 @@ export default function EditChapter() {
 
       <form onSubmit={handleUpdate} className="p-6 mb-10 space-y-4 shadow-md bg-surface dark:bg-surfaceDark rounded-xl">
         <input
-          className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Chapter Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
         />
         <input
-          className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Short Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -69,7 +69,7 @@ export default function EditChapter() {
         {form.sections.map((section, index) => (
           <div key={index} className="space-y-2">
             <input
-              className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               placeholder={`Section ${index + 1} Heading`}
               value={section.heading}
               onChange={(e) => {
@@ -79,7 +79,7 @@ export default function EditChapter() {
               }}
             />
             <textarea
-              className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               rows={4}
               placeholder="Section Content"
               value={section.content}
@@ -92,40 +92,36 @@ export default function EditChapter() {
           </div>
         ))}
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3 mt-2">
           <button
             type="button"
-            onClick={() =>
-              setForm({ ...form, sections: [...form.sections, { heading: '', content: '' }] })
-            }
-            className="px-3 py-1 mt-2 text-sm text-white bg-green-600 rounded"
+            onClick={() => setForm({ ...form, sections: [...form.sections, { heading: '', content: '' }] })}
+            className="px-3 py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
           >
             + Add Section
           </button>
           {form.sections.length > 1 && (
             <button
               type="button"
-              onClick={() =>
-                setForm({ ...form, sections: form.sections.slice(0, -1) })
-              }
-              className="px-3 py-1 mt-2 text-sm text-white bg-red-500 rounded"
+              onClick={() => setForm({ ...form, sections: form.sections.slice(0, -1) })}
+              className="px-3 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600"
             >
               – Remove Section
             </button>
           )}
         </div>
 
-        <div className="flex justify-between mt-6">
+        <div className="flex flex-col items-stretch gap-3 mt-6 sm:flex-row sm:justify-between">
           <button
             type="submit"
-            className="flex items-center gap-2 px-4 py-2 font-semibold text-white transition bg-blue-600 rounded hover:opacity-90"
+            className="flex items-center justify-center gap-2 px-4 py-2 font-semibold text-white transition bg-primary dark:bg-darkPrimary rounded hover:opacity-90"
           >
             <Save className="w-5 h-5" /> Save Changes
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-400 hover:text-white"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white"
           >
             <ArrowLeft className="w-4 h-4" /> Go Back
           </button>

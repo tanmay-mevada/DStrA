@@ -4,35 +4,23 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, Code, Code2, BarChart3 } from 'lucide-react';
+import {
+  BookOpen,
+  Code,
+  FileText,
+  Database,
+  BarChart3,
+  LayoutDashboard,
+  Terminal,
+} from 'lucide-react';
 import { trackUserActivity } from '@/lib/trackUserActivity';
 
 const adminSections = [
-  {
-    title: 'Manage Chapters',
-    description: 'Create, edit, and delete DSA chapters.',
-    href: '/admin/chapters',
-    icon: <BookOpen className="w-6 h-6 text-sky-400" />,
-  },
-  {
-    title: 'Manage Snippets',
-    description: 'Add and organize code snippets per chapter.',
-    href: '/admin/snippets',
-    icon: <Code2 className="w-6 h-6 text-green-400" />,
-  },
-  {
-    title: 'Manage Programs',
-    description: 'Add and organize program codes and description.',
-    href: '/admin/programs',
-    icon: <Code className="w-6 h-6 text-green-400" />,
-  },
-  {
-    title: 'Analytics',
-    description: 'Track student activity and page views.',
-    href: '/admin/users',
-    icon: <BarChart3 className="w-6 h-6 text-yellow-400" />,
-    disabled: false,
-  }
+  { title: 'Chapters', href: '/admin/chapters', icon: BookOpen },
+  { title: 'Snippets', href: '/admin/snippets', icon: Code },
+  { title: 'Programs', href: '/admin/programs', icon: FileText },
+  { title: 'Library', href: '/admin/library', icon: Database },
+  { title: 'Analytics', href: '/admin/users', icon: BarChart3 },
 ];
 
 export default function AdminHome() {
@@ -51,38 +39,53 @@ export default function AdminHome() {
     trackUserActivity(pathname);
   }, [session, status, router, pathname]);
 
-  if (status === 'loading' || session?.user?.role !== 'admin') {
-    return <div className="p-6 text-gray-400">Loading or Unauthorized...</div>;
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <main className="max-w-6xl p-4 mx-auto sm:p-6 animate-fadeIn">
-      <div className="mb-8">
-        <h1 className="flex items-center gap-2 text-3xl font-extrabold text-primary dark:text-darkPrimary">
-          Admin Dashboard
-        </h1>
-        <p className="mt-1 text-gray-400">Manage DStrA content and lessons efficiently.</p>
-      </div>
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      {/* Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 p-6 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+        <div className="flex items-center gap-3 mb-10 text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <LayoutDashboard className="w-8 h-8" />
+          Admin Panel
+        </div>
+        <nav className="flex flex-col gap-3">
+          {adminSections.map((section) => (
+            <Link
+              key={section.title}
+              href={section.href}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md transition hover:bg-blue-100 dark:hover:bg-blue-900
+                ${
+                  pathname === section.href
+                    ? 'bg-blue-100 dark:bg-blue-900 font-semibold text-blue-600 dark:text-blue-300'
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}
+            >
+              <section.icon className="w-5 h-5" />
+              {section.title}
+            </Link>
+          ))}
+        </nav>
+      </aside>
 
-      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {adminSections.map((section) => (
-          <Link
-            key={section.title}
-            href={section.href}
-            className={`group bg-slate-800 p-6 rounded-xl border border-slate-700 transition-transform shadow-md hover:shadow-lg ${
-              section.disabled
-                ? 'opacity-50 cursor-not-allowed pointer-events-none'
-                : 'hover:scale-[1.02]'
-            }`}
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="p-3 rounded-full bg-slate-700">{section.icon}</div>
-              <h2 className="text-lg font-semibold text-white">{section.title}</h2>
-            </div>
-            <p className="text-sm text-gray-400">{section.description}</p>
-          </Link>
-        ))}
-      </section>
-    </main>
+      {/* Main Content - Welcome */}
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
+        <div className="max-w-2xl">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-800 dark:text-gray-50">
+            //ADMIN_ACCESS_GRANTED
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+            The system is online and awaiting your directives. Navigate the console
+            using the sidebar to manage critical operations.
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

@@ -56,16 +56,17 @@ export default function AdminChapters() {
         <BookOpen className="w-7 h-7" /> Manage Chapters
       </h1>
 
+      {/* Form */}
       <form onSubmit={handleSubmit} className="p-6 mb-10 space-y-4 shadow-md bg-surface dark:bg-surfaceDark rounded-xl">
         <input
-          className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Chapter Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           required
         />
         <input
-          className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Short Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -74,7 +75,7 @@ export default function AdminChapters() {
         {form.sections.map((section, index) => (
           <div key={index} className="space-y-2">
             <input
-              className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               placeholder={`Section ${index + 1} Heading`}
               value={section.heading}
               onChange={(e) => {
@@ -84,7 +85,7 @@ export default function AdminChapters() {
               }}
             />
             <textarea
-              className="w-full p-3 rounded bg-background dark:bg-backgroundDark text-text dark:text-textDark"
+              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               rows={4}
               placeholder="Section Content (Markdown supported)"
               value={section.content}
@@ -97,7 +98,8 @@ export default function AdminChapters() {
           </div>
         ))}
 
-        <div className="flex gap-3">
+        {/* Section Controls */}
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() =>
@@ -106,7 +108,7 @@ export default function AdminChapters() {
                 sections: [...form.sections, { heading: '', content: '' }],
               })
             }
-            className="px-3 py-1 mt-2 text-sm text-white bg-green-600 rounded"
+            className="px-3 py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
           >
             + Add Section
           </button>
@@ -119,7 +121,7 @@ export default function AdminChapters() {
                   sections: form.sections.slice(0, -1),
                 })
               }
-              className="px-3 py-1 mt-2 text-sm text-white bg-red-500 rounded"
+              className="px-3 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600"
             >
               – Remove Section
             </button>
@@ -134,28 +136,28 @@ export default function AdminChapters() {
         </button>
       </form>
 
-      {/* Chapters List */}
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+      {/* Chapters Grid */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {chapters.map((c) => (
           <div
             key={c._id}
-            className="p-5 transition border shadow bg-surface dark:bg-surfaceDark rounded-xl border-border dark:border-borderDark hover:shadow-lg"
+            className="p-5 transition-all duration-200 border shadow-sm bg-surface dark:bg-surfaceDark rounded-xl border-border dark:border-borderDark hover:shadow-md"
           >
-            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col justify-between gap-4 h-full">
               <div>
                 <h2 className="text-xl font-semibold text-primary dark:text-darkPrimary">{c.title}</h2>
-                <p className="text-sm text-text/70 dark:text-textDark/70">{c.description}</p>
+                <p className="mt-1 text-sm text-text/70 dark:text-textDark/70">{c.description}</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex items-center justify-end gap-4 mt-4 text-sm">
                 <Link
                   href={`/admin/chapters/${c._id}`}
-                  className="flex items-center gap-1 text-sm text-yellow-500 hover:underline"
+                  className="flex items-center gap-1 text-yellow-600 hover:underline"
                 >
                   <Edit3 className="w-4 h-4" /> Edit
                 </Link>
                 <button
                   onClick={() => handleDelete(c._id)}
-                  className="flex items-center gap-1 text-sm text-red-500 hover:underline"
+                  className="flex items-center gap-1 text-red-600 hover:underline"
                 >
                   <Trash2 className="w-4 h-4" /> Delete
                 </button>

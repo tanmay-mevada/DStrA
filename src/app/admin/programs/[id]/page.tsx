@@ -4,23 +4,16 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 type Lang = 'python' | 'cpp' | 'c';
+const languages: Lang[] = ['python', 'cpp', 'c'];
 
 export default function EditProgramPage() {
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const router = useRouter();
 
   const [title, setTitle] = useState('');
   const [chapterNumber, setChapterNumber] = useState(1);
-  const [code, setCode] = useState<{ python: string; cpp: string; c: string }>({
-    python: '',
-    cpp: '',
-    c: '',
-  });
-  const [description, setDescription] = useState<{ python: string; cpp: string; c: string }>({
-    python: '',
-    cpp: '',
-    c: '',
-  });
+  const [code, setCode] = useState<{ [key in Lang]: string }>({ python: '', cpp: '', c: '' });
+  const [description, setDescription] = useState<{ [key in Lang]: string }>({ python: '', cpp: '', c: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -43,6 +36,7 @@ export default function EditProgramPage() {
         });
       } catch (err) {
         console.error('Failed to fetch program:', err);
+        alert('Error loading program data');
       }
     };
 
@@ -63,11 +57,12 @@ export default function EditProgramPage() {
       if (res.ok) {
         router.push('/admin/programs');
       } else {
-        alert('Failed to update program');
+        const errorData = await res.json();
+        alert(`Failed to update program: ${errorData.message || 'Unknown error'}`);
       }
     } catch (err) {
       console.error(err);
-      alert('Server error');
+      alert('Server error. Try again.');
     } finally {
       setLoading(false);
     }
@@ -80,7 +75,7 @@ export default function EditProgramPage() {
       <label className="block font-semibold mt-2">Description ({lang})</label>
       <textarea
         className="w-full p-2 border rounded"
-        rows={4}
+        rows={3}
         value={description[lang]}
         onChange={(e) => setDescription({ ...description, [lang]: e.target.value })}
       />
@@ -88,7 +83,7 @@ export default function EditProgramPage() {
       <label className="block font-semibold mt-2">Code ({lang})</label>
       <textarea
         className="w-full p-2 border rounded font-mono"
-        rows={6}
+        rows={5}
         value={code[lang]}
         onChange={(e) => setCode({ ...code, [lang]: e.target.value })}
       />
@@ -116,20 +111,29 @@ export default function EditProgramPage() {
             type="number"
             className="w-full p-2 border rounded"
             value={chapterNumber}
-            onChange={(e) => setChapterNumber(parseInt(e.target.value))}
+            onChange={(e) => setChapterNumber(Number(e.target.value))}
             required
           />
         </div>
 
-        {(['python', 'cpp', 'c'] as const).map(renderLanguageFields)}
+        {languages.map(renderLanguageFields)}
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? 'Updating...' : 'Update Program'}
-        </button>
+        <div className="flex gap-4 items-center">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            disabled={loading}
+          >
+            {loading ? 'Updating...' : 'Update Program'}
+          </button>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="text-gray-600 underline"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

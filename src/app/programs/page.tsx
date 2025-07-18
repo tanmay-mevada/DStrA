@@ -129,7 +129,7 @@ export default function ProgramsPage() {
       <div className="border-b border-borderL dark:border-borderDark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-text dark:text-textDark">
+            <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-primary dark:text-primaryDark">
               Programs
             </h1>
             
