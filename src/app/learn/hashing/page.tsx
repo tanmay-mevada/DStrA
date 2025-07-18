@@ -71,9 +71,9 @@ export default function HashingVisualizer() {
   };
 
   const TheoryModal = () => (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-primary/20 dark:border-darkPrimary/20">
-        <div className="sticky top-0 bg-white dark:bg-zinc-900 border-b border-primary/10 dark:border-darkPrimary/10 p-6 flex justify-between items-center">
+    <div className="fixed inset-0 bg-zinc-800/10 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/30 dark:bg-zinc-900/30 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-primary/20 dark:border-darkPrimary/20">
+        <div className="sticky top-0 bg-white/40 dark:bg-zinc-900/40 border-b border-primary/10 dark:border-darkPrimary/10 p-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-primary dark:text-darkPrimary flex items-center gap-2">
             <BookOpen size={24} />
             Hash Tables Theory
@@ -155,7 +155,7 @@ export default function HashingVisualizer() {
         </div>
 
         {/* Controls */}
-        <div className="bg-white/80 dark:bg-zinc-900/80 border border-primary/15 dark:border-darkPrimary/15 rounded-2xl shadow-md backdrop-blur-md p-4 sm:p-6">
+        <div className="bg-white/50 dark:bg-zinc-900/50 border border-primary/15 dark:border-darkPrimary/15 rounded-2xl shadow-md backdrop-blur-md p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4">
             <input
               type="text"
@@ -203,7 +203,7 @@ export default function HashingVisualizer() {
         </div>
 
         {/* Hash Table */}
-        <div className="bg-white/80 dark:bg-zinc-900/80 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-inner backdrop-blur-md p-4 sm:p-6">
+        <div className="bg-white/40 dark:bg-zinc-900/40 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-inner backdrop-blur-md p-4 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold text-center text-primary dark:text-darkPrimary mb-4 sm:mb-6">
             Hash Table (Size: {TABLE_SIZE})
           </h2>
@@ -247,7 +247,7 @@ export default function HashingVisualizer() {
         {/* Message */}
         {message && (
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 text-sm sm:text-base lg:text-lg font-medium text-primary dark:text-darkPrimary bg-white/80 dark:bg-zinc-900/80 border border-primary/10 dark:border-darkPrimary/10 rounded-xl px-4 py-3 shadow-sm backdrop-blur-md max-w-full">
+            <div className="inline-flex items-center gap-2 text-sm sm:text-base lg:text-lg font-medium text-primary dark:text-darkPrimary bg-white/50 dark:bg-zinc-900/50 border border-primary/10 dark:border-darkPrimary/10 rounded-xl px-4 py-3 shadow-sm backdrop-blur-md max-w-full">
               {message.includes('calculation') && <Calculator size={18} />}
               {message.includes('Inserted') && <CheckCircle size={18} />}
               {message.includes('Collision') && <AlertTriangle size={18} />}
@@ -259,7 +259,7 @@ export default function HashingVisualizer() {
         )}
 
         {/* Theory Section */}
-        <div className="bg-white/80 dark:bg-zinc-900/80 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-sm backdrop-blur-md p-6 sm:p-8">
+        <div className="bg-white/50 dark:bg-zinc-900/50 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-sm backdrop-blur-md p-6 sm:p-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-primary dark:text-darkPrimary mb-6 flex items-center gap-3">
             <BookOpen size={28} />
             Hash Tables Theory
@@ -366,19 +366,19 @@ export default function HashingVisualizer() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="bg-white/60 dark:bg-zinc-900/60 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {table.filter(val => val !== null).length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Elements</div>
           </div>
-          <div className="bg-white/60 dark:bg-zinc-900/60 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {table.filter(val => val === null).length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Empty Slots</div>
           </div>
-          <div className="bg-white/60 dark:bg-zinc-900/60 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {currentStep}
             </div>

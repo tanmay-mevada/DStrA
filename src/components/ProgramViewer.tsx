@@ -11,7 +11,7 @@ import { useTheme } from 'next-themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { LinkIcon, Youtube, Save, Share2, Download } from 'lucide-react';
+import { Link, Youtube, Save, Share2, Download, AlertTriangle } from 'lucide-react';
 
 interface Props {
   title: string;
@@ -44,6 +44,50 @@ const useLocalStorage = (key: string, initialValue: any) => {
   }, [key]);
 
   return [storedValue, setValue];
+};
+
+// Tooltip Component
+const Tooltip = ({ children, content, showOnMobile = false }: { 
+  children: React.ReactNode; 
+  content: string; 
+  showOnMobile?: boolean;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleInteraction = () => {
+    if (isMobile && showOnMobile) {
+      setIsVisible(!isVisible);
+    }
+  };
+
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => !isMobile && setIsVisible(true)}
+        onMouseLeave={() => !isMobile && setIsVisible(false)}
+        onClick={handleInteraction}
+        className="cursor-pointer"
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg -top-12 left-1/2 transform -translate-x-1/2 min-w-max max-w-xs">
+          <div className="relative">
+            {content}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default function ProgramViewer({
@@ -219,7 +263,7 @@ export default function ProgramViewer({
               const icon = isYouTube ? (
                 <Youtube size={18} className="text-red-600 dark:text-red-400" />
               ) : (
-                <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
+                <Link size={16} className="text-indigo-600 dark:text-lime-400" />
               );
 
               return (
@@ -322,15 +366,23 @@ export default function ProgramViewer({
   // Mobile layout
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="p-4 space-y-4">
           {/* Header Section with Action Buttons */}
           <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-lg border border-zinc-200 dark:border-zinc-800">
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl font-extrabold mb-2 text-blue-700 dark:text-cyan-300 tracking-tight">
-                  {title}
-                </h1>
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-blue-700 dark:text-cyan-300 tracking-tight">
+                    {title}
+                  </h1>
+                  <Tooltip 
+                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                    showOnMobile={true}
+                  >
+                    <AlertTriangle size={20} className="text-amber-500 dark:text-amber-400" />
+                  </Tooltip>
+                </div>
                 <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-3">
                   <span className="font-semibold">Chapter {chapter}</span> · 
                   <span className="font-semibold">Language:</span> {lang.toUpperCase()}
@@ -416,7 +468,7 @@ export default function ProgramViewer({
 
   // Desktop layout - Fixed to viewport height
   return (
-    <div className="h-screen bg-gray-50 dark:bg-zinc-950 overflow-hidden">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <div className="p-4 lg:p-6 h-full">
         <Split
           className="flex h-full"
@@ -436,9 +488,14 @@ export default function ProgramViewer({
             <div className="flex-shrink-0">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
-                  <h1 className="text-2xl lg:text-3xl font-extrabold mb-2 text-blue-700 dark:text-cyan-300 tracking-tight">
-                    {title}
-                  </h1>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h1 className="text-2xl lg:text-3xl font-extrabold text-blue-700 dark:text-cyan-300 tracking-tight">
+                      {title}
+                    </h1>
+                    <Tooltip content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.">
+                      <AlertTriangle size={24} className="text-amber-500 dark:text-amber-400" />
+                    </Tooltip>
+                  </div>
                   <p className="text-zinc-500 dark:text-zinc-400 text-sm lg:text-base mb-2">
                     <span className="font-semibold">Chapter {chapter}</span> · 
                     <span className="font-semibold">Language:</span> {lang.toUpperCase()}

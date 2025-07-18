@@ -4,6 +4,7 @@ import Editor from '@monaco-editor/react';
 import Split from 'react-split';
 import { Play, Bug, RotateCcw, Minus, Plus } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export default function IDE({
   theme,
@@ -38,7 +39,7 @@ export default function IDE({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -74,12 +75,25 @@ export default function IDE({
             </button>
 
             <button
-              onClick={onRun}
+              onClick={() => {
+                const toastId = toast.loading('Running code...');
+                onRun();
+                setTimeout(() => toast.dismiss(toastId), 2000); // optional auto-dismiss
+              }}
+
               disabled={loading}
               className="w-8 h-8 flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 rounded text-white shadow-md hover:from-blue-600 hover:to-cyan-600 transition disabled:opacity-60"
               title="Run"
             >
-              <Play size={14} />
+              {loading ? (
+                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+              ) : (
+                <Play size={16} />
+              )}
+
             </button>
 
             <button
@@ -181,7 +195,12 @@ export default function IDE({
           </button>
 
           <button
-            onClick={onRun}
+            onClick={() => {
+              const toastId = toast.loading('Running code...');
+              onRun();
+              setTimeout(() => toast.dismiss(toastId), 2000); // optional auto-dismiss
+            }}
+
             disabled={loading}
             className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center bg-gradient-to-r from-blue-500 to-cyan-500 rounded text-white shadow-md hover:from-blue-600 hover:to-cyan-600 transition disabled:opacity-60"
             title="Run"
@@ -233,7 +252,7 @@ export default function IDE({
               theme={theme === 'dark' ? 'vs-dark' : 'vs'}
               options={{
                 fontSize,
-                minimap: { enabled: false },
+                minimap: { enabled: true },
                 wordWrap: 'on',
                 scrollBeyondLastLine: false,
                 fontFamily: 'Fira Mono, Menlo, Monaco, Consolas, monospace',
@@ -248,7 +267,7 @@ export default function IDE({
                 },
               }}
               onChange={(val) => setCode(val || '')}
-              className="rounded-xl overflow-hidden border border-gray-300 dark:border-zinc-800"
+              className="rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-300/20"
             />
           </div>
 
