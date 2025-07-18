@@ -2,35 +2,62 @@ import { NextRequest, NextResponse } from 'next/server';
 import Library from '@/models/library';
 import connectDB from '@/lib/db';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+type ParamsPromise = Promise<{ id: string }>;
+
+// GET a single library
+export async function GET(
+  req: NextRequest,
+  context: { params: ParamsPromise }
+) {
+  const { id } = await context.params;
+  await connectDB();
+
   try {
-    await connectDB();
-    const lib = await Library.findById(params.id);
-    if (!lib) return NextResponse.json({ message: 'Not found' }, { status: 404 });
+    const lib = await Library.findById(id);
+    if (!lib) {
+      return NextResponse.json({ message: 'Library not found' }, { status: 404 });
+    }
     return NextResponse.json(lib);
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+// UPDATE a library
+export async function PUT(
+  req: NextRequest,
+  context: { params: ParamsPromise }
+) {
+  const { id } = await context.params;
+  await connectDB();
+  const body = await req.json();
+
   try {
-    await connectDB();
-    const body = await req.json();
-    const updated = await Library.findByIdAndUpdate(params.id, body, { new: true });
-    if (!updated) return NextResponse.json({ message: 'Not Found' }, { status: 404 });
+    const updated = await Library.findByIdAndUpdate(id, body, { new: true });
+    if (!updated) {
+      return NextResponse.json({ message: 'Library not found' }, { status: 404 });
+    }
     return NextResponse.json(updated);
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ message: 'Update failed' }, { status: 500 });
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+// DELETE a library
+export async function DELETE(
+  req: NextRequest,
+  context: { params: ParamsPromise }
+) {
+  const { id } = await context.params;
+  await connectDB();
+
   try {
-    await connectDB();
-    await Library.findByIdAndDelete(params.id);
-    return NextResponse.json({ message: 'Deleted' });
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
+    const deleted = await Library.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ message: 'Library not found' }, { status: 404 });
+    }
+    return NextResponse.json({ message: 'Library deleted successfully' });
+  } catch {
+    return NextResponse.json({ message: 'Delete failed' }, { status: 500 });
   }
 }
