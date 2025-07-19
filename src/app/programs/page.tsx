@@ -128,71 +128,109 @@ export default function ProgramsPage() {
       {/* Header */}
       <div className="border-b border-borderL dark:border-borderDark">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-primary dark:text-primaryDark">
-              Programs
-            </h1>
-            
-            {/* Warning Icon with Tooltip */}
-            <div className="relative">
-              <button
-                className="w-5 h-5 text-amber-500 hover:text-amber-400 transition-colors cursor-help focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 rounded-full p-0.5"
-                onClick={() => setShowTooltip(!showTooltip)}
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                aria-label="Important information about programs"
-              >
-                <svg 
-                  className="w-4 h-4" 
-                  fill="currentColor" 
-                  viewBox="0 0 20 20"
-                >
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-primary dark:text-primaryDark">
+                Programs
+              </h1>
               
-              {/* Tooltip - Mobile friendly with backdrop */}
-              {showTooltip && (
-                <>
-                  {/* Backdrop for mobile - clicking outside closes tooltip */}
-                  <div 
-                    className="fixed inset-0 z-40 bg-black bg-opacity-20 md:hidden"
-                    onClick={() => setShowTooltip(false)}
-                  />
-                  
-                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-72 sm:w-80 z-50 animate-fadeIn">
-                    <div className="bg-surface dark:bg-surfaceDark text-text dark:text-textDark text-sm rounded-lg p-4 shadow-xl border border-borderL dark:border-borderDark">
-                      {/* Arrow pointer */}
-                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-surface dark:bg-surfaceDark rotate-45 border-l border-t border-borderL dark:border-borderDark"></div>
-                      
-                      {/* Close button for mobile */}
-                      <div className="flex items-start justify-between mb-2 md:hidden">
-                        <span className="text-xs font-medium text-amber-500 dark:text-amber-400 font-techmono">
-                          Important Notice
-                        </span>
-                        <button
+              {/* Warning Icon with Tooltip */}
+              <div className="relative">
+                <button
+                  className="w-5 h-5 text-amber-500 hover:text-amber-400 transition-colors cursor-help focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 rounded-full p-0.5"
+                  onClick={() => setShowTooltip(!showTooltip)}
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}
+                  aria-label="Important information about programs"
+                >
+                  <svg 
+                    className="w-4 h-4" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                
+                {/* Tooltip - Mobile friendly with backdrop */}
+                {showTooltip && (
+                  <>
+                    {/* Backdrop for mobile - clicking outside closes tooltip */}
+                    <div 
+                      className="fixed inset-0 z-40 bg-black bg-opacity-20 md:hidden"
+                      onClick={() => setShowTooltip(false)}
+                    />
+                    
+                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-72 sm:w-80 z-50 animate-fadeIn">
+                      <div className="bg-surface dark:bg-surfaceDark text-text dark:text-textDark text-sm rounded-lg p-4 shadow-xl border border-borderL dark:border-borderDark">
+                        {/* Arrow pointer */}
+                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-surface dark:bg-surfaceDark rotate-45 border-l border-t border-borderL dark:border-borderDark"></div>
+                        
+                        {/* Close button for mobile */}
+                        <div className="flex items-start justify-between mb-2 md:hidden">
+                          <span className="text-xs font-medium text-amber-500 dark:text-amber-400 font-techmono">
+                            Important Notice
+                          </span>
+                          <button
+                            onClick={() => setShowTooltip(false)}
+                            className="text-borderL dark:text-borderDark hover:text-text dark:hover:text-textDark transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        
+                        <p className="leading-relaxed mb-3">
+                          These programs are specially designed for DStrA's IDE and not recommended to practice in exams. They are intended to demonstrate coding concepts and practices.
+                        </p>
+                        
+                        {/* Library Link in tooltip */}
+                        <Link 
+                          href="/library"
+                          className="inline-flex items-center gap-2 text-primary dark:text-darkPrimary hover:text-primary/80 dark:hover:text-darkPrimary/80 transition-colors font-medium text-sm"
                           onClick={() => setShowTooltip(false)}
-                          className="text-borderL dark:text-borderDark hover:text-text dark:hover:text-textDark transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                           </svg>
-                        </button>
+                          Check Code Library for exam-ready solutions
+                        </Link>
                       </div>
-                      
-                      <p className="leading-relaxed">
-                        These programs are specially designed for DStrA's IDE and not recommended to practice in exams. They are intended to demonstrate coding concepts and practices. Check out our code library for exam-ready solutions.
-                      </p>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
+
+            {/* Library Link Button in Header */}
+            <Link 
+              href="/library" 
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary rounded-lg transition-all duration-200 font-techmono text-sm font-medium hover:scale-105"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Code Library
+            </Link>
           </div>
           
-          <p className="mt-2 text-borderL dark:text-borderDark font-techmono text-xs sm:text-sm">
-            Collection of programming solutions and code examples
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-2">
+            <p className="text-borderL dark:text-borderDark font-techmono text-xs sm:text-sm">
+              Collection of programming solutions and code examples
+            </p>
+            
+            {/* Mobile Library Link */}
+            <Link 
+              href="/library" 
+              className="sm:hidden inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary rounded-lg transition-all duration-200 font-techmono text-xs font-medium self-start"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Code Library
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -294,7 +332,18 @@ export default function ProgramsPage() {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-text dark:text-textDark mb-2 font-michroma">No programs found</h3>
-            <p className="text-borderL dark:text-borderDark font-techmono">Check back later for new programming content</p>
+            <p className="text-borderL dark:text-borderDark font-techmono mb-4">Check back later for new programming content</p>
+            
+            {/* Library link in empty state */}
+            <Link 
+              href="/library" 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary rounded-lg transition-all duration-200 font-techmono text-sm font-medium hover:scale-105"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Explore Code Library
+            </Link>
           </div>
         )}
       </div>

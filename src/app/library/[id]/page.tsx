@@ -109,7 +109,7 @@ export default function LibraryDetailPage() {
   const getAvailableLanguages = (codes: LibraryItem['codes']) => {
     const languages = [];
     if (codes.c) languages.push('C');
-    if (codes.cpp) languages.push('C++');
+    if (codes.cpp) languages.push('Cpp');
     if (codes.python) languages.push('Python');
     return languages;
   };
@@ -620,14 +620,6 @@ export default function LibraryDetailPage() {
                 <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Quick Actions</h4>
                 <div className="space-y-2">
                   <button
-                    onClick={handleDownloadAll}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline">Download All Files</span>
-                    <span className="sm:hidden">Download All</span>
-                  </button>
-                  <button
                     onClick={() => handleCopy(selectedLanguage)}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-2"
                   >
@@ -654,7 +646,7 @@ export default function LibraryDetailPage() {
           <div className="lg:col-span-3 order-1 lg:order-2">
             <div className="h-[50vh] sm:h-[60vh] lg:h-[calc(100vh-200px)] min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]">
               <IDE
-                theme={theme} // This is the crucial part: pass the 'theme' from next-themes
+                theme={theme}
                 language={selectedLanguage}
                 code={currentCode}
                 setCode={setCurrentCode}
