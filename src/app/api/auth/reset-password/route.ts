@@ -1,5 +1,3 @@
-// /api/auth/reset-password/route.ts
-
 import { User } from '@/models/user';
 import connectDB from '@/lib/db';
 import { hash } from 'bcryptjs';

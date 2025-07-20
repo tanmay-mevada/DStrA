@@ -1,5 +1,3 @@
-// /api/auth/reset-password/validate/route.ts
-
 import { NextResponse } from 'next/server';
 import { User } from '@/models/user'; // make sure this imports the Mongoose model correctly
 import connectDB from '@/lib/db';

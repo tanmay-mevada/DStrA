@@ -1,4 +1,3 @@
-// /api/auth/request-reset/route.ts
 import { User } from '@/models/user';
 import connectDB from '@/lib/db';
 import crypto from 'crypto';

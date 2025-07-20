@@ -6,7 +6,7 @@ const chapterSchema = new Schema({
   sections: [
     {
       heading: { type: String },
-      content: { type: String }, // Markdown supported
+      content: { type: String }, 
     },
   ],
   createdAt: { type: Date, default: Date.now },

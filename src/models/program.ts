@@ -6,11 +6,11 @@ const ProgramSchema = new mongoose.Schema(
     chapterNumber: { type: Number, required: true },
     language: { type: String, default: 'python' },
     description: {
-      type: mongoose.Schema.Types.Mixed, // supports string or { lang: string }
+      type: mongoose.Schema.Types.Mixed,
       required: true
     },
     code: {
-      type: mongoose.Schema.Types.Mixed, // supports string or { lang: string }
+      type: mongoose.Schema.Types.Mixed,
       required: true
     }
   },

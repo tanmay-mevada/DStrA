@@ -20,36 +20,6 @@ import {
 } from 'lucide-react';
 
 export default function AboutPage() {
-    const stats = [
-        {
-            icon: Users,
-            number: '1000+',
-            label: 'Students Helped',
-            color: 'text-blue-600 dark:text-blue-400',
-            bgColor: 'bg-blue-50 dark:bg-blue-900/30'
-        },
-        {
-            icon: BookOpen,
-            number: '50+',
-            label: 'Chapters Covered',
-            color: 'text-green-600 dark:text-green-400',
-            bgColor: 'bg-green-50 dark:bg-green-900/30'
-        },
-        {
-            icon: Code,
-            number: '200+',
-            label: 'Code Examples',
-            color: 'text-purple-600 dark:text-purple-400',
-            bgColor: 'bg-purple-50 dark:bg-purple-900/30'
-        },
-        {
-            icon: Award,
-            number: '95%',
-            label: 'Success Rate',
-            color: 'text-orange-600 dark:text-orange-400',
-            bgColor: 'bg-orange-50 dark:bg-orange-900/30'
-        }
-    ];
 
     const features = [
         {

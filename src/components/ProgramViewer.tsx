@@ -377,7 +377,7 @@ export default function ProgramViewer({
                     {title}
                   </h1>
                   <Tooltip 
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                    content="This program is only designed to help you understand the concepts of data structures and algorithms."
                     showOnMobile={true}
                   >
                     <AlertTriangle size={20} className="text-amber-500 dark:text-amber-400" />
@@ -468,7 +468,7 @@ export default function ProgramViewer({
 
   // Desktop layout - Fixed to viewport height
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="h-screen-safe bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <div className="p-4 lg:p-6 h-full">
         <Split
           className="flex h-full"

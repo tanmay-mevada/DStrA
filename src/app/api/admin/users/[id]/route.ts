@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { User } from '@/models/user';
 
-// You can replace `any` with your own reusable type later (e.g. type Context = { params: { id: string } })
 export async function DELETE(req: NextRequest, context: any) {
   await connectDB();
 

@@ -80,32 +80,31 @@ export default function ChapterDetail() {
                   ol: (props) => <ol className="mb-4 space-y-1 list-decimal list-inside" {...props} />,
                   li: (props) => <li {...props} />,
                   a: ({ href, children, ...props }) => {
-  const isExternal = href?.startsWith('http');
-  const isYouTube = href?.includes('youtube.com') || href?.includes('youtu.be');
+                    const isExternal = href?.startsWith('http');
+                    const isYouTube = href?.includes('youtube.com') || href?.includes('youtu.be');
 
-  const icon = isYouTube ? (
-    <Youtube size={18} className="text-red-600 dark:text-red-400" />
-  ) : (
-    <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
-  );
+                    const icon = isYouTube ? (
+                      <Youtube size={18} className="text-red-600 dark:text-red-400" />
+                    ) : (
+                      <LinkIcon size={16} className="text-indigo-600 dark:text-lime-400" />
+                    );
 
-  return (
-    <a
-      href={href}
-      target={isExternal ? '_blank' : undefined}
-      rel={isExternal ? 'noopener noreferrer' : undefined}
-      className={`inline-flex items-center gap-1 underline font-medium transition-colors ${
-        isYouTube
-          ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
-          : 'text-indigo-600 hover:text-indigo-800 dark:text-lime-400 dark:hover:text-lime-300'
-      }`}
-      {...props}
-    >
-      {icon}
-      {children}
-    </a>
-  );
-},
+                    return (
+                      <a
+                        href={href}
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noopener noreferrer' : undefined}
+                        className={`inline-flex items-center gap-1 underline font-medium transition-colors ${isYouTube
+                            ? 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300'
+                            : 'text-indigo-600 hover:text-indigo-800 dark:text-lime-400 dark:hover:text-lime-300'
+                          }`}
+                        {...props}
+                      >
+                        {icon}
+                        {children}
+                      </a>
+                    );
+                  },
 
                   table: ({ node, ...props }) => {
                     const isSmallTable =
@@ -154,13 +153,13 @@ export default function ChapterDetail() {
                       return (
                         <code
                           className="px-1 py-0.5 rounded font-mono 
-    bg-[#f0f0f0] dark:bg-zinc-900 
-    text-[#6B21A8] dark:text-[#4ADE80] 
-    border border-purple-200 dark:border-green-700 
-    text-[15px] tracking-tight shadow-sm
-    md:bg-[#f0f0f0] md:dark:bg-zinc-900 
-    md:border md:border-purple-200 md:dark:border-green-700 
-    bg-transparent border-0"
+                                    bg-[#f0f0f0] dark:bg-zinc-900 
+                                    text-[#6B21A8] dark:text-[#4ADE80] 
+                                    border border-purple-200 dark:border-green-700 
+                                    text-[15px] tracking-tight shadow-sm
+                                    md:bg-[#f0f0f0] md:dark:bg-zinc-900 
+                                    md:border md:border-purple-200 md:dark:border-green-700 
+                                    bg-transparent border-0"
                           style={{ fontWeight: 600, letterSpacing: "0.01em" }}
                           {...props}
                         >

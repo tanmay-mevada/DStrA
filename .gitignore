@@ -1,7 +1,12 @@
-# .gitignore
 node_modules/
 .next/
-.env
-.env.local
+out/
+.env*
+!.env.example
+*.log
 .DS_Store
-npm-debug.log
+.vscode/
+.idea/
+*.swp
+*.tmp
+.turbo/

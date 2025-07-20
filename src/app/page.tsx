@@ -72,9 +72,8 @@ export default function HomePage() {
 
   const resources = [
     { label: 'GTU Syllabus', href: 'https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf' },
-    // { label: 'Documentation', href: '/docs' },
-    // { label: 'Support', href: '/support' },
-    // { label: 'FAQ', href: '/faq' },
+    { label: 'Library', href: '/library' },
+    { label: 'Contact', href: '/contact' },
   ];
 
   return (

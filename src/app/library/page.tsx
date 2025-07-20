@@ -103,7 +103,7 @@ const ErrorDisplay = ({ error, onRetry }: { error: string; onRetry: () => void }
 
 const LibraryHeader = () => (
   <div className="text-center mb-8">
-    <div className="flex justify-center items-center gap-3 mb-4">
+    <div className="flex gap-3 mb-4">
       <div className="p-3 rounded-xl border border-gray-200 dark:border-zinc-700">
         <Book className="h-8 w-8 text-blue-600 dark:text-blue-400" />
       </div>

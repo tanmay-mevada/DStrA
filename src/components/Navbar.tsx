@@ -113,10 +113,55 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navbarRef = useRef<HTMLElement>(null);
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
+
+  // Update CSS custom property for navbar height
+  const updateNavbarHeight = () => {
+    if (isCollapsed) {
+      // When collapsed, navbar doesn't take space in document flow
+      document.documentElement.style.setProperty('--navbar-height', '0px');
+    } else {
+      // When expanded, get the actual navbar height
+      if (navbarRef.current) {
+        const height = navbarRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      } else {
+        // Fallback height estimation based on your navbar structure
+        const estimatedHeight = mobileMenuOpen ? 200 : 64; // Adjust based on your actual heights
+        document.documentElement.style.setProperty('--navbar-height', `${estimatedHeight}px`);
+      }
+    }
+  };
+
+  // Update navbar height when state changes
+  useEffect(() => {
+    const timeoutId = setTimeout(updateNavbarHeight, 50); // Small delay for DOM updates
+    return () => clearTimeout(timeoutId);
+  }, [isCollapsed, mobileMenuOpen]);
+
+  // Update navbar height on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      updateNavbarHeight();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isCollapsed, mobileMenuOpen]);
+
+  // Initial navbar height setup
+  useEffect(() => {
+    // Set initial CSS variable
+    document.documentElement.style.setProperty('--navbar-height', '0px');
+    
+    // Update after component mounts
+    const timeoutId = setTimeout(updateNavbarHeight, 100);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   // Mobile scroll behavior
   useEffect(() => {
@@ -301,9 +346,12 @@ export default function Navbar() {
 
   // Full navbar (expanded state)
   return (
-    <header className={`sticky top-0 z-50 border-b shadow-sm bg-background dark:bg-backgroundDark border-border dark:border-borderDark transition-transform duration-300 ${
-      !isVisible ? 'md:translate-y-0 -translate-y-full' : 'translate-y-0'
-    }`}>
+    <header 
+      ref={navbarRef}
+      className={`sticky top-0 z-50 border-b shadow-sm bg-background dark:bg-backgroundDark border-border dark:border-borderDark transition-transform duration-300 ${
+        !isVisible ? 'md:translate-y-0 -translate-y-full' : 'translate-y-0'
+      }`}
+    >
       <div className="flex items-center justify-between w-full px-4 py-3 md:px-10">
         {/* Logo */}
         <Link href="/" className="font-techmono text-2xl font-bold text-primary dark:text-darkPrimary">

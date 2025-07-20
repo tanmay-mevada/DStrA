@@ -20,7 +20,14 @@ html {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Optional: ensure toast z-index is high */
 .react-hot-toast {
   z-index: 9999;
+}
+
+.min-h-screen-safe {
+  min-height: calc(100vh - var(--navbar-height, 0px));
+}
+
+.h-screen-safe {
+  height: calc(100vh - var(--navbar-height, 0px));
 }
