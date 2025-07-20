@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DStrA - Data Structures and Algorithms for GTU Diploma (DI03000021)
+
+**DStrA** is a structured and comprehensive web application designed for third-semester diploma students of Computer Engineering under Gujarat Technological University (GTU). It focuses on the subject **Data Structures (DI03000021)**, offering a complete learning platform including explanations, code examples, visualizations, and interactive coding.
+
+## Features
+
+- Structured Learning aligned with GTU syllabus  
+- Visual representation of algorithms  
+- In-browser coding environment  
+- Auth system with OTP verification  
+- Admin dashboard for content management  
+- TypeScript and Next.js 13+ architecture  
+
+## Tech Stack
+
+- Next.js 13+  
+- TypeScript  
+- Tailwind CSS  
+- React  
+- MongoDB @Atlas
+- Node.js  
+- Nodemailer
+- Markdown Rendering 
+- Judge0 API
+- NextAuth & GoogleAuth
+- React Hooks
+
+## Folder Structure
+
+```
+src/
+├── app/                 # Application pages (learn, library, programs)
+├── api/                 # API routes (auth, chapters, admin)
+├── components/          # Reusable React components
+├── lib/                 # Utility functions (auth, DB, tracking)
+├── models/              # Type definitions and interfaces
+├── types/               # Custom types and declarations
+├── utils/               # Helper functions (OTP, email)
+├── public/              # Static assets
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js >= 18.x  
+- npm or yarn  
+- MongoDB or your preferred DB (if applicable)  
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/tanmay-mevada/DStrA.git
+cd DStrA
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Create `.env.local` file:
+
+```env
+MONGO_URI = ************
+GOOGLE_CLIENT_ID = ************
+GOOGLE_CLIENT_SECRET = ************
+NEXTAUTH_SECRET = ************
+NEXT_PUBLIC_JUDGE0_API_KEY = ************
+API_BASE_URL = ************
+NEXT_PUBLIC_API_BASE_URL = ************
+NEXTAUTH_URL = ************
+EMAIL_USER = ************
+EMAIL_PASS = ************
+NEXT_PUBLIC_BASE_URL = ************
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `dev` - Run the app in development mode  
+- `build` - Build for production  
+- `start` - Start production server  
+- `lint` - Run ESLint  
 
-## Learn More
+## Contribution Guidelines
 
-To learn more about Next.js, take a look at the following resources:
+1. Fork the repository  
+2. Create a new branch (`git checkout -b feature-name`)  
+3. Commit your changes (`git commit -m 'Add new feature'`)  
+4. Push to the branch (`git push origin feature-name`)  
+5. Open a pull request  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## To-Do / Future Improvements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Add leaderboard and user progress tracking  
+- Add offline mode using PWA  
+- Add problem submission & evaluation logic  
+- Mobile app version (React Native)  
+- Integration of AI-based code assistant  
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.

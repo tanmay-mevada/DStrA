@@ -6,12 +6,14 @@ import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect, useRef } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { ShieldUser, Menu, X, ChevronUp, ChevronDown, User } from 'lucide-react';
+import { La_Belle_Aurore } from 'next/font/google';
 
 const navItems = [
   { label: 'Learn', href: '/learn' },
   { label: 'Chapters', href: '/chapters' },
   { label: 'Programs', href: '/programs' },
   { label: 'About', href: '/about'},
+  { label: 'Contact', href: '/contact' },
 ];
 
 // Security: Validate and sanitize image URLs
