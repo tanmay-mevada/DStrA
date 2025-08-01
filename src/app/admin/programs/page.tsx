@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import Spinner from '@/components/Spinner';
+import { toast } from 'react-hot-toast';
 
 interface Program {
   _id: string;
@@ -80,18 +85,41 @@ export default function AdminProgramsPage() {
     }));
   };
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Auth check + activity tracking
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session?.user || session.user.role !== 'admin') {
+      toast.error('ACCESS DENIED - UNAUTHORIZED');
+      router.replace('/');
+    } else {
+      trackUserActivity(pathname);
+    }
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background dark:bg-backgroundDark">
+        <Spinner />
+      </div>
+    );
+  }
   return (
-    <div className="p-6 space-y-8 max-w-4xl mx-auto">
+    <div className="max-w-4xl p-6 mx-auto space-y-8">
       <h1 className="text-2xl font-bold">Admin - Programs</h1>
 
       {/* FORM */}
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-zinc-800 p-6 rounded-xl shadow">
-        <div className="grid md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="p-6 space-y-6 bg-white shadow dark:bg-zinc-800 rounded-xl">
+        <div className="grid gap-4 md:grid-cols-2">
           <input
             placeholder="Title"
             value={form.title}
             onChange={e => setForm({ ...form, title: e.target.value })}
-            className="border p-2 rounded w-full"
+            className="w-full p-2 border rounded"
             required
           />
           <input
@@ -99,42 +127,42 @@ export default function AdminProgramsPage() {
             type="number"
             value={form.chapterNumber}
             onChange={e => setForm({ ...form, chapterNumber: e.target.value })}
-            className="border p-2 rounded w-full"
+            className="w-full p-2 border rounded"
             required
           />
         </div>
 
         {/* Description Fields */}
         <div>
-          <label className="block font-medium mb-2">Descriptions</label>
+          <label className="block mb-2 font-medium">Descriptions</label>
           {languages.map((lang) => (
             <textarea
               key={lang}
               placeholder={`${lang.toUpperCase()} Description`}
               value={form.description[lang]}
               onChange={e => updateDesc(lang, e.target.value)}
-              className="border p-2 rounded w-full mb-2"
+              className="w-full p-2 mb-2 border rounded"
             />
           ))}
         </div>
 
         {/* Code Fields */}
         <div>
-          <label className="block font-medium mb-2">Code</label>
+          <label className="block mb-2 font-medium">Code</label>
           {languages.map((lang) => (
             <textarea
               key={lang}
               placeholder={`${lang.toUpperCase()} Code`}
               value={form.code[lang]}
               onChange={e => updateCode(lang, e.target.value)}
-              className="border p-2 rounded w-full mb-2 font-mono"
+              className="w-full p-2 mb-2 font-mono border rounded"
             />
           ))}
         </div>
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="px-4 py-2 text-white transition bg-blue-600 rounded hover:bg-blue-700"
         >
           Add Program
         </button>
@@ -145,7 +173,7 @@ export default function AdminProgramsPage() {
         {programs.map((p) => (
           <div
             key={p._id}
-            className="p-4 border rounded shadow flex justify-between items-center bg-white dark:bg-zinc-800"
+            className="flex items-center justify-between p-4 bg-white border rounded shadow dark:bg-zinc-800"
           >
             <div>
               <h3 className="text-lg font-semibold">{p.title}</h3>

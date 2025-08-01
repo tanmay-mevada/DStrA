@@ -59,7 +59,7 @@ export async function sendResetEmail(email: string, token: string) {
           <div style="background: #f8fafc; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="margin: 0; font-size: 12px; color: #9ca3af;">
               Need help? Contact us at 
-              <a href="mailto:support@dstra.com" style="color: #2563EB; text-decoration: none;">support@dstra.com</a>
+              <a href="mailto:dstra0.2.68@gmail.com" style="color: #2563EB; text-decoration: none;">support@dstra.com</a>
             </p>
           </div>
         </div>

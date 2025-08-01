@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Thank you for contacting DStrA!',
+      subject: 'Acknowledgement for contacting DStrA!',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #007bff;">Thank you for reaching out!</h2>
@@ -63,15 +63,9 @@ export async function POST(request: NextRequest) {
           </div>
           
           <p>I typically respond within 24 hours. In the meantime, feel free to:</p>
-          <ul>
-            <li>Explore the <strong>DStrA</strong> platform for Data Structures learning</li>
-            <li>Check out my <a href="https://github.com/tanmay-mevada" style="color: #007bff;">GitHub</a> for more projects</li>
-            <li>Visit my <a href="https://myportfolio-nine-eta-17.vercel.app/" style="color: #007bff;">portfolio</a> to learn more about my work</li>
-          </ul>
           
           <p>Best regards,<br>
           <strong>Tanmay Mevada</strong><br>
-          <small>Developer, DStrA Platform</small></p>
           
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
           <p style="font-size: 12px; color: #6c757d;">
