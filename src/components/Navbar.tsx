@@ -265,12 +265,12 @@ export default function Navbar() {
   // Collapsed state - only for desktop
   if (isCollapsed) {
     return (
-      <div className="hidden md:block fixed top-2 right-2 z-50">
+      <div className="fixed z-50 hidden md:block top-2 right-2">
         <div className="flex items-center gap-2">
           {/* Show Navbar Button */}
           <button
             onClick={toggleCollapse}
-            className="w-9 h-9 flex items-center justify-center rounded-full shadow-lg bg-primary text-white hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center text-white transition-colors rounded-full shadow-lg w-9 h-9 bg-primary hover:bg-primary/90"
             title="Show navbar"
             aria-label="Show navbar"
           >
@@ -278,7 +278,7 @@ export default function Navbar() {
           </button>
 
           {/* Theme Toggle Button */}
-          <div className="w-9 h-9 flex items-center justify-center rounded-full shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-center bg-white border border-gray-200 rounded-full shadow-lg w-9 h-9 dark:bg-gray-800 dark:border-gray-700">
             <div className="scale-[0.8]">
               <ThemeToggle />
             </div>
@@ -286,12 +286,12 @@ export default function Navbar() {
 
           {/* Profile / Auth */}
           {status === 'loading' ? (
-            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse shadow-lg" />
+            <div className="bg-gray-200 rounded-full shadow-lg w-9 h-9 dark:bg-gray-700 animate-pulse" />
           ) : (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="transition-all border-2 border-white dark:border-gray-600 rounded-full shadow-lg hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none"
+                className="transition-all border-2 border-white rounded-full shadow-lg dark:border-gray-600 hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none"
                 aria-label="User menu"
                 aria-expanded={dropdownOpen}
               >
@@ -302,19 +302,12 @@ export default function Navbar() {
                 <div className="absolute right-0 z-[60] w-48 mt-2 bg-white rounded-md shadow-lg dark:bg-zinc-800 ring-1 ring-black/10 dark:ring-white/10">
                   {user ? (
                     <>
-                      <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
+                      <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-600">
                         {sanitizeEmail(user.email || '')}
                       </div>
-                      <Link
-                        href="/account"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Manage Account
-                      </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="w-full px-4 py-2 text-sm text-left text-red-600 transition-colors hover:bg-gray-100 dark:hover:bg-zinc-700"
                       >
                         Logout
                       </button>
@@ -323,14 +316,14 @@ export default function Navbar() {
                     <>
                       <Link
                         href="/auth/login"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                         onClick={() => setDropdownOpen(false)}
                       >
                         Login
                       </Link>
                       <Link
                         href="/auth/signup"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                         onClick={() => setDropdownOpen(false)}
                       >
                         Sign Up
@@ -356,12 +349,12 @@ export default function Navbar() {
     >
       <div className="flex items-center justify-between w-full px-4 py-3 md:px-10">
         {/* Logo */}
-        <Link href="/" className="font-techmono text-2xl font-bold text-primary dark:text-darkPrimary">
+        <Link href="/" className="text-2xl font-bold font-techmono text-primary dark:text-darkPrimary">
           DStrA
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-4 text-sm">
+        <nav className="items-center hidden gap-4 text-sm md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -379,7 +372,7 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link 
               href="/admin" 
-              className="px-2 py-2 rounded hover:bg-surface dark:hover:bg-surfaceDark transition-colors"
+              className="px-2 py-2 transition-colors rounded hover:bg-surface dark:hover:bg-surfaceDark"
               title="Admin Panel"
             >
               <ShieldUser className="w-6 h-6 text-text dark:text-textDark" />
@@ -390,12 +383,12 @@ export default function Navbar() {
 
           {/* Profile / Auth */}
           {status === 'loading' ? (
-            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+            <div className="bg-gray-200 rounded-full w-9 h-9 dark:bg-gray-700 animate-pulse"></div>
           ) : (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="transition-all border-2 border-gray-300 dark:border-gray-600 hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none rounded-full"
+                className="transition-all border-2 border-gray-300 rounded-full dark:border-gray-600 hover:ring-2 ring-sky-400 focus:ring-2 focus:ring-sky-400 focus:outline-none"
                 aria-label="User menu"
                 aria-expanded={dropdownOpen}
               >
@@ -406,19 +399,12 @@ export default function Navbar() {
                 <div className="absolute right-0 z-50 w-48 mt-2 bg-white rounded-md shadow-lg dark:bg-zinc-800 ring-1 ring-black/10 dark:ring-white/10">
                   {user ? (
                     <>
-                      <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
+                      <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-600">
                         {sanitizeEmail(user.email || '')}
                       </div>
-                      <Link
-                        href="/account"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Manage Account
-                      </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="w-full px-4 py-2 text-sm text-left text-red-600 transition-colors hover:bg-gray-100 dark:hover:bg-zinc-700"
                       >
                         Logout
                       </button>
@@ -427,14 +413,14 @@ export default function Navbar() {
                     <>
                       <Link
                         href="/auth/login"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                         onClick={() => setDropdownOpen(false)}
                       >
                         Login
                       </Link>
                       <Link
                         href="/auth/signup"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-700 transition-colors dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                         onClick={() => setDropdownOpen(false)}
                       >
                         Sign Up
@@ -449,7 +435,7 @@ export default function Navbar() {
           {/* Hide Navbar Button - Desktop only */}
           <button
             onClick={toggleCollapse}
-            className="p-2 rounded-md text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark transition-colors"
+            className="p-2 transition-colors rounded-md text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark"
             title="Hide navbar"
             aria-label="Hide navbar"
           >
@@ -458,12 +444,12 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile Navigation - Theme Toggle and Menu */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           
           <button
             onClick={toggleMobileMenu}
-            className="p-2 rounded-md text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark transition-colors"
+            className="p-2 transition-colors rounded-md text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -474,7 +460,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-2 border-t border-border dark:border-borderDark bg-background dark:bg-backgroundDark">
+        <div className="px-4 pb-4 space-y-2 border-t md:hidden border-border dark:border-borderDark bg-background dark:bg-backgroundDark">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -496,7 +482,7 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="block px-4 py-2 rounded hover:bg-surface dark:hover:bg-surfaceDark transition-colors"
+              className="block px-4 py-2 transition-colors rounded hover:bg-surface dark:hover:bg-surfaceDark"
               onClick={() => {
                 setMobileMenuOpen(false);
                 setDropdownOpen(false);
@@ -506,7 +492,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          <div className="border-t border-border dark:border-borderDark my-2"></div>
+          <div className="my-2 border-t border-border dark:border-borderDark"></div>
 
           {/* Mobile User Section */}
           {user ? (
@@ -519,19 +505,9 @@ export default function Navbar() {
                   {sanitizeEmail(user.email || '')}
                 </div>
               </div>
-              <Link
-                href="/account"
-                className="block px-4 py-2 text-sm text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark transition-colors rounded"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setDropdownOpen(false);
-                }}
-              >
-                Manage Account
-              </Link>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-surface dark:hover:bg-surfaceDark transition-colors rounded"
+                className="w-full px-4 py-2 text-sm text-left text-red-600 transition-colors rounded hover:bg-surface dark:hover:bg-surfaceDark"
               >
                 Logout
               </button>
@@ -540,7 +516,7 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth/login"
-                className="block px-4 py-2 text-sm text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark transition-colors rounded"
+                className="block px-4 py-2 text-sm transition-colors rounded text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setDropdownOpen(false);
@@ -550,7 +526,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="block px-4 py-2 text-sm text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark transition-colors rounded"
+                className="block px-4 py-2 text-sm transition-colors rounded text-text dark:text-textDark hover:bg-surface dark:hover:bg-surfaceDark"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setDropdownOpen(false);
