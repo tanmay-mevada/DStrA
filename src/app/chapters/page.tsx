@@ -1,10 +1,12 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ChapterCard from '@/components/ChapterCard';
 import Spinner from '@/components/Spinner';
+import toast from 'react-hot-toast';
+import { trackUserActivity } from '@/lib/trackUserActivity';
 
 interface Chapter {
   _id: string;
@@ -13,16 +15,20 @@ interface Chapter {
 }
 
 export default function ChaptersPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoadingChapters, setIsLoadingChapters] = useState(true);
-
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+  
   useEffect(() => {
     if (status !== 'loading' && !session?.user) {
-      router.push('/auth/login');
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
     }
-  }, [status, session, router]);
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
 
   useEffect(() => {
     if (session?.user) {
@@ -49,9 +55,9 @@ export default function ChaptersPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-background dark:bg-backgroundDark overflow-x-hidden">
-      <main className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-12 animate-fadeIn">
-        <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl font-michroma text-primary dark:text-darkPrimary mb-8 tracking-tight">
+    <div className="relative w-full min-h-screen overflow-x-hidden bg-background dark:bg-backgroundDark">
+      <main className="w-full max-w-4xl px-4 py-10 mx-auto sm:px-6 sm:py-12 animate-fadeIn">
+        <h1 className="mb-8 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl font-michroma text-primary dark:text-darkPrimary">
           All DSA Chapters
         </h1>
 
@@ -60,7 +66,7 @@ export default function ChaptersPage() {
             <Spinner />
           </div>
         ) : chapters.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-surface/70 dark:bg-surfaceDark/70 rounded-xl shadow border border-borderL dark:border-borderDark">
+          <div className="flex flex-col items-center justify-center py-16 border shadow bg-surface/70 dark:bg-surfaceDark/70 rounded-xl border-borderL dark:border-borderDark">
             <p className="text-lg text-text dark:text-textDark/80">No chapters found.</p>
           </div>
         ) : (

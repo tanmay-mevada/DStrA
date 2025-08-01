@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import Spinner from '@/components/Spinner';
+import { toast } from 'react-hot-toast';
 
 type Lang = 'python' | 'cpp' | 'c';
 const languages: Lang[] = ['python', 'cpp', 'c'];
@@ -9,13 +13,36 @@ const languages: Lang[] = ['python', 'cpp', 'c'];
 export default function EditProgramPage() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
-
   const [title, setTitle] = useState('');
   const [chapterNumber, setChapterNumber] = useState(1);
   const [code, setCode] = useState<{ [key in Lang]: string }>({ python: '', cpp: '', c: '' });
   const [description, setDescription] = useState<{ [key in Lang]: string }>({ python: '', cpp: '', c: '' });
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
 
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session?.user || session.user.role !== 'admin') {
+      toast.error("ACCESS DENIED - UNAUTHORIZED");
+      router.replace('/');
+    } else {
+      trackUserActivity(pathname);
+    }
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background dark:bg-backgroundDark">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!session?.user || session.user.role !== 'admin') {
+    return null;
+  }
   useEffect(() => {
     const fetchProgram = async () => {
       try {
@@ -70,9 +97,9 @@ export default function EditProgramPage() {
 
   const renderLanguageFields = (lang: Lang) => (
     <div key={lang}>
-      <h3 className="text-lg font-semibold capitalize mt-4">{lang}</h3>
+      <h3 className="mt-4 text-lg font-semibold capitalize">{lang}</h3>
 
-      <label className="block font-semibold mt-2">Description ({lang})</label>
+      <label className="block mt-2 font-semibold">Description ({lang})</label>
       <textarea
         className="w-full p-2 border rounded"
         rows={3}
@@ -80,9 +107,9 @@ export default function EditProgramPage() {
         onChange={(e) => setDescription({ ...description, [lang]: e.target.value })}
       />
 
-      <label className="block font-semibold mt-2">Code ({lang})</label>
+      <label className="block mt-2 font-semibold">Code ({lang})</label>
       <textarea
-        className="w-full p-2 border rounded font-mono"
+        className="w-full p-2 font-mono border rounded"
         rows={5}
         value={code[lang]}
         onChange={(e) => setCode({ ...code, [lang]: e.target.value })}
@@ -91,8 +118,8 @@ export default function EditProgramPage() {
   );
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Edit Program</h1>
+    <div className="max-w-2xl p-6 mx-auto">
+      <h1 className="mb-4 text-2xl font-bold">Edit Program</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-semibold">Title</label>
@@ -118,10 +145,10 @@ export default function EditProgramPage() {
 
         {languages.map(renderLanguageFields)}
 
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
             disabled={loading}
           >
             {loading ? 'Updating...' : 'Update Program'}

@@ -13,6 +13,12 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { BarChart2, Brain, BookOpen } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Legend, Tooltip, Title);
 
@@ -137,15 +143,27 @@ export default function ComplexityVisualizer() {
       },
     },
   });
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 space-y-12 overflow-hidden">
+    <div className="px-4 py-12 mx-auto space-y-12 overflow-hidden max-w-7xl">
       {/* Header */}
       <section>
-        <h1 className="text-4xl md:text-5xl font-bold text-primary dark:text-darkPrimary mb-2">
+        <h1 className="mb-2 text-4xl font-bold md:text-5xl text-primary dark:text-darkPrimary">
           Time Complexity in Data Structures
         </h1>
-        <p className="text-lg md:text-xl text-text dark:text-textDark max-w-3xl">
+        <p className="max-w-3xl text-lg md:text-xl text-text dark:text-textDark">
           Time complexity shows how an algorithm scales with input size using <span className="font-semibold text-primary dark:text-darkPrimary">Big-O Notation</span>.
         </p>
       </section>
@@ -153,13 +171,13 @@ export default function ComplexityVisualizer() {
       {/* Combined Chart */}
 
 <section>
-  <h2 className="flex items-center gap-2 text-2xl md:text-3xl font-semibold text-text dark:text-textDark mb-3">
+  <h2 className="flex items-center gap-2 mb-3 text-2xl font-semibold md:text-3xl text-text dark:text-textDark">
     <BarChart2 className="w-6 h-6 text-primary dark:text-darkPrimary" />
     Combined Complexity Graph
   </h2>
 
   {/* Move legend outside the chart box */}
-  <div className="mb-4 flex flex-wrap justify-center gap-2 px-3 py-2 rounded-xl bg-white/10 dark:bg-black/10 shadow-sm backdrop-blur-md border border-borderL dark:border-borderDark">
+  <div className="flex flex-wrap justify-center gap-2 px-3 py-2 mb-4 border shadow-sm rounded-xl bg-white/10 dark:bg-black/10 backdrop-blur-md border-borderL dark:border-borderDark">
     {complexityInfo.map(({ label, color }) => (
       <label
         key={label}
@@ -212,11 +230,11 @@ export default function ComplexityVisualizer() {
 
       {/* Quick List */}
       <section>
-        <h2 className="flex items-center gap-2 text-2xl md:text-3xl font-semibold text-text dark:text-textDark mb-4">
+        <h2 className="flex items-center gap-2 mb-4 text-2xl font-semibold md:text-3xl text-text dark:text-textDark">
           <Brain className="w-6 h-6 text-primary dark:text-darkPrimary" />
           Complexity Quick View
         </h2>
-        <ul className="list-disc pl-6 text-text dark:text-textDark space-y-3">
+        <ul className="pl-6 space-y-3 list-disc text-text dark:text-textDark">
           {complexityInfo.map((c) => (
             <li key={c.label}>
               <strong>{c.label}:</strong> {c.meaning} — {c.desc}{' '}
@@ -228,19 +246,19 @@ export default function ComplexityVisualizer() {
 
       {/* Individual Graph Cards */}
       <section>
-        <h2 className="flex items-center gap-2 text-2xl md:text-3xl font-semibold text-text dark:text-textDark mb-6">
+        <h2 className="flex items-center gap-2 mb-6 text-2xl font-semibold md:text-3xl text-text dark:text-textDark">
           <BookOpen className="w-6 h-6 text-primary dark:text-darkPrimary" />
           Individual Complexity Types
         </h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           {complexityInfo.map(({ label, meaning, desc, color, example, analogy }) => (
             <div
               key={label}
-              className="bg-white dark:bg-gray-800/20 p-5 rounded-2xl shadow-lg border border-borderL dark:border-borderDark space-y-4 hover:shadow-xl"
+              className="p-5 space-y-4 bg-white border shadow-lg dark:bg-gray-800/20 rounded-2xl border-borderL dark:border-borderDark hover:shadow-xl"
             >
-              <h3 className="text-lg md:text-xl font-bold text-primary dark:text-darkPrimary flex items-center gap-2">
+              <h3 className="flex items-center gap-2 text-lg font-bold md:text-xl text-primary dark:text-darkPrimary">
                 <span style={{ color }}>{label}</span>
-                <span className="text-text dark:text-textDark/80 font-normal">- {meaning}</span>
+                <span className="font-normal text-text dark:text-textDark/80">- {meaning}</span>
               </h3>
               <p className="text-sm md:text-base text-text dark:text-textDark/80">{desc}</p>
               <p className="text-xs text-text/70 dark:text-textDark/70">

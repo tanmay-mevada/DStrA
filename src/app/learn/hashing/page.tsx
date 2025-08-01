@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { RefreshCcw, PlusCircle, BookOpen, X, Play, Hash, AlertTriangle, CheckCircle, XCircle, Calculator, Database, Settings, Users, Lock, Zap } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 export default function HashingVisualizer() {
   const TABLE_SIZE = 10;
@@ -71,10 +77,10 @@ export default function HashingVisualizer() {
   };
 
   const TheoryModal = () => (
-    <div className="fixed inset-0 bg-zinc-800/10 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-800/10 backdrop-blur-sm">
       <div className="bg-white/30 dark:bg-zinc-900/30 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-primary/20 dark:border-darkPrimary/20">
-        <div className="sticky top-0 bg-white/40 dark:bg-zinc-900/40 border-b border-primary/10 dark:border-darkPrimary/10 p-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-primary dark:text-darkPrimary flex items-center gap-2">
+        <div className="sticky top-0 flex items-center justify-between p-6 border-b bg-white/40 dark:bg-zinc-900/40 border-primary/10 dark:border-darkPrimary/10">
+          <h2 className="flex items-center gap-2 text-2xl font-bold text-primary dark:text-darkPrimary">
             <BookOpen size={24} />
             Hash Tables Theory
           </h2>
@@ -83,11 +89,11 @@ export default function HashingVisualizer() {
         
         <div className="p-6 space-y-6">
           <section>
-            <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-3">What is a Hash Table?</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-3">
+            <h3 className="mb-3 text-xl font-semibold text-primary dark:text-darkPrimary">What is a Hash Table?</h3>
+            <p className="mb-3 text-gray-700 dark:text-gray-300">
               A hash table is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function to compute an index into an array of buckets or slots, from which the desired value can be found.
             </p>
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-400">
+            <div className="p-4 border-l-4 border-blue-400 rounded-lg bg-blue-50 dark:bg-blue-900/20">
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 <strong>Time Complexity:</strong> Average O(1) for insertion, deletion, and search operations
               </p>
@@ -95,11 +101,11 @@ export default function HashingVisualizer() {
           </section>
 
           <section>
-            <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-3">Division Method</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-3">
-              The division method uses the formula: <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">hash(key) = key % table_size</code>
+            <h3 className="mb-3 text-xl font-semibold text-primary dark:text-darkPrimary">Division Method</h3>
+            <p className="mb-3 text-gray-700 dark:text-gray-300">
+              The division method uses the formula: <code className="px-2 py-1 bg-gray-100 rounded dark:bg-gray-800">hash(key) = key % table_size</code>
             </p>
-            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
               <p className="text-sm text-green-800 dark:text-green-200">
                 <strong>Example:</strong> If we want to insert 23 into a table of size 10: hash(23) = 23 % 10 = 3
               </p>
@@ -107,11 +113,11 @@ export default function HashingVisualizer() {
           </section>
 
           <section>
-            <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-3">Linear Probing</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-3">
+            <h3 className="mb-3 text-xl font-semibold text-primary dark:text-darkPrimary">Linear Probing</h3>
+            <p className="mb-3 text-gray-700 dark:text-gray-300">
               Linear probing is a collision resolution technique where we search for the next available slot sequentially. If slot hash(key) is occupied, we try hash(key) + 1, then hash(key) + 2, and so on.
             </p>
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
+            <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 <strong>Clustering:</strong> Linear probing can cause primary clustering, where consecutive occupied slots form clusters, increasing search time.
               </p>
@@ -119,15 +125,15 @@ export default function HashingVisualizer() {
           </section>
 
           <section>
-            <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-3">Load Factor</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-3">
+            <h3 className="mb-3 text-xl font-semibold text-primary dark:text-darkPrimary">Load Factor</h3>
+            <p className="mb-3 text-gray-700 dark:text-gray-300">
               Load factor = (Number of elements) / (Table size). A load factor above 0.7 typically indicates the need for table resizing to maintain performance.
             </p>
           </section>
 
           <section>
-            <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-3">Applications</h3>
-            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
+            <h3 className="mb-3 text-xl font-semibold text-primary dark:text-darkPrimary">Applications</h3>
+            <ul className="space-y-2 text-gray-700 list-disc list-inside dark:text-gray-300">
               <li>Database indexing</li>
               <li>Caching systems</li>
               <li>Symbol tables in compilers</li>
@@ -139,37 +145,57 @@ export default function HashingVisualizer() {
       </div>
     </div>
   );
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full bg-background dark:bg-backgroundDark py-4 px-2 sm:px-4 lg:px-8">
-      <div className="max-w-6xl w-full mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
+    <div className="w-full min-h-screen px-2 py-4 bg-background dark:bg-backgroundDark sm:px-4 lg:px-8">
+      <div className="w-full max-w-6xl mx-auto space-y-6 sm:space-y-8 lg:space-y-10">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary dark:text-darkPrimary drop-shadow flex items-center justify-center gap-3">
+        <div className="space-y-4 text-center">
+          <h1 className="flex items-center justify-center gap-3 text-2xl font-bold sm:text-3xl lg:text-4xl text-primary dark:text-darkPrimary drop-shadow">
             <Hash size={32} className="sm:w-8 sm:h-8 lg:w-10 lg:h-10" />
             Hash Table Visualizer
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto text-sm text-gray-600 sm:text-base dark:text-gray-400">
             Interactive visualization of hash table operations using division method and linear probing
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-white/50 dark:bg-zinc-900/50 border border-primary/15 dark:border-darkPrimary/15 rounded-2xl shadow-md backdrop-blur-md p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4">
+        <div className="p-4 border shadow-md bg-white/50 dark:bg-zinc-900/50 border-primary/15 dark:border-darkPrimary/15 rounded-2xl backdrop-blur-md sm:p-6">
+          <div className="flex flex-col items-center justify-center gap-3 mb-4 sm:flex-row sm:gap-4">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter value to insert"
               disabled={isAnimating}
-              className="border border-primary/20 dark:border-darkPrimary/20 px-3 py-2 rounded-lg w-full sm:w-48 bg-white/90 dark:bg-zinc-900/90 focus:ring-2 focus:ring-primary dark:focus:ring-darkPrimary outline-none transition disabled:opacity-50"
+              className="w-full px-3 py-2 transition border rounded-lg outline-none border-primary/20 dark:border-darkPrimary/20 sm:w-48 bg-white/90 dark:bg-zinc-900/90 focus:ring-2 focus:ring-primary dark:focus:ring-darkPrimary disabled:opacity-50"
             />
-            <div className="flex gap-2 w-full sm:w-auto">
+            <div className="flex w-full gap-2 sm:w-auto">
               <button
                 onClick={insert}
                 disabled={isAnimating}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center flex-1 gap-2 px-4 py-2 font-semibold text-white transition-all bg-green-600 rounded-lg shadow sm:flex-none hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isAnimating ? <Play size={16} className="animate-pulse" /> : <PlusCircle size={16} />}
                 {isAnimating ? 'Inserting...' : 'Insert'}
@@ -177,7 +203,7 @@ export default function HashingVisualizer() {
               <button
                 onClick={resetTable}
                 disabled={isAnimating}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center flex-1 gap-2 px-4 py-2 font-semibold text-white transition-all bg-gray-500 rounded-lg shadow sm:flex-none hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCcw size={16} />
                 Reset
@@ -185,8 +211,8 @@ export default function HashingVisualizer() {
             </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
-            <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+          <div className="flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
+            <div className="flex flex-wrap justify-center gap-4 sm:justify-start">
               <span className="text-gray-600 dark:text-gray-400">
                 Load Factor: <span className="font-semibold text-primary dark:text-darkPrimary">{getLoadFactor()}%</span>
               </span>
@@ -203,13 +229,13 @@ export default function HashingVisualizer() {
         </div>
 
         {/* Hash Table */}
-        <div className="bg-white/40 dark:bg-zinc-900/40 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-inner backdrop-blur-md p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-center text-primary dark:text-darkPrimary mb-4 sm:mb-6">
+        <div className="p-4 border shadow-inner bg-white/40 dark:bg-zinc-900/40 border-primary/10 dark:border-darkPrimary/10 rounded-2xl backdrop-blur-md sm:p-6">
+          <h2 className="mb-4 text-lg font-semibold text-center sm:text-xl text-primary dark:text-darkPrimary sm:mb-6">
             Hash Table (Size: {TABLE_SIZE})
           </h2>
           
           {/* Mobile: 2 columns, Tablet: 5 columns, Desktop: 10 columns */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-3 lg:gap-4 justify-center">
+          <div className="grid justify-center grid-cols-2 gap-2 sm:grid-cols-5 lg:grid-cols-10 sm:gap-3 lg:gap-4">
             {table.map((val, idx) => (
               <div
                 key={idx}
@@ -219,8 +245,8 @@ export default function HashingVisualizer() {
                   'bg-white border-primary/20 dark:bg-zinc-900/40 dark:border-darkPrimary/20'}
                 `}
               >
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">[{idx}]</div>
-                <div className="text-center font-bold text-sm sm:text-base">
+                <div className="mb-1 text-xs text-zinc-500 dark:text-zinc-400">[{idx}]</div>
+                <div className="text-sm font-bold text-center sm:text-base">
                   {val !== null ? val : '—'}
                 </div>
               </div>
@@ -228,13 +254,13 @@ export default function HashingVisualizer() {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap justify-center gap-4 mt-4 sm:mt-6 text-xs sm:text-sm">
+          <div className="flex flex-wrap justify-center gap-4 mt-4 text-xs sm:mt-6 sm:text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-white border-2 border-primary/20 dark:bg-zinc-900/40 dark:border-darkPrimary/20 rounded"></div>
+              <div className="w-4 h-4 bg-white border-2 rounded border-primary/20 dark:bg-zinc-900/40 dark:border-darkPrimary/20"></div>
               <span className="text-gray-600 dark:text-gray-400">Empty</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-blue-100 border-2 border-blue-400 dark:bg-blue-900/40 dark:border-blue-500 rounded"></div>
+              <div className="w-4 h-4 bg-blue-100 border-2 border-blue-400 rounded dark:bg-blue-900/40 dark:border-blue-500"></div>
               <span className="text-gray-600 dark:text-gray-400">Occupied</span>
             </div>
             <div className="flex items-center gap-2">
@@ -247,7 +273,7 @@ export default function HashingVisualizer() {
         {/* Message */}
         {message && (
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 text-sm sm:text-base lg:text-lg font-medium text-primary dark:text-darkPrimary bg-white/50 dark:bg-zinc-900/50 border border-primary/10 dark:border-darkPrimary/10 rounded-xl px-4 py-3 shadow-sm backdrop-blur-md max-w-full">
+            <div className="inline-flex items-center max-w-full gap-2 px-4 py-3 text-sm font-medium border shadow-sm sm:text-base lg:text-lg text-primary dark:text-darkPrimary bg-white/50 dark:bg-zinc-900/50 border-primary/10 dark:border-darkPrimary/10 rounded-xl backdrop-blur-md">
               {message.includes('calculation') && <Calculator size={18} />}
               {message.includes('Inserted') && <CheckCircle size={18} />}
               {message.includes('Collision') && <AlertTriangle size={18} />}
@@ -259,23 +285,23 @@ export default function HashingVisualizer() {
         )}
 
         {/* Theory Section */}
-        <div className="bg-white/50 dark:bg-zinc-900/50 border border-primary/10 dark:border-darkPrimary/10 rounded-2xl shadow-sm backdrop-blur-md p-6 sm:p-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-primary dark:text-darkPrimary mb-6 flex items-center gap-3">
+        <div className="p-6 border shadow-sm bg-white/50 dark:bg-zinc-900/50 border-primary/10 dark:border-darkPrimary/10 rounded-2xl backdrop-blur-md sm:p-8">
+          <h2 className="flex items-center gap-3 mb-6 text-2xl font-bold sm:text-3xl text-primary dark:text-darkPrimary">
             <BookOpen size={28} />
             Hash Tables Theory
           </h2>
           
           <div className="space-y-8">
             <section>
-              <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-4 flex items-center gap-2">
+              <h3 className="flex items-center gap-2 mb-4 text-xl font-semibold text-primary dark:text-darkPrimary">
                 <Hash size={20} />
                 What is a Hash Table?
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
                 A hash table is a data structure that implements an associative array, a structure that can map keys to values. It uses a hash function to compute an index into an array of buckets or slots, from which the desired value can be found.
               </p>
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-400">
-                <p className="text-sm text-blue-800 dark:text-blue-200 flex items-center gap-2">
+              <div className="p-4 border-l-4 border-blue-400 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                <p className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
                   <Zap size={16} />
                   <strong>Time Complexity:</strong> Average O(1) for insertion, deletion, and search operations
                 </p>
@@ -283,15 +309,15 @@ export default function HashingVisualizer() {
             </section>
 
             <section>
-              <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-4 flex items-center gap-2">
+              <h3 className="flex items-center gap-2 mb-4 text-xl font-semibold text-primary dark:text-darkPrimary">
                 <Calculator size={20} />
                 Division Method
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                The division method uses the formula: <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono">hash(key) = key % table_size</code>
+              <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
+                The division method uses the formula: <code className="px-2 py-1 font-mono bg-gray-100 rounded dark:bg-gray-800">hash(key) = key % table_size</code>
               </p>
-              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border-l-4 border-green-400">
-                <p className="text-sm text-green-800 dark:text-green-200 flex items-center gap-2">
+              <div className="p-4 border-l-4 border-green-400 rounded-lg bg-green-50 dark:bg-green-900/20">
+                <p className="flex items-center gap-2 text-sm text-green-800 dark:text-green-200">
                   <CheckCircle size={16} />
                   <strong>Example:</strong> If we want to insert 23 into a table of size 10: hash(23) = 23 % 10 = 3
                 </p>
@@ -299,15 +325,15 @@ export default function HashingVisualizer() {
             </section>
 
             <section>
-              <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-4 flex items-center gap-2">
+              <h3 className="flex items-center gap-2 mb-4 text-xl font-semibold text-primary dark:text-darkPrimary">
                 <Settings size={20} />
                 Linear Probing
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
                 Linear probing is a collision resolution technique where we search for the next available slot sequentially. If slot hash(key) is occupied, we try hash(key) + 1, then hash(key) + 2, and so on.
               </p>
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border-l-4 border-yellow-400">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+              <div className="p-4 border-l-4 border-yellow-400 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                <p className="flex items-center gap-2 text-sm text-yellow-800 dark:text-yellow-200">
                   <AlertTriangle size={16} />
                   <strong>Clustering:</strong> Linear probing can cause primary clustering, where consecutive occupied slots form clusters, increasing search time.
                 </p>
@@ -315,14 +341,14 @@ export default function HashingVisualizer() {
             </section>
 
             <section>
-              <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-4 flex items-center gap-2">
+              <h3 className="flex items-center gap-2 mb-4 text-xl font-semibold text-primary dark:text-darkPrimary">
                 <Database size={20} />
                 Load Factor
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
                 Load factor = (Number of elements) / (Table size). A load factor above 0.7 typically indicates the need for table resizing to maintain performance.
               </p>
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border-l-4 border-purple-400">
+              <div className="p-4 border-l-4 border-purple-400 rounded-lg bg-purple-50 dark:bg-purple-900/20">
                 <p className="text-sm text-purple-800 dark:text-purple-200">
                   <strong>Current Load Factor:</strong> {getLoadFactor()}% ({table.filter(val => val !== null).length}/{TABLE_SIZE})
                 </p>
@@ -330,32 +356,32 @@ export default function HashingVisualizer() {
             </section>
 
             <section>
-              <h3 className="text-xl font-semibold text-primary dark:text-darkPrimary mb-4 flex items-center gap-2">
+              <h3 className="flex items-center gap-2 mb-4 text-xl font-semibold text-primary dark:text-darkPrimary">
                 <Users size={20} />
                 Real-World Applications
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Database size={18} className="text-blue-600" />
                   <span className="text-gray-700 dark:text-gray-300">Database indexing</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Zap size={18} className="text-yellow-600" />
                   <span className="text-gray-700 dark:text-gray-300">Caching systems</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Settings size={18} className="text-green-600" />
                   <span className="text-gray-700 dark:text-gray-300">Symbol tables in compilers</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Hash size={18} className="text-purple-600" />
                   <span className="text-gray-700 dark:text-gray-300">Implementing sets and maps</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Lock size={18} className="text-red-600" />
                   <span className="text-gray-700 dark:text-gray-300">Password storage</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                   <Users size={18} className="text-indigo-600" />
                   <span className="text-gray-700 dark:text-gray-300">User session management</span>
                 </div>
@@ -365,20 +391,20 @@ export default function HashingVisualizer() {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+        <div className="grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
+          <div className="p-4 border bg-white/30 dark:bg-zinc-900/30 rounded-xl border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {table.filter(val => val !== null).length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Elements</div>
           </div>
-          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+          <div className="p-4 border bg-white/30 dark:bg-zinc-900/30 rounded-xl border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {table.filter(val => val === null).length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Empty Slots</div>
           </div>
-          <div className="bg-white/30 dark:bg-zinc-900/30 rounded-xl p-4 border border-primary/10 dark:border-darkPrimary/10">
+          <div className="p-4 border bg-white/30 dark:bg-zinc-900/30 rounded-xl border-primary/10 dark:border-darkPrimary/10">
             <div className="text-2xl font-bold text-primary dark:text-darkPrimary">
               {currentStep}
             </div>

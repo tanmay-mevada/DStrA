@@ -2,6 +2,12 @@
 
 import Link from 'next/link';
 import { PlayCircle, ChevronRight, Search } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const searchingAlgorithms = [
   {
@@ -22,18 +28,39 @@ const searchingAlgorithms = [
 
 
 export default function SearchingIntroPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen w-full bg-[#f9fafb] dark:bg-[#0f172a] py-4 sm:py-6 lg:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 mb-6 sm:mb-8 lg:mb-12">
+        <div className="px-4 py-6 mb-6 border shadow-xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-slate-200 dark:border-slate-700 sm:px-6 lg:px-8 sm:py-8 lg:py-12 sm:mb-8 lg:mb-12">
           <div className="flex flex-col items-center text-center">
             <div className="mb-4 sm:mb-6">
               <Search className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-[#38bdf8] dark:text-[#0ea5e9] mx-auto mb-3 sm:mb-4" />
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary dark:text-darkPrimary mb-3 sm:mb-4">
+              <h1 className="mb-3 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-primary dark:text-darkPrimary sm:mb-4">
                 Searching Algorithms
               </h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed px-2">
+              <p className="max-w-3xl px-2 mx-auto text-sm leading-relaxed sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400">
                 Explore interactive visualizations of fundamental searching algorithms. 
                 Learn how they work, compare their performance, and understand their real-world applications.
               </p>
@@ -43,7 +70,7 @@ export default function SearchingIntroPage() {
         </div>
 
         {/* Algorithm Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
+        <div className="grid max-w-4xl grid-cols-1 gap-4 mx-auto sm:grid-cols-2 sm:gap-6">
           {searchingAlgorithms.map((algo) => (
             <Link
               href={`/learn/searching/${algo.id}`}
@@ -65,13 +92,13 @@ export default function SearchingIntroPage() {
                 </div>
               </div>
               
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+              <p className="mb-4 text-sm leading-relaxed sm:text-base text-slate-600 dark:text-slate-400">
                 {algo.desc}
               </p>
               
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-medium sm:text-sm text-slate-500 dark:text-slate-400">
                     Time Complexity:
                   </span>
                   <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs sm:text-sm font-mono text-[#38bdf8] dark:text-[#0ea5e9]">

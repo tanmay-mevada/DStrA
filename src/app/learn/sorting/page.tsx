@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { PlayCircle, ChevronRight, BarChart3, ChevronDown, ArrowDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
 
 const sortingAlgorithms = [
   {
@@ -59,6 +64,27 @@ function SortingPreview() {
   const jRef = useRef(0);
   const arrRef = useRef<number[]>([...arr]);
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+  
   useEffect(() => {
     arrRef.current = [8, 3, 5, 4, 7, 6, 1, 2];
     setArr([...arrRef.current]);
@@ -111,8 +137,8 @@ function SortingPreview() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center mb-8 w-full">
-      <div className="flex items-end gap-1 sm:gap-2 h-24 sm:h-28 md:h-32 w-full max-w-xs sm:max-w-md md:max-w-lg bg-gradient-to-br from-slate-50/50 to-blue-50/50 dark:from-slate-800/50 dark:to-blue-900/30 rounded-xl border border-slate-200 dark:border-slate-700 p-3 sm:p-4 shadow-inner">
+    <div className="flex flex-col items-center w-full mb-8">
+      <div className="flex items-end w-full h-24 max-w-xs gap-1 p-3 border shadow-inner sm:gap-2 sm:h-28 md:h-32 sm:max-w-md md:max-w-lg bg-gradient-to-br from-slate-50/50 to-blue-50/50 dark:from-slate-800/50 dark:to-blue-900/30 rounded-xl border-slate-200 dark:border-slate-700 sm:p-4">
         {arr.map((v, i) => (
           <div
             key={i}
@@ -127,7 +153,7 @@ function SortingPreview() {
               height: `${v * 8 + 20}px`,
             }}
           >
-            <div className="absolute bottom-0 left-0 right-0 text-xs text-white font-semibold text-center py-1">
+            <div className="absolute bottom-0 left-0 right-0 py-1 text-xs font-semibold text-center text-white">
               {v}
             </div>
           </div>
@@ -143,30 +169,30 @@ function SortingPreview() {
 export default function SortingIntroPage() {
   return (
     <div className="min-h-screen w-full bg-[#f9fafb] dark:bg-[#0f172a] py-4 sm:py-6 lg:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 mb-8 sm:mb-12">
+        <div className="px-4 py-6 mb-8 border shadow-xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-slate-200 dark:border-slate-700 sm:px-6 lg:px-8 sm:py-8 lg:py-12 sm:mb-12">
           <div className="flex flex-col items-center text-center">
             <div className="mb-6 sm:mb-8">
               <BarChart3 className="w-12 h-12 sm:w-16 sm:h-16 text-[#38bdf8] dark:text-[#0ea5e9] mx-auto mb-4" />
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary dark:text-darkPrimary mb-4">
+              <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl text-primary dark:text-darkPrimary">
                 Sorting Algorithms
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+              <p className="max-w-3xl mx-auto text-base leading-relaxed sm:text-lg md:text-xl text-slate-600 dark:text-slate-400">
                 Explore interactive visualizations of fundamental sorting algorithms. 
                 Learn how they work, compare their performance, and understand their real-world applications.
               </p>
             </div>
             
             <SortingPreview />
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+            <div className="absolute transform -translate-x-1/2 bottom-6 left-1/2">
         <ArrowDown className="w-6 h-6 animate-bounce text-zinc-500 dark:text-zinc-400" />
       </div>
           </div>
         </div>
 
         {/* Algorithm Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-8">
           {sortingAlgorithms.map((algo) => (
             <Link
               href={`/learn/sorting/${algo.id}`}
@@ -188,13 +214,13 @@ export default function SortingIntroPage() {
                 </div>
               </div>
               
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+              <p className="mb-4 text-sm leading-relaxed sm:text-base text-slate-600 dark:text-slate-400">
                 {algo.desc}
               </p>
               
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-medium sm:text-sm text-slate-500 dark:text-slate-400">
                     Time Complexity:
                   </span>
                   <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs sm:text-sm font-mono text-[#38bdf8] dark:text-[#0ea5e9]">

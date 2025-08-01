@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { RefreshCcw, Play, Pause, Timer, ArrowLeft, BookOpen, Code, Zap, TrendingUp, Clock } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
 
 export default function InsertionSortPage() {
   const SIZE = 20;
@@ -22,6 +27,26 @@ export default function InsertionSortPage() {
   const isPaused = useRef(false);
   const resetVersion = useRef(0);
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
   useEffect(() => {
     generateArray();
   }, []);
@@ -127,26 +152,26 @@ export default function InsertionSortPage() {
   return (
     <div className="min-h-screen bg-[#f9fafb] dark:bg-[#0f172a] py-4 sm:py-6 lg:py-8">
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <button className="p-2 rounded-lg bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <button className="p-2 transition-colors border rounded-lg bg-white/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
               <ArrowLeft className="w-5 h-5 text-[#111827] dark:text-[#e2e8f0]" />
             </button>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#111827] dark:text-[#e2e8f0]">
               Insertion Sort Visualization
             </h1>
           </div>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-3xl">
+          <p className="max-w-3xl text-sm sm:text-base text-slate-600 dark:text-slate-400">
             Watch how insertion sort builds the final sorted array one element at a time, inserting each element into its correct position within the already sorted portion.
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="p-4 mb-6 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border-slate-200 dark:border-slate-700 sm:p-6 sm:mb-8">
+          <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 lg:grid-cols-4">
             <button
               onClick={generateArray}
               disabled={isSorting}
@@ -177,7 +202,7 @@ export default function InsertionSortPage() {
               <span className="text-sm">{paused ? 'Resume' : 'Pause'}</span>
             </button>
             
-            <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800">
               <Timer className="w-4 h-4 text-[#38bdf8] dark:text-[#0ea5e9]" />
               <span className="text-sm font-medium text-[#111827] dark:text-[#e2e8f0] whitespace-nowrap">
                 Speed: {speed}ms
@@ -207,28 +232,28 @@ export default function InsertionSortPage() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 sm:mb-8">
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Current Pass</div>
+        <div className="grid grid-cols-2 gap-4 mb-6 sm:grid-cols-4 sm:mb-8">
+          <div className="p-3 border rounded-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-700 sm:p-4">
+            <div className="mb-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400">Current Pass</div>
             <div className="text-lg sm:text-xl font-bold text-[#38bdf8] dark:text-[#0ea5e9]">{currentPass}</div>
           </div>
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Comparisons</div>
-            <div className="text-lg sm:text-xl font-bold text-yellow-500">{comparisons}</div>
+          <div className="p-3 border rounded-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-700 sm:p-4">
+            <div className="mb-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400">Comparisons</div>
+            <div className="text-lg font-bold text-yellow-500 sm:text-xl">{comparisons}</div>
           </div>
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Insertions</div>
-            <div className="text-lg sm:text-xl font-bold text-red-500">{insertions}</div>
+          <div className="p-3 border rounded-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-700 sm:p-4">
+            <div className="mb-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400">Insertions</div>
+            <div className="text-lg font-bold text-red-500 sm:text-xl">{insertions}</div>
           </div>
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Sorted</div>
-            <div className="text-lg sm:text-xl font-bold text-green-500">{sortedIndices.length}</div>
+          <div className="p-3 border rounded-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200 dark:border-slate-700 sm:p-4">
+            <div className="mb-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400">Sorted</div>
+            <div className="text-lg font-bold text-green-500 sm:text-xl">{sortedIndices.length}</div>
           </div>
         </div>
 
         {/* Visualizer */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
-          <div className="flex items-end justify-center h-64 sm:h-80 md:h-96 overflow-x-auto">
+        <div className="p-4 mb-6 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border-slate-200 dark:border-slate-700 sm:p-6 sm:mb-8">
+          <div className="flex items-end justify-center h-64 overflow-x-auto sm:h-80 md:h-96">
             <div className="flex items-end gap-1 sm:gap-2 min-w-fit">
               {array.map((val, i) => {
                 const isComparing = comparing.includes(i);
@@ -258,7 +283,7 @@ export default function InsertionSortPage() {
                       style={{ height: `${val * 2.5}px` }}
                     />
                     {/* Index */}
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 select-none">
+                    <div className="mt-1 text-xs select-none text-slate-500 dark:text-slate-400">
                       {i}
                     </div>
                   </div>
@@ -268,34 +293,34 @@ export default function InsertionSortPage() {
           </div>
           
           {/* Legend */}
-          <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex flex-wrap gap-4 pt-4 mt-6 border-t border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-[#38bdf8] dark:bg-[#0ea5e9] rounded"></div>
               <span className="text-sm text-slate-600 dark:text-slate-400">Unsorted</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-purple-400 ring-2 ring-purple-300 rounded"></div>
+              <div className="w-4 h-4 bg-purple-400 rounded ring-2 ring-purple-300"></div>
               <span className="text-sm text-slate-600 dark:text-slate-400">Current Key</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-yellow-400 ring-2 ring-yellow-300 rounded"></div>
+              <div className="w-4 h-4 bg-yellow-400 rounded ring-2 ring-yellow-300"></div>
               <span className="text-sm text-slate-600 dark:text-slate-400">Comparing</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-400 ring-2 ring-red-300 rounded"></div>
+              <div className="w-4 h-4 bg-red-400 rounded ring-2 ring-red-300"></div>
               <span className="text-sm text-slate-600 dark:text-slate-400">Inserting</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-400 ring-2 ring-green-300 rounded"></div>
+              <div className="w-4 h-4 bg-green-400 rounded ring-2 ring-green-300"></div>
               <span className="text-sm text-slate-600 dark:text-slate-400">Sorted</span>
             </div>
           </div>
         </div>
 
         {/* Theory Section */}
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
+        <div className="grid gap-6 lg:grid-cols-2 sm:gap-8">
           {/* How it Works */}
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+          <div className="p-4 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border-slate-200 dark:border-slate-700 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
               <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">How Insertion Sort Works</h2>
@@ -307,7 +332,7 @@ export default function InsertionSortPage() {
               <p>
                 The algorithm maintains a sorted subarray at the beginning and repeatedly takes the next element from the unsorted portion to insert it into the correct position in the sorted portion.
               </p>
-              <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 mt-4">
+              <div className="p-3 mt-4 rounded-lg bg-slate-100 dark:bg-slate-800">
                 <h3 className="font-medium text-[#111827] dark:text-[#e2e8f0] mb-2">Algorithm Steps:</h3>
                 <ol className="space-y-1 text-sm">
                   <li>1. Start with second element (first is sorted)</li>
@@ -320,19 +345,19 @@ export default function InsertionSortPage() {
           </div>
 
           {/* Complexity Analysis */}
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+          <div className="p-4 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border-slate-200 dark:border-slate-700 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
               <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Complexity Analysis</h2>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3">
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Time Complexity</div>
+                <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <div className="mb-1 text-xs text-slate-600 dark:text-slate-400">Time Complexity</div>
                   <div className="font-mono text-sm text-red-500">O(n²)</div>
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3">
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Space Complexity</div>
+                <div className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <div className="mb-1 text-xs text-slate-600 dark:text-slate-400">Space Complexity</div>
                   <div className="font-mono text-sm text-green-500">O(1)</div>
                 </div>
               </div>
@@ -351,15 +376,15 @@ export default function InsertionSortPage() {
           </div>
 
           {/* Pros and Cons */}
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+          <div className="p-4 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border-slate-200 dark:border-slate-700 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <Zap className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
               <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Pros & Cons</h2>
             </div>
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium text-green-600 dark:text-green-400 mb-2">Advantages:</h3>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                <h3 className="mb-2 font-medium text-green-600 dark:text-green-400">Advantages:</h3>
+                <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                   <li>• Efficient for small datasets</li>
                   <li>• Adaptive - performs well on nearly sorted data</li>
                   <li>• Stable sorting algorithm</li>
@@ -368,8 +393,8 @@ export default function InsertionSortPage() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-medium text-red-600 dark:text-red-400 mb-2">Disadvantages:</h3>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                <h3 className="mb-2 font-medium text-red-600 dark:text-red-400">Disadvantages:</h3>
+                <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                   <li>• Poor performance on large datasets</li>
                   <li>• More writes than selection sort</li>
                   <li>• O(n²) comparisons and writes</li>
@@ -380,12 +405,12 @@ export default function InsertionSortPage() {
           </div>
 
           {/* Code Implementation */}
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-lg">
+          <div className="p-4 border shadow-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-xl border-slate-200 dark:border-slate-700 sm:p-6">
             <div className="flex items-center gap-2 mb-4">
               <Code className="w-5 h-5 text-[#38bdf8] dark:text-[#0ea5e9]" />
               <h2 className="text-lg sm:text-xl font-semibold text-[#111827] dark:text-[#e2e8f0]">Implementation</h2>
             </div>
-            <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 overflow-x-auto">
+            <div className="p-4 overflow-x-auto rounded-lg bg-slate-100 dark:bg-slate-800">
               <pre className="text-sm text-slate-700 dark:text-slate-300">
                 <code>{`function insertionSort(arr) {
   const n = arr.length;

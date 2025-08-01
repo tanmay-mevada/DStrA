@@ -1,8 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import { BookOpen, Save, Plus, ArrowLeft } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import Spinner from '@/components/Spinner';
+import toast from 'react-hot-toast';
 
 interface Section {
   heading: string;
@@ -18,9 +22,35 @@ interface Chapter {
 
 export default function EditChapter() {
   const { id } = useParams();
-  const router = useRouter();
   const [form, setForm] = useState<Chapter | null>(null);
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session?.user || session.user.role !== 'admin') {
+      toast.error("ACCESS DENIED - UNAUTHORIZED");
+      router.replace('/');
+    } else {
+      trackUserActivity(pathname);
+    }
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background dark:bg-backgroundDark">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!session?.user || session.user.role !== 'admin') {
+    return null;
+  }
+  
   useEffect(() => {
     if (!id) return;
     fetch(`/api/chapters/${id}`)
@@ -54,13 +84,13 @@ export default function EditChapter() {
 
       <form onSubmit={handleUpdate} className="p-6 mb-10 space-y-4 shadow-md bg-surface dark:bg-surfaceDark rounded-xl">
         <input
-          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full p-3 border rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Chapter Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
         />
         <input
-          className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full p-3 border rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
           placeholder="Short Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -69,7 +99,7 @@ export default function EditChapter() {
         {form.sections.map((section, index) => (
           <div key={index} className="space-y-2">
             <input
-              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full p-3 border rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               placeholder={`Section ${index + 1} Heading`}
               value={section.heading}
               onChange={(e) => {
@@ -79,7 +109,7 @@ export default function EditChapter() {
               }}
             />
             <textarea
-              className="w-full p-3 rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full p-3 border rounded-lg bg-background dark:bg-backgroundDark text-text dark:text-textDark border-border dark:border-borderDark focus:outline-none focus:ring-2 focus:ring-primary/50"
               rows={4}
               placeholder="Section Content"
               value={section.content}
@@ -114,7 +144,7 @@ export default function EditChapter() {
         <div className="flex flex-col items-stretch gap-3 mt-6 sm:flex-row sm:justify-between">
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 px-4 py-2 font-semibold text-white transition bg-primary dark:bg-darkPrimary rounded hover:opacity-90"
+            className="flex items-center justify-center gap-2 px-4 py-2 font-semibold text-white transition rounded bg-primary dark:bg-darkPrimary hover:opacity-90"
           >
             <Save className="w-5 h-5" /> Save Changes
           </button>

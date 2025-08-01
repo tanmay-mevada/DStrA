@@ -3,7 +3,21 @@ import connectDB from '@/lib/db';
 import { User } from '@/models/user';
 
 export async function GET() {
-  await connectDB();
-  const users = await User.find({}, 'email role lastSeen').sort({ lastSeen: -1 });
-  return NextResponse.json(users);
+  try {
+    await connectDB();
+
+    const users = await User.find({})
+      .select('-password')
+      .sort({ lastSeen: -1 });
+    
+    const usersWithPasswordStatus = users.map(user => ({
+      ...user.toObject(),
+      password: user.password ? 'SET' : '', 
+    }));
+    
+    return NextResponse.json(usersWithPasswordStatus);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+  }
 }

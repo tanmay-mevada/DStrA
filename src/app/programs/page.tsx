@@ -2,7 +2,11 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Spinner from '@/components/Spinner'; // Adjust path as needed
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
 
 interface Program {
   _id: string;
@@ -51,6 +55,27 @@ export default function ProgramsPage() {
   const [loading, setLoading] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
@@ -95,25 +120,25 @@ export default function ProgramsPage() {
   // Show loading spinner
   if (loading) {
     return (
-      <div className="min-h-screen bg-background dark:bg-backgroundDark transition-colors duration-300">
+      <div className="min-h-screen transition-colors duration-300 bg-background dark:bg-backgroundDark">
         <div className="border-b border-borderL dark:border-borderDark">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 sm:py-8">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-primary dark:text-darkPrimary">
+              <h1 className="text-2xl font-bold sm:text-3xl font-michroma text-primary dark:text-darkPrimary">
                 Programs
               </h1>
             </div>
-            <p className="mt-2 text-borderL dark:text-borderDark font-techmono text-sm">
+            <p className="mt-2 text-sm text-borderL dark:text-borderDark font-techmono">
               Collection of programming solutions and code examples
             </p>
           </div>
         </div>
         
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex flex-col items-center gap-4">
               <Spinner className="w-8 h-8" />
-              <p className="text-borderL dark:text-borderDark font-techmono text-sm">
+              <p className="text-sm text-borderL dark:text-borderDark font-techmono">
                 Loading programs...
               </p>
             </div>
@@ -124,13 +149,13 @@ export default function ProgramsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-backgroundDark transition-colors duration-300">
+    <div className="min-h-screen transition-colors duration-300 bg-background dark:bg-backgroundDark">
       {/* Header */}
       <div className="border-b border-borderL dark:border-borderDark">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 sm:py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-michroma font-bold text-primary dark:text-primaryDark">
+              <h1 className="text-2xl font-bold sm:text-3xl font-michroma text-primary dark:text-primaryDark">
                 Programs
               </h1>
               
@@ -161,10 +186,10 @@ export default function ProgramsPage() {
                       onClick={() => setShowTooltip(false)}
                     />
                     
-                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-72 sm:w-80 z-50 animate-fadeIn">
-                      <div className="bg-surface dark:bg-surfaceDark text-text dark:text-textDark text-sm rounded-lg p-4 shadow-xl border border-borderL dark:border-borderDark">
+                    <div className="absolute z-50 transform -translate-x-1/2 top-8 left-1/2 w-72 sm:w-80 animate-fadeIn">
+                      <div className="p-4 text-sm border rounded-lg shadow-xl bg-surface dark:bg-surfaceDark text-text dark:text-textDark border-borderL dark:border-borderDark">
                         {/* Arrow pointer */}
-                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-surface dark:bg-surfaceDark rotate-45 border-l border-t border-borderL dark:border-borderDark"></div>
+                        <div className="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 border-t border-l -top-1 left-1/2 bg-surface dark:bg-surfaceDark border-borderL dark:border-borderDark"></div>
                         
                         {/* Close button for mobile */}
                         <div className="flex items-start justify-between mb-2 md:hidden">
@@ -173,7 +198,7 @@ export default function ProgramsPage() {
                           </span>
                           <button
                             onClick={() => setShowTooltip(false)}
-                            className="text-borderL dark:text-borderDark hover:text-text dark:hover:text-textDark transition-colors"
+                            className="transition-colors text-borderL dark:text-borderDark hover:text-text dark:hover:text-textDark"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -181,14 +206,14 @@ export default function ProgramsPage() {
                           </button>
                         </div>
                         
-                        <p className="leading-relaxed mb-3">
+                        <p className="mb-3 leading-relaxed">
                           These programs are specially designed for DStrA's IDE and not recommended to practice in exams. They are intended to demonstrate coding concepts and practices.
                         </p>
                         
                         {/* Library Link in tooltip */}
                         <Link 
                           href="/library"
-                          className="inline-flex items-center gap-2 text-primary dark:text-darkPrimary hover:text-primary/80 dark:hover:text-darkPrimary/80 transition-colors font-medium text-sm"
+                          className="inline-flex items-center gap-2 text-sm font-medium transition-colors text-primary dark:text-darkPrimary hover:text-primary/80 dark:hover:text-darkPrimary/80"
                           onClick={() => setShowTooltip(false)}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +231,7 @@ export default function ProgramsPage() {
             {/* Library Link Button in Header */}
             <Link 
               href="/library" 
-              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary rounded-lg transition-all duration-200 font-techmono text-sm font-medium hover:scale-105"
+              className="items-center hidden gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg sm:flex bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary font-techmono hover:scale-105"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -215,8 +240,8 @@ export default function ProgramsPage() {
             </Link>
           </div>
           
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-2">
-            <p className="text-borderL dark:text-borderDark font-techmono text-xs sm:text-sm">
+          <div className="flex flex-col gap-2 mt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+            <p className="text-xs text-borderL dark:text-borderDark font-techmono sm:text-sm">
               Collection of programming solutions and code examples
             </p>
             
@@ -235,7 +260,7 @@ export default function ProgramsPage() {
       </div>
 
       {/* Programs Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-6xl px-4 py-6 mx-auto sm:px-6 sm:py-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {programs.map((program) => {
             const isAvailable = program.available !== false;
@@ -243,19 +268,19 @@ export default function ProgramsPage() {
             if (isAvailable) {
               return (
                 <Link key={program._id} href={`/programs/${program._id}`}>
-                  <div className="group bg-white dark:bg-surfaceDark rounded-lg border border-borderL dark:border-borderDark hover:border-primary dark:hover:border-darkPrimary transition-all duration-200 hover:shadow-lg cursor-pointer">
+                  <div className="transition-all duration-200 bg-white border rounded-lg cursor-pointer group dark:bg-surfaceDark border-borderL dark:border-borderDark hover:border-primary dark:hover:border-darkPrimary hover:shadow-lg">
                     <div className="p-4 sm:p-6">
                       {/* Header */}
-                      <div className="flex items-start justify-between mb-4 gap-2">
+                      <div className="flex items-start justify-between gap-2 mb-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-darkPrimary/10 dark:text-darkPrimary font-techmono">
                           Chapter {program.chapterNumber}
                         </span>
                         
-                        <div className="flex gap-1 flex-wrap">
+                        <div className="flex flex-wrap gap-1">
                           {getLanguages(program).map((lang) => (
                             <span
                               key={lang}
-                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface dark:bg-backgroundDark text-text dark:text-textDark border border-borderL dark:border-borderDark font-techmono"
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium border rounded bg-surface dark:bg-backgroundDark text-text dark:text-textDark border-borderL dark:border-borderDark font-techmono"
                             >
                               {lang}
                             </span>
@@ -264,7 +289,7 @@ export default function ProgramsPage() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-base sm:text-lg font-semibold text-text dark:text-textDark mb-3 group-hover:text-primary dark:group-hover:text-darkPrimary transition-colors line-clamp-2">
+                      <h3 className="mb-3 text-base font-semibold transition-colors sm:text-lg text-text dark:text-textDark group-hover:text-primary dark:group-hover:text-darkPrimary line-clamp-2">
                         {program.title}
                       </h3>
 
@@ -275,8 +300,8 @@ export default function ProgramsPage() {
                           <span className="text-xs text-borderL dark:text-borderDark font-techmono">Available</span>
                         </div>
                         
-                        <div className="flex items-center text-primary dark:text-darkPrimary group-hover:translate-x-1 transition-transform">
-                          <span className="text-sm font-medium mr-1 font-techmono">View</span>
+                        <div className="flex items-center transition-transform text-primary dark:text-darkPrimary group-hover:translate-x-1">
+                          <span className="mr-1 text-sm font-medium font-techmono">View</span>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
@@ -288,17 +313,17 @@ export default function ProgramsPage() {
               );
             } else {
               return (
-                <div key={program._id} className="bg-white dark:bg-surfaceDark rounded-lg border border-borderL dark:border-borderDark opacity-60 cursor-not-allowed">
+                <div key={program._id} className="bg-white border rounded-lg cursor-not-allowed dark:bg-surfaceDark border-borderL dark:border-borderDark opacity-60">
                   <div className="p-4 sm:p-6">
                     {/* Header */}
-                    <div className="flex items-start justify-between mb-4 gap-2">
+                    <div className="flex items-start justify-between gap-2 mb-4">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 font-techmono">
                         Chapter {program.chapterNumber}
                       </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
+                    <h3 className="mb-3 text-base font-semibold text-gray-500 sm:text-lg dark:text-gray-400 line-clamp-2">
                       {program.title}
                     </h3>
 
@@ -310,7 +335,7 @@ export default function ProgramsPage() {
                       </div>
                       
                       <div className="flex items-center text-gray-400 dark:text-gray-500">
-                        <span className="text-sm font-medium mr-1 font-techmono">Coming Soon</span>
+                        <span className="mr-1 text-sm font-medium font-techmono">Coming Soon</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
@@ -325,19 +350,19 @@ export default function ProgramsPage() {
 
         {/* Empty state */}
         {programs.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 bg-surface dark:bg-surfaceDark rounded-full flex items-center justify-center border border-borderL dark:border-borderDark">
+          <div className="py-16 text-center">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 border rounded-full bg-surface dark:bg-surfaceDark border-borderL dark:border-borderDark">
               <svg className="w-8 h-8 text-primary dark:text-darkPrimary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-text dark:text-textDark mb-2 font-michroma">No programs found</h3>
-            <p className="text-borderL dark:text-borderDark font-techmono mb-4">Check back later for new programming content</p>
+            <h3 className="mb-2 text-xl font-semibold text-text dark:text-textDark font-michroma">No programs found</h3>
+            <p className="mb-4 text-borderL dark:text-borderDark font-techmono">Check back later for new programming content</p>
             
             {/* Library link in empty state */}
             <Link 
               href="/library" 
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary rounded-lg transition-all duration-200 font-techmono text-sm font-medium hover:scale-105"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg bg-primary/10 hover:bg-primary/20 dark:bg-darkPrimary/10 dark:hover:bg-darkPrimary/20 text-primary dark:text-darkPrimary font-techmono hover:scale-105"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

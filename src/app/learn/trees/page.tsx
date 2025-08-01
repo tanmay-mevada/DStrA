@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import type { JSX } from 'react';
 import { Play, RefreshCcw } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 type TreeNode = {
   id: number;
@@ -118,12 +124,33 @@ export default function TreeVisualizer() {
     ];
   };
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f9fafb] dark:bg-[#0f172a] transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 lg:py-12">
         {/* Header */}
-        <div className="text-center mb-8 lg:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary dark:text-darkPrimary mb-4">
+        <div className="mb-8 text-center lg:mb-12">
+          <h1 className="mb-4 text-3xl font-bold sm:text-4xl lg:text-5xl text-primary dark:text-darkPrimary">
             Binary Tree Traversals
           </h1>
           <p className="text-base sm:text-lg text-[#64748b] dark:text-[#94a3b8] max-w-2xl mx-auto leading-relaxed">
@@ -133,7 +160,7 @@ export default function TreeVisualizer() {
 
         {/* Control Panel */}
         <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-[#e2e8f0] dark:border-[#334155] p-6 sm:p-8 mb-8 lg:mb-12">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <button
               onClick={() => traverse(treeData, 'pre')}
               disabled={running}
@@ -201,7 +228,7 @@ export default function TreeVisualizer() {
               <h3 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4">
                 Traversal Result
               </h3>
-              <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 {visited.map((id, i) => (
                   <div key={id} className="flex items-center">
                     <span className="bg-[#38bdf8] text-white px-3 py-1 rounded-lg font-semibold text-sm sm:text-base shadow-md">
@@ -218,7 +245,7 @@ export default function TreeVisualizer() {
         )}
 
         {/* Algorithm Info */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-6 mt-12 md:grid-cols-3 lg:gap-8">
           <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-lg border border-[#e2e8f0] dark:border-[#334155] p-6 hover:shadow-xl transition-all duration-300">
             <h3 className="text-lg font-bold text-[#111827] dark:text-[#e2e8f0] mb-3">Preorder</h3>
             <p className="text-sm text-[#64748b] dark:text-[#94a3b8] leading-relaxed">
@@ -231,7 +258,7 @@ export default function TreeVisualizer() {
             <h3 className="text-lg font-bold text-[#111827] dark:text-[#e2e8f0] mb-3">Inorder</h3>
             <p className="text-sm text-[#64748b] dark:text-[#94a3b8] leading-relaxed">
               Visit left subtree → root → right subtree<br/>
-              <span className="text-emerald-500 font-medium">Result: 1, 2, 3, 4, 5, 6, 7 (sorted!)</span>
+              <span className="font-medium text-emerald-500">Result: 1, 2, 3, 4, 5, 6, 7 (sorted!)</span>
             </p>
           </div>
           
@@ -239,7 +266,7 @@ export default function TreeVisualizer() {
             <h3 className="text-lg font-bold text-[#111827] dark:text-[#e2e8f0] mb-3">Postorder</h3>
             <p className="text-sm text-[#64748b] dark:text-[#94a3b8] leading-relaxed">
               Visit left subtree → right subtree → root<br/>
-              <span className="text-violet-500 font-medium">Result: 1, 3, 2, 5, 7, 6, 4</span>
+              <span className="font-medium text-violet-500">Result: 1, 3, 2, 5, 7, 6, 4</span>
             </p>
           </div>
         </div>

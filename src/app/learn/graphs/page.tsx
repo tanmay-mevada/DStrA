@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { Play, RefreshCcw } from 'lucide-react';
+import Spinner from '@/components/Spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import { trackUserActivity } from '@/lib/trackUserActivity';
+import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 // Graph node type
 type Node = {
@@ -96,12 +102,33 @@ export default function GraphVisualizer() {
     setRunning(false);
   };
 
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (status !== 'loading' && !session?.user) {
+      toast('Please Login to continue');
+      router.replace('/auth/login');
+      return;
+    }
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen bg-[#f9fafb] dark:bg-[#0f172a] transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 lg:py-12">
         {/* Header */}
-        <div className="text-center mb-8 lg:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary dark:text-darkPrimary mb-4">
+        <div className="mb-8 text-center lg:mb-12">
+          <h1 className="mb-4 text-3xl font-bold sm:text-4xl lg:text-5xl text-primary dark:text-darkPrimary">
             Graph Traversal Algorithms
           </h1>
           <p className="text-base sm:text-lg text-[#64748b] dark:text-[#94a3b8] max-w-2xl mx-auto leading-relaxed">
@@ -110,7 +137,7 @@ export default function GraphVisualizer() {
         </div>
 
         {/* Algorithm Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 lg:mb-12">
+        <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:mb-12">
           {/* BFS Controls */}
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-[#e2e8f0] dark:border-[#334155] p-6 sm:p-8">
             <h2 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4 flex items-center gap-2">
@@ -120,7 +147,7 @@ export default function GraphVisualizer() {
             <p className="text-sm text-[#64748b] dark:text-[#94a3b8] mb-6 leading-relaxed">
               Explores all neighbors at the current depth before moving to nodes at the next depth level.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
               {nodes.map((node) => (
                 <button
                   key={`bfs-${node.id}`}
@@ -138,13 +165,13 @@ export default function GraphVisualizer() {
           {/* DFS Controls */}
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-[#e2e8f0] dark:border-[#334155] p-6 sm:p-8">
             <h2 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4 flex items-center gap-2">
-              <div className="w-4 h-4 bg-emerald-500 rounded-full"></div>
+              <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
               Depth-First Search
             </h2>
             <p className="text-sm text-[#64748b] dark:text-[#94a3b8] mb-6 leading-relaxed">
               Goes as deep as possible along each branch before backtracking to explore other branches.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
               {nodes.map((node) => (
                 <button
                   key={`dfs-${node.id}`}
@@ -233,16 +260,15 @@ export default function GraphVisualizer() {
 
         {/* Traversal Result */}
         {visited.length > 0 && (
-          <div className={`rounded-2xl border p-6 sm:p-8 mb-8 ${
-            currentAlgorithm === 'BFS' 
-              ? 'bg-gradient-to-r from-[#38bdf8]/10 to-[#0ea5e9]/10 dark:from-[#38bdf8]/20 dark:to-[#0ea5e9]/20 border-[#38bdf8]/20 dark:border-[#38bdf8]/30' 
+          <div className={`rounded-2xl border p-6 sm:p-8 mb-8 ${currentAlgorithm === 'BFS'
+              ? 'bg-gradient-to-r from-[#38bdf8]/10 to-[#0ea5e9]/10 dark:from-[#38bdf8]/20 dark:to-[#0ea5e9]/20 border-[#38bdf8]/20 dark:border-[#38bdf8]/30'
               : 'bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 dark:from-emerald-500/20 dark:to-emerald-600/20 border-emerald-500/20 dark:border-emerald-500/30'
-          }`}>
+            }`}>
             <div className="text-center">
               <h3 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-[#e2e8f0] mb-4">
                 {currentAlgorithm} Traversal Result
               </h3>
-              <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 {visited.map((id, i) => (
                   <div key={id} className="flex items-center">
                     <span className={`text-white px-3 py-1 rounded-lg font-semibold text-sm sm:text-base shadow-md
@@ -261,7 +287,7 @@ export default function GraphVisualizer() {
         )}
 
         {/* Algorithm Comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
           <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-lg border border-[#e2e8f0] dark:border-[#334155] p-6 hover:shadow-xl transition-all duration-300">
             <h3 className="text-lg font-bold text-[#111827] dark:text-[#e2e8f0] mb-4 flex items-center gap-2">
               <div className="w-3 h-3 bg-[#38bdf8] rounded-full"></div>
@@ -277,7 +303,7 @@ export default function GraphVisualizer() {
 
           <div className="bg-white dark:bg-[#1e293b] rounded-xl shadow-lg border border-[#e2e8f0] dark:border-[#334155] p-6 hover:shadow-xl transition-all duration-300">
             <h3 className="text-lg font-bold text-[#111827] dark:text-[#e2e8f0] mb-4 flex items-center gap-2">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
               DFS Characteristics
             </h3>
             <ul className="text-sm text-[#64748b] dark:text-[#94a3b8] space-y-2">
