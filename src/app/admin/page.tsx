@@ -1,176 +1,113 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import {
   BookOpen,
   Code,
   FileText,
+  Database,
   BarChart3,
   LayoutDashboard,
-  Menu,
-  X,
-  Users,
-  ChevronRight
+  ArrowRight,
 } from 'lucide-react';
+import { trackUserActivity } from '@/lib/trackUserActivity';
 
 const adminSections = [
-  { title: 'Chapters', href: '/admin/chapters', icon: BookOpen },
-  { title: 'Programs', href: '/admin/programs', icon: FileText },
-  { title: 'Library', href: '/admin/library', icon: Code },
-  { title: 'Analytics', href: '/admin/users', icon: BarChart3 },
-  { title: 'Users', href: '/admin/user-management', icon: Users },
+  { title: 'Chapters', href: '/admin/chapters', icon: BookOpen, description: 'Manage course chapters and content' },
+  { title: 'Snippets', href: '/admin/snippets', icon: Code, description: 'Code snippets and examples' },
+  { title: 'Programs', href: '/admin/programs', icon: FileText, description: 'Program management and settings' },
+  { title: 'Library', href: '/admin/library', icon: Database, description: 'Resource library and materials' },
+  { title: 'Analytics', href: '/admin/users', icon: BarChart3, description: 'User analytics and insights' },
 ];
 
 export default function AdminHome() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const pathname = '/admin'; // Simulated current path
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Simulate session
-  const session = { user: { role: 'admin' } };
-  const status = 'authenticated';
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session?.user || session.user.role !== 'admin') {
+      router.push('/');
+      return;
+    }
+
+    trackUserActivity(pathname);
+  }, [session, status, router, pathname]);
 
   if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
-          <div className="w-8 h-8 mx-auto mb-4 border-4 border-blue-600 border-solid rounded-full animate-spin border-t-transparent"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <div className="w-8 h-8 mx-auto mb-4 border-2 border-blue-600 rounded-full dark:border-blue-400 animate-spin border-t-transparent"></div>
+          <p className="text-lg text-slate-600 dark:text-gray-300">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`fixed lg:static top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out z-50
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        
-        {/* Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
-              <LayoutDashboard className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Admin Panel
-            </span>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded-md lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="p-4">
-          <div className="space-y-2">
-            {adminSections.map((section) => (
-              <button
-                key={section.title}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors
-                  ${pathname === section.href
-                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                  }`}
-                onClick={() => setIsSidebarOpen(false)}
-              >
-                <section.icon className="w-5 h-5" />
-                <span className="font-medium">{section.title}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex flex-col flex-1">
-        
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Header */}
-        <header className="px-4 py-4 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 lg:px-6">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-md lg:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Dashboard
+        <div className="mb-16 text-center">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="p-3 bg-blue-600 dark:bg-blue-500 rounded-xl">
+              <LayoutDashboard className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-gray-100 sm:text-5xl">
+              Admin Dashboard
             </h1>
           </div>
-        </header>
+          <p className="max-w-2xl mx-auto text-lg text-slate-600 dark:text-gray-300">
+            Manage your platform with powerful administrative tools. Select a module below to get started.
+          </p>
+        </div>
 
-        {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6">
-          
-          {/* Welcome Section */}
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
-              //ADMIN_ACCESS_GRANTED
-            </h2>
-            <p className="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
-              System online and ready. Use the navigation menu to manage your platform components.
-            </p>
-          </div>
-
-          {/* Quick Actions Grid */}
-          <div className="grid max-w-6xl grid-cols-1 gap-6 mx-auto md:grid-cols-2 lg:grid-cols-3">
-            {adminSections.map((section) => (
-              <button
-                key={section.title}
-                className="p-6 text-left transition-all duration-200 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 group hover:shadow-md"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                    <section.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 transition-transform group-hover:translate-x-1" />
+        {/* Admin Sections Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {adminSections.map((section) => (
+            <Link
+              key={section.title}
+              href={section.href}
+              className="relative p-6 overflow-hidden transition-all duration-300 bg-white border shadow-sm group rounded-2xl dark:bg-gray-800 border-slate-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-500 hover:-translate-y-1"
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="p-3 mb-4 transition-colors duration-300 bg-slate-50 dark:bg-gray-700 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30">
+                  <section.icon className="w-8 h-8 transition-colors duration-300 text-slate-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                
+                <h3 className="mb-2 text-lg font-semibold transition-colors duration-300 text-slate-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                   {section.title}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Manage {section.title.toLowerCase()} and related settings
+                
+                <p className="mb-4 text-sm transition-colors duration-300 text-slate-500 dark:text-gray-400 group-hover:text-slate-600 dark:group-hover:text-gray-300">
+                  {section.description}
                 </p>
-              </button>
-            ))}
-          </div>
-
-          {/* System Status */}
-          <div className="max-w-4xl mx-auto mt-12">
-            <div className="p-6 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
-              <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                System Status
-              </h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">All systems operational</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Database connected</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Services running</span>
+                
+                <div className="flex items-center text-sm font-medium text-blue-600 transition-opacity duration-300 opacity-0 dark:text-blue-400 group-hover:opacity-100">
+                  Access
+                  <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-300 transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </div>
+              
+              {/* Hover gradient overlay */}
+              <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-blue-50 dark:from-blue-900/20 to-transparent group-hover:opacity-100 rounded-2xl"></div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-16 text-center">
+          <div className="inline-flex items-center px-4 py-2 text-sm font-medium bg-white border rounded-full shadow-sm text-slate-600 dark:text-gray-300 dark:bg-gray-800 border-slate-200 dark:border-gray-700">
+            <div className="w-2 h-2 mr-2 bg-green-500 rounded-full animate-pulse"></div>
+            System Status: Online
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
