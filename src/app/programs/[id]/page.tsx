@@ -25,14 +25,14 @@ export default async function ProgramDetailPage(props: any) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (status !== 'loading' && !session?.user) {
-      toast('Please Login to continue');
-      router.replace('/auth/login');
-      return;
-    }
-    trackUserActivity(pathname);
-  }, [session, status, router, pathname]);
+  // useEffect(() => {
+  //   if (status !== 'loading' && !session?.user) {
+  //     toast('Please Login to continue');
+  //     router.replace('/auth/login');
+  //     return;
+  //   }
+  //   trackUserActivity(pathname);
+  // }, [session, status, router, pathname]);
 
   if (status === 'loading' || !session?.user) {
     return (
