@@ -137,18 +137,17 @@ export default function StackOperationsPage() {
     trackUserActivity(pathname);
   }, [session, status, router, pathname]);
 
-  if (status === 'loading' || !session?.user) {
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+    if (status === 'loading' || !session?.user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Spinner className="w-8 h-8" />
       </div>
     );
   }
-  
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   return (
     <div className="flex items-center justify-center w-full min-h-screen p-4 bg-background dark:bg-backgroundDark">

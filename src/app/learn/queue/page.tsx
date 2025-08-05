@@ -60,20 +60,21 @@ function QueueVisualizer({
     }
     trackUserActivity(pathname);
   }, [session, status, router, pathname]);
-
-  if (status === 'loading' || !session?.user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner className="w-8 h-8" />
-      </div>
-    );
-  }
+  
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollLeft = containerRef.current.scrollWidth;
     }
   }, [queue.length]);
 
+    if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+  
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="relative p-4 border-2 shadow-xl border-borderL/20 dark:border-borderDark/20 rounded-2xl sm:p-6 bg-surface/80 dark:bg-surfaceDark/80 backdrop-blur-md">

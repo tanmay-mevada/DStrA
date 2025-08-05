@@ -250,17 +250,37 @@ export default function LibraryDetailPage() {
     }
   }, [item]);
 
-  const handleRun = useCallback(async () => {
+  // Fixed execution logic - same as ProgramViewer
+  const runOrDebug = useCallback(async (debug = false) => {
     setIsRunning(true);
-    setTimeout(() => {
-      setOutput(`Executing ${selectedLanguage.toUpperCase()} code...\nInput: ${input}\nOutput: Hello World!\n\nExecution completed successfully.`);
-      setIsRunning(false);
-    }, 1000);
-  }, [selectedLanguage, input]);
+    try {
+      const res = await fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: selectedLanguage,
+          source_code: debug ? `# Debug Mode\n${currentCode}` : currentCode,
+          stdin: input.trim().split(/\s+/).join('\n'),
+        }),
+      });
 
-  const handleDebug = useCallback(() => {
-    setOutput(`Debug mode for ${selectedLanguage.toUpperCase()} code...\nSetting breakpoints...\nAnalyzing variables...\nDebugging information would appear here.\n\nDebug session ready.`);
-  }, [selectedLanguage]);
+      const data = await res.json();
+      const result = data?.output || data?.stderr || 'No output returned.';
+      setOutput(result);
+    } catch (err) {
+      setOutput('Error executing code.');
+    } finally {
+      setIsRunning(false);
+    }
+  }, [selectedLanguage, currentCode, input]);
+
+  const handleRun = useCallback(async () => {
+    await runOrDebug(false);
+  }, [runOrDebug]);
+
+  const handleDebug = useCallback(async () => {
+    await runOrDebug(true);
+  }, [runOrDebug]);
 
   const handleReset = useCallback(() => {
     setInput('');
@@ -645,7 +665,7 @@ export default function LibraryDetailPage() {
             </div>
           </div>
 
-          {/* IDE */}
+        {/* IDE */}
           <div className="order-1 lg:col-span-3 lg:order-2">
             <div className="h-[50vh] sm:h-[60vh] lg:h-[calc(100vh-200px)] min-h-[400px] sm:min-h-[500px] lg:min-h-[600px]">
               <IDE

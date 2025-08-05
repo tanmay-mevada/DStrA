@@ -76,14 +76,6 @@ function SortingPreview() {
     }
     trackUserActivity(pathname);
   }, [session, status, router, pathname]);
-
-  if (status === 'loading' || !session?.user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner className="w-8 h-8" />
-      </div>
-    );
-  }
   
   useEffect(() => {
     arrRef.current = [8, 3, 5, 4, 7, 6, 1, 2];
@@ -135,6 +127,14 @@ function SortingPreview() {
 
     return () => clearInterval(intervalRef.current!);
   }, []);
+
+  if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center w-full mb-8">

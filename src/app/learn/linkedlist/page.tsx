@@ -52,14 +52,6 @@ function LinkedListVisualizer({
     trackUserActivity(pathname);
   }, [session, status, router, pathname]);
 
-  if (status === 'loading' || !session?.user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner className="w-8 h-8" />
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (
       foundIndex !== null &&
@@ -70,6 +62,14 @@ function LinkedListVisualizer({
       node.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
   }, [foundIndex]);
+
+    if (status === 'loading' || !session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 border shadow-sm bg-surface dark:bg-surfaceDark rounded-xl border-borderL dark:border-borderDark sm:p-6">
