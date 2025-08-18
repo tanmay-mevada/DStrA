@@ -10,7 +10,7 @@ import { toast } from 'react-hot-toast';
 import { trackUserActivity } from '@/lib/trackUserActivity';
 
 export default function ProgramDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); // ✅ unwrap the params Promise
+  const { id } = use(params); 
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -18,7 +18,6 @@ export default function ProgramDetailPage({ params }: { params: Promise<{ id: st
   const [program, setProgram] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch program from API
   useEffect(() => {
     async function fetchProgram() {
       try {

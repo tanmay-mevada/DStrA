@@ -11,7 +11,7 @@ import { useTheme } from 'next-themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Link, Youtube, Save, Share2, Download, AlertTriangle } from 'lucide-react';
+import { Link, Youtube, Save, Share2, Download, AlertTriangle, RotateCcw } from 'lucide-react';
 
 interface Props {
   title: string;
@@ -79,10 +79,10 @@ const Tooltip = ({ children, content, showOnMobile = false }: {
         {children}
       </div>
       {isVisible && (
-        <div className="absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 dark:bg-gray-800 rounded-lg shadow-lg -top-12 left-1/2 transform -translate-x-1/2 min-w-max max-w-xs">
+        <div className="absolute z-50 max-w-xs px-3 py-2 text-sm text-white transform -translate-x-1/2 bg-gray-900 rounded-lg shadow-lg dark:bg-gray-800 -top-12 left-1/2 min-w-max">
           <div className="relative">
             {content}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+            <div className="absolute w-0 h-0 transform -translate-x-1/2 border-t-4 border-l-4 border-r-4 border-transparent top-full left-1/2 border-t-gray-900 dark:border-t-gray-800"></div>
           </div>
         </div>
       )}
@@ -104,13 +104,21 @@ export default function ProgramViewer({
   const [lang, setLang] = useLocalStorage(`program-${programId}-lang`, 
     availableLangs.includes(language) ? language : availableLangs[0]
   );
-  const [codeMap, setCodeMap] = useState(code);
+  
+  // Separate original code from user-modified code
+  const [originalCode] = useState(code); // Keep original code immutable
+  const [userCodeMap, setUserCodeMap] = useLocalStorage(`program-${programId}-user-code`, {}); // User modifications
+  
   const [inputContent, setInputContent] = useLocalStorage(`program-${programId}-input`, '');
   const [terminalContent, setTerminalContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [debugMode, setDebugMode] = useState(false);
+
+  // Get current code (user modified or original)
+  const getCurrentCode = useCallback((language: string) => {
+    return userCodeMap[language] || originalCode[language] || '';
+  }, [userCodeMap, originalCode]);
 
   useEffect(() => setMounted(true), []);
 
@@ -139,38 +147,21 @@ export default function ProgramViewer({
     };
   };
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!hasUnsavedChanges || !programId) return;
-
-    const autoSave = debounce(async () => {
-      try {
-        setSaveStatus('saving');
-        await fetch(`/api/programs/${programId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            code: codeMap,
-            lastModified: new Date().toISOString(),
-          }),
-        });
-        setSaveStatus('saved');
-        setHasUnsavedChanges(false);
-        setTimeout(() => setSaveStatus('idle'), 2000);
-      } catch (error) {
-        console.error('Auto-save failed:', error);
-        setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 3000);
-      }
-    }, 2000);
-
-    autoSave();
-  }, [codeMap, hasUnsavedChanges, programId]);
-
+  // Handle code changes - only store in localStorage, not database
   const handleCodeChange = useCallback((newCode: string) => {
-    setCodeMap((prev) => ({ ...prev, [lang]: newCode }));
-    setHasUnsavedChanges(true);
-  }, [lang]);
+    setUserCodeMap((prev: any) => ({ ...prev, [lang]: newCode }));
+  }, [lang, setUserCodeMap]);
+
+  // Reset to original code
+  const handleResetCode = useCallback(() => {
+    setUserCodeMap((prev: any) => {
+      const newMap = { ...prev };
+      delete newMap[lang]; // Remove user modifications for current language
+      return newMap;
+    });
+    setTerminalContent('');
+    setInputContent('');
+  }, [lang, setUserCodeMap, setInputContent]);
 
   const handleReset = useCallback(() => {
     setTerminalContent('');
@@ -183,38 +174,306 @@ export default function ProgramViewer({
 
   const runOrDebug = useCallback(async (debug = false) => {
     setLoading(true);
+    setDebugMode(debug);
+    
     try {
+      const currentCode = getCurrentCode(lang);
+      let codeToExecute = currentCode;
+      
+      if (debug) {
+        // Enhanced debug information for all languages
+        if (lang === 'python') {
+          codeToExecute = `# DEBUG MODE ENABLED
+import sys
+import traceback
+import os
+
+print("=== DEBUG INFORMATION ===")
+print(f"Python version: {sys.version}")
+print(f"Current working directory: {os.getcwd()}")
+print(f"Input received: {repr(input().strip()) if input else 'No input'}")
+print("=== CODE EXECUTION START ===")
+print()
+
+try:
+${currentCode.split('\n').map((line: string, index: number) => `    print(f"Line ${index + 1}: Executing..."); ${line}`).join('\n')}
+    print()
+    print("=== CODE EXECUTION COMPLETED SUCCESSFULLY ===")
+except Exception as e:
+    print()
+    print("=== ERROR DETECTED ===")
+    print(f"Error type: {type(e).__name__}")
+    print(f"Error message: {str(e)}")
+    print(f"Error occurred in line: {traceback.extract_tb(e.__traceback__)[-1].lineno}")
+    print()
+    print("=== FULL TRACEBACK ===")
+    traceback.print_exc()
+    print("=== DEBUG SESSION END ===")
+except SystemExit:
+    print("=== PROGRAM EXITED ===")
+except KeyboardInterrupt:
+    print("=== EXECUTION INTERRUPTED ===")
+`;
+        } else if (lang === 'cpp') {
+          // For C++, we need to wrap the code more carefully
+          const hasMainFunction = currentCode.includes('int main(');
+          
+          if (hasMainFunction) {
+            // If code already has main, wrap it in try-catch
+            codeToExecute = `// DEBUG MODE ENABLED
+#include <iostream>
+#include <exception>
+#include <stdexcept>
+#include <string>
+
+${currentCode.replace(/int main\s*\([^)]*\)\s*{/, `
+void debug_info() {
+    std::cout << "=== DEBUG INFORMATION ===" << std::endl;
+    std::cout << "Compiler: C++" << std::endl;
+    std::cout << "=== CODE EXECUTION START ===" << std::endl;
+    std::cout << std::endl;
+}
+
+int main() {
+    debug_info();
+    
+    try {`).replace(/}\s*$/, `
+        std::cout << std::endl;
+        std::cout << "=== CODE EXECUTION COMPLETED SUCCESSFULLY ===" << std::endl;
+        return 0;
+    } catch (const std::exception& e) {
+        std::cout << std::endl;
+        std::cout << "=== ERROR DETECTED ===" << std::endl;
+        std::cout << "Error type: std::exception" << std::endl;
+        std::cout << "Error message: " << e.what() << std::endl;
+        std::cout << "=== DEBUG SESSION END ===" << std::endl;
+        return 1;
+    } catch (...) {
+        std::cout << std::endl;
+        std::cout << "=== UNKNOWN ERROR DETECTED ===" << std::endl;
+        std::cout << "An unknown error occurred during execution" << std::endl;
+        std::cout << "=== DEBUG SESSION END ===" << std::endl;
+        return 1;
+    }
+}`)}`;
+          } else {
+            // If no main function, add one with debug wrapper
+            codeToExecute = `// DEBUG MODE ENABLED
+#include <iostream>
+#include <exception>
+#include <stdexcept>
+
+${currentCode}
+
+int main() {
+    std::cout << "=== DEBUG INFORMATION ===" << std::endl;
+    std::cout << "Compiler: C++" << std::endl;
+    std::cout << "=== CODE EXECUTION START ===" << std::endl;
+    std::cout << std::endl;
+    
+    try {
+        // Your code would be executed here
+        std::cout << "Note: Add a main() function to execute your code" << std::endl;
+        std::cout << std::endl;
+        std::cout << "=== CODE EXECUTION COMPLETED SUCCESSFULLY ===" << std::endl;
+        return 0;
+    } catch (const std::exception& e) {
+        std::cout << std::endl;
+        std::cout << "=== ERROR DETECTED ===" << std::endl;
+        std::cout << "Error: " << e.what() << std::endl;
+        std::cout << "=== DEBUG SESSION END ===" << std::endl;
+        return 1;
+    }
+}`;
+          }
+        } else if (lang === 'c') {
+          // For C, similar approach but with C-style error handling
+          const hasMainFunction = currentCode.includes('int main(');
+          
+          if (hasMainFunction) {
+            codeToExecute = `// DEBUG MODE ENABLED
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+
+${currentCode.replace(/int main\s*\([^)]*\)\s*{/, `
+void debug_info() {
+    printf("=== DEBUG INFORMATION ===\\n");
+    printf("Compiler: C\\n");
+    printf("=== CODE EXECUTION START ===\\n");
+    printf("\\n");
+}
+
+void handle_signal(int sig) {
+    printf("\\n=== RUNTIME ERROR DETECTED ===\\n");
+    printf("Signal received: %d\\n", sig);
+    if (sig == SIGSEGV) {
+        printf("Error type: Segmentation fault\\n");
+    } else if (sig == SIGFPE) {
+        printf("Error type: Floating point exception\\n");
+    } else if (sig == SIGABRT) {
+        printf("Error type: Abort signal\\n");
+    }
+    printf("=== DEBUG SESSION END ===\\n");
+    exit(1);
+}
+
+int main() {
+    signal(SIGSEGV, handle_signal);
+    signal(SIGFPE, handle_signal);
+    signal(SIGABRT, handle_signal);
+    
+    debug_info();`).replace(/}\s*$/, `
+    printf("\\n");
+    printf("=== CODE EXECUTION COMPLETED SUCCESSFULLY ===\\n");
+    return 0;
+}`)}`;
+          } else {
+            codeToExecute = `// DEBUG MODE ENABLED
+#include <stdio.h>
+#include <stdlib.h>
+
+${currentCode}
+
+int main() {
+    printf("=== DEBUG INFORMATION ===\\n");
+    printf("Compiler: C\\n");
+    printf("=== CODE EXECUTION START ===\\n");
+    printf("\\n");
+    
+    printf("Note: Add a main() function to execute your code\\n");
+    printf("\\n");
+    printf("=== CODE EXECUTION COMPLETED SUCCESSFULLY ===\\n");
+    return 0;
+}`;
+          }
+        }
+      }
+
       const res = await fetch('/api/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           language: lang,
-          source_code: debug ? `# Debug Mode\n${codeMap[lang]}` : codeMap[lang],
-          stdin: inputContent.trim().split(/\s+/).join('\n'),
+          source_code: codeToExecute,
+          stdin: inputContent.trim(),
+          debug: debug,
         }),
       });
 
       const data = await res.json();
-      const result = data?.output || data?.stderr || 'No output returned.';
+      
+      let result = '';
+      
+      if (debug) {
+        // Enhanced error reporting for debug mode
+        if (data?.compile_output && data.compile_output.trim()) {
+          result += `=== COMPILATION OUTPUT ===\n${data.compile_output}\n\n`;
+        }
+        
+        if (data?.output) {
+          result += data.output;
+        }
+        
+        if (data?.stderr && data.stderr.trim()) {
+          result += `\n=== RUNTIME ERRORS ===\n${data.stderr}`;
+        }
+        
+        if (data?.error) {
+          result += `\n=== EXECUTION ERROR ===\n${data.error}`;
+        }
+        
+        // Add execution status
+        if (data?.status) {
+          result += `\n=== EXECUTION STATUS ===\nExit code: ${data.status}`;
+          if (data.status !== 0) {
+            result += ` (Error - non-zero exit code)`;
+          }
+        }
+        
+        if (!result.trim()) {
+          result = '=== DEBUG SESSION ===\nNo output or errors detected.\n=== DEBUG SESSION END ===';
+        }
+      } else {
+        // Normal execution mode
+        if (data?.output) {
+          result = data.output;
+        } else if (data?.stderr) {
+          result = `Error:\n${data.stderr}`;
+        } else if (data?.error) {
+          result = `Execution Error:\n${data.error}`;
+        } else if (data?.compile_output) {
+          result = `Compilation Error:\n${data.compile_output}`;
+        } else {
+          result = 'No output returned.';
+        }
+      }
+      
       setTerminalContent(result);
     } catch (err) {
-      setTerminalContent('Error executing code.');
+      console.error('Execution error:', err);
+      const errorMessage = debug 
+        ? `=== DEBUG SESSION ERROR ===\nNetwork Error: Unable to execute code.\n${err instanceof Error ? err.message : 'Unknown error'}\n=== DEBUG SESSION END ===`
+        : `Network Error: Unable to execute code.\n${err instanceof Error ? err.message : 'Unknown error'}`;
+      setTerminalContent(errorMessage);
     } finally {
       setLoading(false);
+      setDebugMode(false);
     }
-  }, [lang, codeMap, inputContent]);
+  }, [lang, getCurrentCode, inputContent]);
 
-  // Export functionality
+  //     const res = await fetch('/api/execute', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         language: lang,
+  //         source_code: codeToExecute,
+  //         stdin: inputContent.trim(),
+  //         debug: debug,
+  //       }),
+  //     });
+
+  //     const data = await res.json();
+      
+  //     let result = '';
+  //     if (data?.output) {
+  //       result = data.output;
+  //     } else if (data?.stderr) {
+  //       result = `Error:\n${data.stderr}`;
+  //     } else if (data?.error) {
+  //       result = `Execution Error:\n${data.error}`;
+  //     } else {
+  //       result = 'No output returned.';
+  //     }
+      
+  //     setTerminalContent(result);
+  //   } catch (err) {
+  //     console.error('Execution error:', err);
+  //     setTerminalContent(`Network Error: Unable to execute code.\n${err instanceof Error ? err.message : 'Unknown error'}`);
+  //   } finally {
+  //     setLoading(false);
+  //     setDebugMode(false);
+  //   }
+  // }, [lang, getCurrentCode, inputContent]);
+
+  // Export functionality - downloads current user-modified code
   const exportCode = useCallback(() => {
-    const content = codeMap[lang] || '';
-    const blob = new Blob([content], { type: 'text/plain' });
+    const currentCode = getCurrentCode(lang);
+    const blob = new Blob([currentCode], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${title.replace(/\s+/g, '_')}_${lang}.${lang === 'python' ? 'py' : lang}`;
+    
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const extension = lang === 'python' ? 'py' : lang === 'cpp' ? 'cpp' : 'c';
+    a.download = `${title.replace(/\s+/g, '_')}_${lang}_${timestamp}.${extension}`;
+    
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [codeMap, lang, title]);
+  }, [getCurrentCode, lang, title]);
 
   // Share functionality
   const shareCode = useCallback(async () => {
@@ -240,16 +499,21 @@ export default function ProgramViewer({
     }
   }, [title, chapter]);
 
+  // Check if code has been modified
+  const hasModifications = useMemo(() => {
+    return userCodeMap[lang] && userCodeMap[lang] !== originalCode[lang];
+  }, [userCodeMap, lang, originalCode]);
+
   // Memoize markdown renderer for performance
   const MarkdownRenderer = useMemo(() => {
     return ({ content }: { content: string }) => (
-      <article className="prose prose-sm sm:prose lg:prose-lg max-w-none text-zinc-800 dark:text-zinc-100 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-h3:text-blue-600 dark:prose-h3:text-cyan-300 prose-h4:text-blue-500 dark:prose-h4:text-cyan-200 prose-p:mb-5 prose-p:text-base prose-p:font-normal prose-p:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-cyan-700 prose-blockquote:bg-blue-50/40 dark:prose-blockquote:bg-cyan-900/20 prose-blockquote:italic prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:rounded-r-lg">
+      <article className="prose-sm prose sm:prose lg:prose-lg max-w-none text-zinc-800 dark:text-zinc-100 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-h3:text-blue-600 dark:prose-h3:text-cyan-300 prose-h4:text-blue-500 dark:prose-h4:text-cyan-200 prose-p:mb-5 prose-p:text-base prose-p:font-normal prose-p:leading-relaxed prose-blockquote:border-l-4 prose-blockquote:border-blue-300 dark:prose-blockquote:border-cyan-700 prose-blockquote:bg-blue-50/40 dark:prose-blockquote:bg-cyan-900/20 prose-blockquote:italic prose-blockquote:pl-4 prose-blockquote:py-2 prose-blockquote:rounded-r-lg">
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkBreaks]}
           rehypePlugins={[rehypeRaw]}
           components={{
-            h1: (props) => <h1 className="mb-4 text-3xl font-bold underline text-blue-800 dark:text-cyan-200" {...props} />,
-            h2: (props) => <h2 className="mb-3 text-2xl font-semibold underline text-blue-700 dark:text-cyan-300" {...props} />,
+            h1: (props) => <h1 className="mb-4 text-3xl font-bold text-blue-800 underline dark:text-cyan-200" {...props} />,
+            h2: (props) => <h2 className="mb-3 text-2xl font-semibold text-blue-700 underline dark:text-cyan-300" {...props} />,
             h3: (props) => <h3 className="mb-2 text-xl font-semibold text-blue-600 dark:text-cyan-300" {...props} />,
             h4: (props) => <h4 className="mb-1 text-lg font-medium text-blue-500 dark:text-cyan-200" {...props} />,
             p: (props) => <p className="mb-5 text-base font-normal leading-relaxed text-zinc-800 dark:text-zinc-100" {...props} />,
@@ -369,11 +633,11 @@ export default function ProgramViewer({
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="p-4 space-y-4">
           {/* Header Section with Action Buttons */}
-          <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-lg border border-zinc-200 dark:border-zinc-800">
-            <div className="flex justify-between items-start mb-3">
+          <div className="p-4 bg-white border shadow-lg dark:bg-zinc-900 rounded-xl border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <h1 className="text-xl sm:text-2xl font-extrabold text-blue-700 dark:text-cyan-300 tracking-tight">
+                  <h1 className="text-xl font-extrabold tracking-tight text-blue-700 sm:text-2xl dark:text-cyan-300">
                     {title}
                   </h1>
                   <Tooltip 
@@ -383,24 +647,40 @@ export default function ProgramViewer({
                     <AlertTriangle size={20} className="text-amber-500 dark:text-amber-400" />
                   </Tooltip>
                 </div>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-3">
+                <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
                   <span className="font-semibold">Chapter {chapter}</span> · 
                   <span className="font-semibold">Language:</span> {lang.toUpperCase()}
+                  {hasModifications && (
+                    <span className="px-2 py-1 ml-2 text-xs text-blue-700 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                      Modified
+                    </span>
+                  )}
                 </p>
               </div>
               
               {/* Action Buttons */}
               <div className="flex gap-2">
+                {hasModifications && (
+                  <Tooltip content="Reset to original code" showOnMobile={true}>
+                    <button
+                      onClick={handleResetCode}
+                      className="p-2 text-orange-600 transition bg-orange-100 rounded-lg dark:bg-orange-900 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-800"
+                      title="Reset Code"
+                    >
+                      <RotateCcw size={16} />
+                    </button>
+                  </Tooltip>
+                )}
                 <button
                   onClick={shareCode}
-                  className="p-2 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition"
+                  className="p-2 text-blue-600 transition bg-blue-100 rounded-lg dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"
                   title="Share"
                 >
                   <Share2 size={16} />
                 </button>
                 <button
                   onClick={exportCode}
-                  className="p-2 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition"
+                  className="p-2 text-green-600 transition bg-green-100 rounded-lg dark:bg-green-900 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800"
                   title="Export Code"
                 >
                   <Download size={16} />
@@ -419,29 +699,19 @@ export default function ProgramViewer({
                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-cyan-700 dark:to-blue-700 text-white'
                       : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-blue-50 dark:hover:bg-cyan-900'
                   }`}
-                  disabled={!codeMap?.[l]}
+                  disabled={!originalCode?.[l]}
                 >
                   {l.toUpperCase()}
+                  {userCodeMap[l] && userCodeMap[l] !== originalCode[l] && (
+                    <span className="inline-block w-2 h-2 ml-1 bg-yellow-400 rounded-full"></span>
+                  )}
                 </button>
               ))}
             </div>
-
-            {/* Save Status */}
-            {saveStatus !== 'idle' && (
-              <div className={`text-sm font-medium ${
-                saveStatus === 'saving' ? 'text-blue-600' :
-                saveStatus === 'saved' ? 'text-green-600' :
-                'text-red-600'
-              }`}>
-                {saveStatus === 'saving' ? 'Saving...' :
-                 saveStatus === 'saved' ? 'Saved!' :
-                 'Save failed'}
-              </div>
-            )}
           </div>
 
           {/* Description Section */}
-          <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-lg border border-zinc-200 dark:border-zinc-800">
+          <div className="p-4 bg-white border shadow-lg dark:bg-zinc-900 rounded-xl border-zinc-200 dark:border-zinc-800">
             <MarkdownRenderer content={description?.[lang] ?? 'No description available.'} />
           </div>
 
@@ -450,7 +720,7 @@ export default function ProgramViewer({
             <IDE
               theme={theme}
               language={lang}
-              code={codeMap?.[lang] ?? ''}
+              code={getCurrentCode(lang)}
               setCode={handleCodeChange}
               onRun={() => runOrDebug(false)}
               onDebug={() => runOrDebug(true)}
@@ -468,8 +738,8 @@ export default function ProgramViewer({
 
   // Desktop layout - Fixed to viewport height
   return (
-    <div className="h-screen-safe bg-gray-50 dark:bg-gray-900 overflow-hidden">
-      <div className="p-4 lg:p-6 h-full">
+    <div className="overflow-hidden h-screen-safe bg-gray-50 dark:bg-gray-900">
+      <div className="h-full p-4 lg:p-6">
         <Split
           className="flex h-full"
           sizes={[38, 62]}
@@ -484,36 +754,52 @@ export default function ProgramViewer({
           }}
         >
           {/* Left Panel */}
-          <div className="bg-white mr-3 dark:bg-zinc-900 rounded-2xl p-4 lg:p-6 shadow-lg flex flex-col space-y-4 lg:space-y-6 border border-zinc-200 dark:border-zinc-800 min-w-0 h-full">
+          <div className="flex flex-col h-full min-w-0 p-4 mr-3 space-y-4 bg-white border shadow-lg dark:bg-zinc-900 rounded-2xl lg:p-6 lg:space-y-6 border-zinc-200 dark:border-zinc-800">
             <div className="flex-shrink-0">
-              <div className="flex justify-between items-start mb-3">
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h1 className="text-2xl lg:text-3xl font-extrabold text-blue-700 dark:text-cyan-300 tracking-tight">
+                    <h1 className="text-2xl font-extrabold tracking-tight text-blue-700 lg:text-3xl dark:text-cyan-300">
                       {title}
                     </h1>
-                    <Tooltip content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.">
+                    <Tooltip content="This program is only designed to help you understand the concepts of data structures and algorithms.">
                       <AlertTriangle size={24} className="text-amber-500 dark:text-amber-400" />
                     </Tooltip>
                   </div>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm lg:text-base mb-2">
+                  <p className="mb-2 text-sm text-zinc-500 dark:text-zinc-400 lg:text-base">
                     <span className="font-semibold">Chapter {chapter}</span> · 
                     <span className="font-semibold">Language:</span> {lang.toUpperCase()}
+                    {hasModifications && (
+                      <span className="px-2 py-1 ml-2 text-xs text-blue-700 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                        Modified
+                      </span>
+                    )}
                   </p>
                 </div>
                 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
+                  {hasModifications && (
+                    <Tooltip content="Reset to original code">
+                      <button
+                        onClick={handleResetCode}
+                        className="p-2 text-orange-600 transition bg-orange-100 rounded-lg dark:bg-orange-900 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-800"
+                        title="Reset Code"
+                      >
+                        <RotateCcw size={18} />
+                      </button>
+                    </Tooltip>
+                  )}
                   <button
                     onClick={shareCode}
-                    className="p-2 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition"
+                    className="p-2 text-blue-600 transition bg-blue-100 rounded-lg dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"
                     title="Share"
                   >
                     <Share2 size={18} />
                   </button>
                   <button
                     onClick={exportCode}
-                    className="p-2 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition"
+                    className="p-2 text-green-600 transition bg-green-100 rounded-lg dark:bg-green-900 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800"
                     title="Export Code"
                   >
                     <Download size={18} />
@@ -532,25 +818,15 @@ export default function ProgramViewer({
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-cyan-700 dark:to-blue-700 text-white'
                         : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-blue-50 dark:hover:bg-cyan-900'
                     }`}
-                    disabled={!codeMap?.[l]}
+                    disabled={!originalCode?.[l]}
                   >
                     {l.toUpperCase()}
+                    {userCodeMap[l] && userCodeMap[l] !== originalCode[l] && (
+                      <span className="inline-block w-2 h-2 ml-1 bg-yellow-400 rounded-full"></span>
+                    )}
                   </button>
                 ))}
               </div>
-
-              {/* Save Status */}
-              {saveStatus !== 'idle' && (
-                <div className={`text-sm font-medium mb-2 ${
-                  saveStatus === 'saving' ? 'text-blue-600' :
-                  saveStatus === 'saved' ? 'text-green-600' :
-                  'text-red-600'
-                }`}>
-                  {saveStatus === 'saving' ? 'Saving...' :
-                   saveStatus === 'saved' ? 'Saved!' :
-                   'Save failed'}
-                </div>
-              )}
             </div>
 
             {/* Description with scrollable content */}
@@ -560,11 +836,11 @@ export default function ProgramViewer({
           </div>
 
           {/* Right Panel - IDE */}
-          <div className="min-w-0 flex-1 h-full">
+          <div className="flex-1 h-full min-w-0">
             <IDE
               theme={theme}
               language={lang}
-              code={codeMap?.[lang] ?? ''}
+              code={getCurrentCode(lang)}
               setCode={handleCodeChange}
               onRun={() => runOrDebug(false)}
               onDebug={() => runOrDebug(true)}

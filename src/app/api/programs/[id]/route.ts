@@ -4,7 +4,6 @@ import connectDB from '@/lib/db';
 
 type ParamsPromise = Promise<{ id: string }>;
 
-// GET a single program
 export async function GET(
   req: NextRequest,
   context: { params: ParamsPromise }
@@ -23,7 +22,6 @@ export async function GET(
   }
 }
 
-// UPDATE a program
 export async function PUT(
   req: NextRequest,
   context: { params: ParamsPromise }
@@ -43,7 +41,6 @@ export async function PUT(
   }
 }
 
-// DELETE a program
 export async function DELETE(
   req: NextRequest,
   context: { params: ParamsPromise }

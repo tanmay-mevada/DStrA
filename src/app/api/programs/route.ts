@@ -1,4 +1,3 @@
-// src/app/api/programs/route.ts
 import connectDB from '@/lib/db';
 import Program from '@/models/program';
 import { NextRequest, NextResponse } from 'next/server';
