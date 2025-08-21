@@ -17,19 +17,18 @@ There are many DSA tools available online, but none are made specially for diplo
 
 ## Tech Stack
 
-![Next.js](https://img.shields.io/badge/Next.js-13+-black?logo=next.js)  
-![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript)  
-![React](https://img.shields.io/badge/React-18+-blue?logo=react)  
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss)  
-![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)  
-![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)  
-![Nodemailer](https://img.shields.io/badge/Nodemailer-Email-yellowgreen)  
-![Judge0](https://img.shields.io/badge/Judge0-API-orange)  
-![NextAuth](https://img.shields.io/badge/NextAuth-Auth-blueviolet)  
-![GoogleAuth](https://img.shields.io/badge/Google-Auth-red?logo=google)  
-![Markdown](https://img.shields.io/badge/Markdown-Rendering-black?logo=markdown)  
-![React Hooks](https://img.shields.io/badge/React-Hooks-61DAFB?logo=react)  
-
+- Next.js 13+  
+- TypeScript  
+- Tailwind CSS  
+- React  
+- MongoDB @Atlas
+- Node.js  
+- Nodemailer
+- Markdown Rendering 
+- Judge0 API
+- NextAuth & GoogleAuth
+- Nodemailer
+- React Hooks
 
 ## Folder Structure
 
