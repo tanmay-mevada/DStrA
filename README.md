@@ -2,14 +2,18 @@
 
 **DStrA** is a structured and comprehensive web application designed for third-semester diploma students of Computer Engineering under Gujarat Technological University (GTU). It focuses on the subject **Data Structures (DI03000021)**, offering a complete learning platform including explanations, code examples, visualizations, and interactive coding.
 
+## Why DStrA was made?
+There are many DSA tools available online, but none are made specially for diploma students. At the diploma level, DSA is taught in a very simple way, and using big tools can feel confusing or too advanced. DStrA was made to fill this gap by giving diploma students an easy and clear platform to learn DSA with examples, visuals, and practice.
+
 ## Features
 
-- Structured Learning aligned with GTU syllabus  
-- Visual representation of algorithms  
-- In-browser coding environment  
-- Auth system with OTP verification  
-- Admin dashboard for content management  
-- TypeScript and Next.js 13+ architecture  
+- Learn Mode: Step-by-step DSA topics with GTU syllabus alignment
+- Theory Module: Read theories, visualize and get video links chapter wise 
+- Visualizations: Graphs, Trees, Sorting animations
+- Online IDE: In-browser Judge0-powered compiler
+- Code library: Download or Run online pre-made codes 
+- Auth System: Google & OTP-based authentication
+- Admin Panel: Upload new lessons, quizzes, and programs  
 
 ## Tech Stack
 
@@ -23,20 +27,20 @@
 - Markdown Rendering 
 - Judge0 API
 - NextAuth & GoogleAuth
+- Nodemailer
 - React Hooks
 
 ## Folder Structure
 
 ```
+public/                  # Static assets
 src/
-├── app/                 # Application pages (learn, library, programs)
-├── api/                 # API routes (auth, chapters, admin)
+├── app/                 # Application pages & API routes (learn, library, programs, admin)
 ├── components/          # Reusable React components
 ├── lib/                 # Utility functions (auth, DB, tracking)
 ├── models/              # Type definitions and interfaces
 ├── types/               # Custom types and declarations
 ├── utils/               # Helper functions (OTP, email)
-├── public/              # Static assets
 ```
 
 ## Getting Started
@@ -64,7 +68,7 @@ npm install
 yarn install
 ```
 
-3. Create `.env.local` file:
+3. Create `.env.local` file with your own credentials :
 
 ```env
 MONGO_URI = ************
@@ -107,7 +111,7 @@ Visit `http://localhost:3000` in your browser.
 
 ## To-Do / Future Improvements
 
-- Add leaderboard and user progress tracking  
+- MCQs Tests Module
 - Add offline mode using PWA  
 - Add problem submission & evaluation logic  
 - Mobile app version (React Native)  
