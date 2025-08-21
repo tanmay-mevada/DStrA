@@ -2,41 +2,46 @@
 
 **DStrA** is a structured and comprehensive web application designed for third-semester diploma students of Computer Engineering under Gujarat Technological University (GTU). It focuses on the subject **Data Structures (DI03000021)**, offering a complete learning platform including explanations, code examples, visualizations, and interactive coding.
 
+## Why DStrA was made?
+There are many DSA tools available online, but none are made specially for diploma students. At the diploma level, DSA is taught in a very simple way, and using big tools can feel confusing or too advanced. DStrA was made to fill this gap by giving diploma students an easy and clear platform to learn DSA with examples, visuals, and practice.
+
 ## Features
 
-- Structured Learning aligned with GTU syllabus  
-- Visual representation of algorithms  
-- In-browser coding environment  
-- Auth system with OTP verification  
-- Admin dashboard for content management  
-- TypeScript and Next.js 13+ architecture  
+- Learn Mode: Step-by-step DSA topics with GTU syllabus alignment
+- Theory Module: Read theories, visualize and get video links chapter wise 
+- Visualizations: Graphs, Trees, Sorting animations
+- Online IDE: In-browser Judge0-powered compiler
+- Code library: Download or Run online pre-made codes 
+- Auth System: Google & OTP-based authentication
+- Admin Panel: Upload new lessons, quizzes, and programs  
 
 ## Tech Stack
 
-- Next.js 13+  
-- TypeScript  
-- Tailwind CSS  
-- React  
-- MongoDB @Atlas
-- Node.js  
-- Nodemailer
-- Markdown Rendering 
-- Judge0 API
-- NextAuth & GoogleAuth
-- React Hooks
+![Next.js](https://img.shields.io/badge/Next.js-13+-black?logo=next.js)  
+![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript)  
+![React](https://img.shields.io/badge/React-18+-blue?logo=react)  
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?logo=tailwindcss)  
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)  
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)  
+![Nodemailer](https://img.shields.io/badge/Nodemailer-Email-yellowgreen)  
+![Judge0](https://img.shields.io/badge/Judge0-API-orange)  
+![NextAuth](https://img.shields.io/badge/NextAuth-Auth-blueviolet)  
+![GoogleAuth](https://img.shields.io/badge/Google-Auth-red?logo=google)  
+![Markdown](https://img.shields.io/badge/Markdown-Rendering-black?logo=markdown)  
+![React Hooks](https://img.shields.io/badge/React-Hooks-61DAFB?logo=react)  
+
 
 ## Folder Structure
 
 ```
+public/                  # Static assets
 src/
-├── app/                 # Application pages (learn, library, programs)
-├── api/                 # API routes (auth, chapters, admin)
+├── app/                 # Application pages & API routes (learn, library, programs, admin)
 ├── components/          # Reusable React components
 ├── lib/                 # Utility functions (auth, DB, tracking)
 ├── models/              # Type definitions and interfaces
 ├── types/               # Custom types and declarations
 ├── utils/               # Helper functions (OTP, email)
-├── public/              # Static assets
 ```
 
 ## Getting Started
@@ -64,7 +69,7 @@ npm install
 yarn install
 ```
 
-3. Create `.env.local` file:
+3. Create `.env.local` file with your own credentials :
 
 ```env
 MONGO_URI = ************
@@ -107,7 +112,7 @@ Visit `http://localhost:3000` in your browser.
 
 ## To-Do / Future Improvements
 
-- Add leaderboard and user progress tracking  
+- MCQs Tests Module
 - Add offline mode using PWA  
 - Add problem submission & evaluation logic  
 - Mobile app version (React Native)  
