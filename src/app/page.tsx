@@ -78,41 +78,36 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Mobile Screen Warning */}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-yellow-100 text-yellow-900 text-sm rounded-md shadow-md animate-fade md:hidden">
-        Best viewed on larger screens. Most of the pages are responsive but still under developement so some features may not work properly on mobile. It is recommended to use a desktop or laptop for the best experience.
-      </div>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16 sm:mb-20">
+        <div className="mb-16 text-center sm:mb-20">
           <div className="mb-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-              Master<span className="text-blue-600 dark:text-blue-400 mt-2"> D</span>ata
-              <span className="text-blue-600 dark:text-blue-400 mt-2"> Str</span>uctures &
-              <span className="text-blue-600 dark:text-blue-400 mt-2"> A</span>lgorithms<br></br>
-              with <span className="font-techmono text-blue-600 dark:text-blue-400 mt-2">
+            <h1 className="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+              Master<span className="mt-2 text-blue-600 dark:text-blue-400"> D</span>ata
+              <span className="mt-2 text-blue-600 dark:text-blue-400"> Str</span>uctures &
+              <span className="mt-2 text-blue-600 dark:text-blue-400"> A</span>lgorithms<br></br>
+              with <span className="mt-2 text-blue-600 font-techmono dark:text-blue-400">
                 DStrA
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="max-w-3xl mx-auto text-lg leading-relaxed text-gray-600 sm:text-xl dark:text-gray-300">
               The ultimate DSA guide made for GTU diploma students for subject
               Data Structures (DI03000021). Learn, practice, and code all at
               one place.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/learn">
-              <button className="group flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
+              <button className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg group hover:bg-blue-700">
                 <Play className="w-5 h-5" />
                 Start Learning
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
 
             <Link href="https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf" target="_blank" rel="noopener noreferrer">
-              <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+              <button className="flex items-center gap-2 px-6 py-3 font-medium text-gray-700 transition-colors duration-200 border border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                 <BookOpen className="w-5 h-5" />
                 View Syllabus
               </button>
@@ -122,15 +117,15 @@ export default function HomePage() {
 
         {/* User Session Card */}
         {session?.user && (
-          <div className="flex items-center gap-3 mb-12 p-4 bg-white/10 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+          <div className="flex items-center gap-3 p-4 mb-12 border border-gray-200 rounded-lg shadow-sm bg-white/10 dark:bg-gray-800/10 dark:border-gray-700">
+            <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full dark:bg-blue-900">
               <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <p className="font-medium text-gray-900 dark:text-white">
                 Welcome back, {session.user.name || 'User'}!
               </p>
-              <p className='text-xs text-gray-400 dark:text-gray-600 truncate'>
+              <p className='text-xs text-gray-400 truncate dark:text-gray-600'>
                 Logged in with {session.user.email}
               </p>
             </div>
@@ -138,25 +133,25 @@ export default function HomePage() {
         )}
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16">
+        <div className="grid grid-cols-1 gap-6 mb-16 md:grid-cols-2 lg:gap-8">
           {features.map((feature, index) => {
             const CardContent = (
               <div
-                className="group p-6 bg-white/20 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+                className="p-6 transition-all duration-200 border border-gray-200 rounded-lg cursor-pointer group bg-white/20 dark:bg-gray-800/10 dark:border-gray-700 hover:shadow-md"
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
                 role="link"
                 tabIndex={0}
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                  <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 transition-colors rounded-lg bg-blue-50 dark:bg-blue-900/30 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50">
                     <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                       {feature.description}
                     </p>
                   </div>
@@ -175,20 +170,20 @@ export default function HomePage() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center p-8 sm:p-12 bg-gray-100 dark:bg-gray-800/10 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="p-8 text-center bg-gray-100 border border-gray-200 rounded-lg sm:p-12 dark:bg-gray-800/10 dark:border-gray-700">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
               Ready to Master Data Structures?
             </h2>
-            <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
+            <p className="mb-8 text-lg text-gray-700 dark:text-gray-300">
               Join thousands of students who have improved their DSA skills with our comprehensive learning platform.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Link href="/learn">
-                <button className="group flex items-center gap-2 px-6 py-3 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">
+                <button className="flex items-center gap-2 px-6 py-3 font-medium text-gray-900 transition-colors duration-200 bg-white rounded-lg group hover:bg-gray-100">
                   <BookOpen className="w-5 h-5" />
                   Start Your Journey
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </Link>
             </div>
@@ -197,21 +192,21 @@ export default function HomePage() {
       </main>
 
       {/* Simple Footer */}
-      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <footer className="bg-white border-t border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+        <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             
             {/* About Section */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
                   <Code className="w-4 h-4 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white font-techmono">
                   DStrA
                 </h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
                 A Data Structures & Algorithms learning platform for GTU diploma students. 
                 Study materials and practice exercises for subject code DI03000021.
               </p>
@@ -219,13 +214,13 @@ export default function HomePage() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h4>
+              <h4 className="mb-4 font-semibold text-gray-900 dark:text-white">Quick Links</h4>
               <ul className="space-y-2">
                 {quickLinks.map((link) => (
                   <li key={link.href}>
                     <Link 
                       href={link.href}
-                      className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
+                      className="text-sm text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                     >
                       {link.label}
                     </Link>
@@ -236,7 +231,7 @@ export default function HomePage() {
 
             {/* Resources */}
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Resources</h4>
+              <h4 className="mb-4 font-semibold text-gray-900 dark:text-white">Resources</h4>
               <ul className="space-y-2">
                 {resources.map((resource) => (
                   <li key={resource.href}>
@@ -244,7 +239,7 @@ export default function HomePage() {
                       href={resource.href}
                       target={resource.href.startsWith('http') ? '_blank' : '_self'}
                       rel={resource.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                      className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm flex items-center gap-1"
+                      className="flex items-center gap-1 text-sm text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
                     >
                       {resource.label}
                       {resource.href.startsWith('http') && (
@@ -258,13 +253,13 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Section */}
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               
               {/* Developer Info */}
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                  <div className="flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full dark:bg-gray-700">
                     <GraduationCap className="w-3 h-3 text-gray-600 dark:text-gray-400" />
                   </div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -275,7 +270,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-2">
                   <a
                     href="mailto:tanmaymevada24@gmail.com"
-                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
                     title="Email"
                   >
                     <Mail className="w-4 h-4" />
@@ -284,14 +279,14 @@ export default function HomePage() {
                     href="https://github.com/tanmay-mevada"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
                     title="GitHub"
                   >
                     <Github className="w-4 h-4" />
                   </a>
                   <a
                     href="https://myportfolio-nine-eta-17.vercel.app/"
-                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
                     title="Portfolio"
                   >
                     <Link2 className="w-4 h-4" />
