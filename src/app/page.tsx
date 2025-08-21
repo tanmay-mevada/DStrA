@@ -10,7 +10,6 @@ import {
   Target,
   ArrowRight,
   Play,
-  Heart,
   Github,
   Mail,
   ExternalLink,
