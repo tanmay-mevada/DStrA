@@ -26,7 +26,7 @@ There are many DSA tools available online, but none are made specially for diplo
 - Nodemailer
 - Markdown Rendering 
 - Judge0 API
-- NextAuth & GoogleAuth
+- GoogleAuth & NextAuth
 - Nodemailer
 - React Hooks
 
