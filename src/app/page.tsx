@@ -1,3 +1,40 @@
+import type { Metadata } from 'next';
+
+// Add metadata for social sharing
+export const metadata: Metadata = {
+  title: 'DStrA - Master Data Structures & Algorithms',
+  description: 'The ultimate DSA guide made for GTU diploma students for subject Data Structures (DI03000021). Learn, practice, and code all at one place.',
+  keywords: ['Data Structures', 'Algorithms', 'GTU', 'Programming', 'Education', 'DSA'],
+  authors: [{ name: 'Tanmay Mevada' }],
+  
+
+  openGraph: {
+    title: 'DStrA - Master Data Structures & Algorithms',
+    description: 'The ultimate DSA guide made for GTU diploma students. Interactive learning platform with coding exercises and visual algorithms.',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://dstra.vercel.app',
+    siteName: 'DStrA',
+    images: [
+      {
+        url: 'https://dstra.vercel.app/dstraogg.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'DStrA - Data Structures & Algorithms Learning Platform',
+      },
+    ],
+  },
+  
+  robots: {
+    index: true,
+    follow: true,
+  },
+  
+  alternates: {
+    canonical: 'https://tanmaymevada.vercel.app',
+  },
+};
+
 'use client';
 
 import Link from 'next/link';
