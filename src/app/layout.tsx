@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} bg-background dark:bg-backgroundDark min-h-screen`}>
         <ThemeProvider>
           <AuthProvider>
-            <Navbar />
+            {/* <Navbar /> */}
             <Toaster position="top-center" />
             {children}
             <Analytics />
