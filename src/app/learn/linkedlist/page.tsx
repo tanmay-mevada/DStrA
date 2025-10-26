@@ -127,6 +127,7 @@ export default function LinkedListPage() {
   const [list, setList] = useState<{ value: string }[]>([]);
   const [value, setValue] = useState('');
   const [index, setIndex] = useState('');
+  const [deleteIdx, setDeleteIdx] = useState('');
   const [search, setSearch] = useState('');
   const [foundIndex, setFoundIndex] = useState<number | null>(null);
 
@@ -283,6 +284,37 @@ export default function LinkedListPage() {
                 <Trash2 className="w-4 h-4" />
                 Delete Last
               </button>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  max={Math.max(0, list.length - 1)}
+                  value={deleteIdx}
+                  onChange={(e) => setDeleteIdx(e.target.value)}
+                  placeholder="Delete Index"
+                  className="w-28 px-3 py-2 text-sm transition-all duration-200 bg-white border rounded-lg border-borderL dark:border-borderDark dark:bg-backgroundDark text-text dark:text-textDark placeholder-borderL dark:placeholder-borderDark focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+                <button
+                  onClick={() => {
+                    // delete at index handler
+                    if (list.length === 0) return;
+                    if (deleteIdx === '') return toast.error('Enter index to delete');
+                    const i = parseInt(deleteIdx);
+                    if (isNaN(i) || i < 0 || i >= list.length) return toast.error('Invalid index');
+                    const newList = [...list];
+                    newList.splice(i, 1);
+                    setList(newList);
+                    setFoundIndex(null);
+                    setDeleteIdx('');
+                    valueInputRef.current?.focus();
+                  }}
+                  disabled={list.length === 0 || deleteIdx === ''}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-all duration-200 bg-red-500 rounded-lg hover:bg-red-600 disabled:bg-borderL disabled:cursor-not-allowed"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete at Index
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -340,7 +372,7 @@ export default function LinkedListPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-borderL dark:text-borderDark">Time Complexity:</span>
-              <span className="font-semibold text-primary dark:text-primary">O(n) search, O(1) insert/delete</span>
+              <span className="font-semibold text-primary dark:text-primary">O(n) search, O(1) insert/delete (First & Last)</span>
             </div>
           </div>
         </div>

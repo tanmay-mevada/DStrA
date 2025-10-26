@@ -34,18 +34,6 @@ const learnTopics = [
     description: 'Interact with singly linked list. Perform insert, delete, search, and count operations.',
   },
   {
-    id: 'trees',
-    unit: { number: 4, name: 'Trees and Graph' },
-    title: 'Tree Structures & Traversals',
-    description: 'Understand binary trees, traversals (inorder, preorder, postorder), and binary search tree operations.',
-  },
-  {
-    id: 'graphs',
-    unit: { number: 4, name: 'Trees and Graph' },
-    title: 'Graph Algorithms',
-    description: 'Visualize graph structures like directed, undirected, and weighted graphs using BFS and DFS.',
-  },
-  {
     id: 'sorting',
     unit: { number: 5, name: 'Sorting and Searching' },
     title: 'Sorting Algorithms',
@@ -62,6 +50,29 @@ const learnTopics = [
     unit: { number: 5, name: 'Sorting and Searching' },
     title: 'Hashing',
     description: 'Understand hash tables, collision resolution techniques, and hash functions like division and folding.',
+  },
+    {
+    id: 'trees',
+    unit: { number: 4, name: 'Trees and Graph' },
+    title: 'Tree Structures & Traversals',
+    description: 'Understand binary trees, traversals (inorder, preorder, postorder), and binary search tree operations.',
+  },
+  {
+    id: 'graphs',
+    unit: { number: 4, name: 'Trees and Graph' },
+    title: 'Graph Algorithms',
+    description: 'Visualize graph structures like directed, undirected, and weighted graphs using BFS and DFS.',
+  },  {
+    id: 'trees',
+    unit: { number: 4, name: 'Trees and Graph' },
+    title: 'Tree Structures & Traversals',
+    description: 'Understand binary trees, traversals (inorder, preorder, postorder), and binary search tree operations.',
+  },
+  {
+    id: 'graphs',
+    unit: { number: 4, name: 'Trees and Graph' },
+    title: 'Graph Algorithms',
+    description: 'Visualize graph structures like directed, undirected, and weighted graphs using BFS and DFS.',
   },
 ];
 
