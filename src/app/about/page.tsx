@@ -96,7 +96,7 @@ export default function AboutPage() {
                     </div>
                 </div>
 
-                {/* Inspiration Section with Premium Design
+                {/* Inspiration Section with Premium Design */}
                 <div className="relative p-8 mb-16 overflow-hidden border border-gray-200 shadow-2xl sm:mb-20 sm:p-12 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-800/30 dark:via-gray-900/10 dark:to-purple-900/10 rounded-3xl dark:border-gray-700">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
                     <div className="absolute top-4 right-4 opacity-20">
@@ -122,7 +122,7 @@ export default function AboutPage() {
                             </p>
                         </div>
                     </div>
-                </div> */}
+                </div>
 
                 {/* Team Section with Enhanced Profile Card */}
                 <div className="mb-16 sm:mb-20">
