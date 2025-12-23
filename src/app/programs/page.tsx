@@ -18,37 +18,49 @@ interface Program {
   available?: boolean;
 }
 
-// Static unavailable programs to show alongside database ones
 const staticUnavailablePrograms: Program[] = [
   {
     _id: 'static-1',
-    title: 'Advanced Data Structures',
-    chapterNumber: 8,
-    c: { code: '', description: 'Implementation of complex data structures like AVL trees, Red-Black trees, and B-trees with detailed explanations' },
+    title: 'Graph: BFS & DFS Traversal',
+    chapterNumber: 0,
+    c: {
+      code: '',
+      description: 'Implementation of Breadth First Search (BFS) and Depth First Search (DFS) algorithms for graph traversal.'
+    },
     available: false
   },
   {
     _id: 'static-2',
-    title: 'Machine Learning Algorithms',
-    chapterNumber: 12,
-    python: { code: '', description: 'Build neural networks, decision trees, and clustering algorithms without external libraries' },
+    title: 'BST Tree Construction',
+    chapterNumber: 0,
+    python: {
+      code: '',
+      description: 'Construction of a Binary Search Tree (BST) with insertion and basic traversal operations.'
+    },
     available: false
   },
   {
     _id: 'static-3',
-    title: 'Advanced OOP Design Patterns',
-    chapterNumber: 15,
-    cpp: { code: '', description: 'Comprehensive implementation of Singleton, Factory, Observer, and Strategy patterns' },
+    title: 'Interpolation Search',
+    chapterNumber: 0,
+    cpp: {
+      code: '',
+      description: 'Implementation of Interpolation Search algorithm for searching elements in a sorted array.'
+    },
     available: false
   },
   {
     _id: 'static-4',
-    title: 'Real-time System Programming',
-    chapterNumber: 18,
-    c: { code: '', description: 'Low-level system programming with threading, memory management, and hardware interaction' },
+    title: 'Hashing',
+    chapterNumber: 0,
+    c: {
+      code: '',
+      description: 'Implementation of hashing techniques including hash functions and collision handling methods.'
+    },
     available: false
   }
 ];
+
 
 export default function ProgramsPage() {
   const [programs, setPrograms] = useState<Program[]>([]);

@@ -32,6 +32,13 @@ const sortingAlgorithms = [
     difficulty: 'Easy',
   },
   {
+  id: 'merge',
+  name: 'Merge Sort',
+  desc: 'Sorts an array using divide and conquer by splitting it into halves and merging sorted subarrays.',
+  complexity: 'O(n log n)',
+  difficulty: 'Medium',
+  },
+  {
     id: 'quick',
     name: 'Quick Sort',
     desc: 'Divides array around a pivot and recursively sorts partitions.',

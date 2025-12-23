@@ -70,6 +70,10 @@ export default function LibraryDetailPage() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    toast('Use of Light theme is recommended for this page...');
+  }, []);
+  
   // Set mounted to true after first render
   useEffect(() => {
     setMounted(true);
