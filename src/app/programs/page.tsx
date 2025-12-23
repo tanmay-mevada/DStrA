@@ -22,7 +22,7 @@ const staticUnavailablePrograms: Program[] = [
   {
     _id: 'static-1',
     title: 'Graph: BFS & DFS Traversal',
-    chapterNumber: 0,
+    chapterNumber: 4,
     c: {
       code: '',
       description: 'Implementation of Breadth First Search (BFS) and Depth First Search (DFS) algorithms for graph traversal.'
@@ -32,7 +32,7 @@ const staticUnavailablePrograms: Program[] = [
   {
     _id: 'static-2',
     title: 'BST Tree Construction',
-    chapterNumber: 0,
+    chapterNumber: 4,
     python: {
       code: '',
       description: 'Construction of a Binary Search Tree (BST) with insertion and basic traversal operations.'
@@ -42,7 +42,7 @@ const staticUnavailablePrograms: Program[] = [
   {
     _id: 'static-3',
     title: 'Interpolation Search',
-    chapterNumber: 0,
+    chapterNumber: 5,
     cpp: {
       code: '',
       description: 'Implementation of Interpolation Search algorithm for searching elements in a sorted array.'
@@ -52,7 +52,7 @@ const staticUnavailablePrograms: Program[] = [
   {
     _id: 'static-4',
     title: 'Hashing',
-    chapterNumber: 0,
+    chapterNumber: 5,
     c: {
       code: '',
       description: 'Implementation of hashing techniques including hash functions and collision handling methods.'
@@ -347,7 +347,7 @@ export default function ProgramsPage() {
                       </div>
                       
                       <div className="flex items-center text-gray-400 dark:text-gray-500">
-                        <span className="mr-1 text-sm font-medium font-techmono">Coming Soon</span>
+                        <span className="mr-1 text-sm font-medium font-techmono">Not in Syllabus</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
