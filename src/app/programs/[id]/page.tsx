@@ -10,13 +10,18 @@ import { toast } from 'react-hot-toast';
 import { trackUserActivity } from '@/lib/trackUserActivity';
 
 export default function ProgramDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); 
+  const { id } = use(params);
 
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [program, setProgram] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    toast('Use of Light theme is recommended for this page...');
+  }, []);
+
 
   useEffect(() => {
     async function fetchProgram() {
