@@ -62,17 +62,6 @@ const learnTopics = [
     unit: { number: 4, name: 'Trees and Graph' },
     title: 'Graph Algorithms',
     description: 'Visualize graph structures like directed, undirected, and weighted graphs using BFS and DFS.',
-  },  {
-    id: 'trees',
-    unit: { number: 4, name: 'Trees and Graph' },
-    title: 'Tree Structures & Traversals',
-    description: 'Understand binary trees, traversals (inorder, preorder, postorder), and binary search tree operations.',
-  },
-  {
-    id: 'graphs',
-    unit: { number: 4, name: 'Trees and Graph' },
-    title: 'Graph Algorithms',
-    description: 'Visualize graph structures like directed, undirected, and weighted graphs using BFS and DFS.',
   },
 ];
 
