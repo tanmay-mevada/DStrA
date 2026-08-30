@@ -78,10 +78,20 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <main className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-12">
+    <div className="relative min-h-screen bg-gray-50 dark:bg-gray-900 overflow-x-hidden">
+      {/* Ambient background decoration */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Subtle grid pattern fading out towards the bottom */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,white_20%,transparent_75%)]"></div>
+        
+        {/* Ambient Glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-blue-400/20 dark:bg-blue-900/20 blur-[120px]"></div>
+        <div className="absolute top-[15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-400/20 dark:bg-indigo-900/20 blur-[120px]"></div>
+      </div>
+
+      <main className="relative z-10 px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-12">
         {/* Hero Section */}
-        <div className="grid items-center gap-12 mb-16 sm:mb-20 lg:grid-cols-2">
+        <div className="grid items-center gap-12 min-h-[75vh] lg:min-h-[80vh] pb-8 mb-16 sm:mb-20 lg:grid-cols-2">
           {/* Left: copy (unchanged text) */}
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-xs font-medium text-blue-600 rounded-full font-techmono bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400">
@@ -92,20 +102,16 @@ export default function HomePage() {
               DI03000021 &middot; GTU DIPLOMA
             </div>
 
-            <h1 className="mb-8 font-bold text-left tracking-tight">
-              <span className="block text-3xl sm:text-4xl lg:text-5xl text-gray-900 dark:text-white mb-1">
-                Master
-              </span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl leading-[1.15] text-gray-900 dark:text-white mb-3">
-                <span className="text-blue-600 dark:text-blue-400">D</span>ata <br />
-                <span className="text-blue-600 dark:text-blue-400">Str</span>uctures & <br />
+            <h1 className="mb-6 text-4xl font-bold leading-[1.15] tracking-tight text-left text-gray-900 sm:text-5xl lg:text-6xl dark:text-white">
+              <span className="block mb-2 text-3xl sm:text-4xl lg:text-5xl text-gray-500 dark:text-gray-400">Master</span>
+              <span className="block mb-1">
+                <span className="text-blue-600 dark:text-blue-400">D</span>ata{' '}
+                <span className="text-blue-600 dark:text-blue-400">Str</span>uctures &{' '}
                 <span className="text-blue-600 dark:text-blue-400">A</span>lgorithms
               </span>
-              <span className="block text-xl sm:text-2xl lg:text-3xl text-gray-500 dark:text-gray-400 mb-1">
-                with
-              </span>
-              <span className="block text-6xl sm:text-7xl lg:text-8xl text-blue-600 font-techmono dark:text-blue-400">
-                DStrA
+              <span className="block mt-3 text-4xl sm:text-5xl lg:text-6xl">
+                <span className="text-gray-500 dark:text-gray-400">with </span>
+                <span className="text-blue-600 font-techmono dark:text-blue-400">DStrA</span>
               </span>
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-left text-gray-600 sm:text-xl dark:text-gray-300">
@@ -133,24 +139,59 @@ export default function HomePage() {
           </div>
 
           {/* Right: signature terminal, recolored to match site's light theme */}
-          <div className="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800/40 dark:border-gray-700">
-            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-gray-200 bg-gray-50 dark:bg-gray-900/40 dark:border-gray-700">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-              <span className="ml-2 text-xs text-gray-400 font-techmono dark:text-gray-500">bst_insert.c</span>
-            </div>
-            <div className="p-5 text-[13px] leading-relaxed font-techmono">
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">1</span><span className="text-purple-600 dark:text-purple-400">struct</span> <span className="text-gray-800 dark:text-gray-200">Node* insert(</span><span className="text-purple-600 dark:text-purple-400">struct</span> <span className="text-gray-800 dark:text-gray-200">Node* root, </span><span className="text-blue-600 dark:text-blue-400">int</span> <span className="text-gray-800 dark:text-gray-200">key) {'{'}</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">2</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">if</span><span className="text-gray-800 dark:text-gray-200"> (root == </span><span className="text-purple-600 dark:text-purple-400">NULL</span><span className="text-gray-800 dark:text-gray-200">) </span><span className="text-purple-600 dark:text-purple-400">return</span><span className="text-gray-800 dark:text-gray-200"> newNode(key);</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">3</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">if</span><span className="text-gray-800 dark:text-gray-200"> (key &lt; root-&gt;data)</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">4</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;&nbsp;&nbsp;root-&gt;left = insert(root-&gt;left, key);</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">5</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">else</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">6</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;&nbsp;&nbsp;root-&gt;right = insert(root-&gt;right, key);</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">7</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-gray-400 dark:text-gray-500">// O(log n) avg &middot; O(n) worst</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">8</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">return</span><span className="text-gray-800 dark:text-gray-200"> root;</span></div>
-              <div><span className="mr-3 text-gray-300 dark:text-gray-600">9</span><span className="text-gray-800 dark:text-gray-200">{'}'}</span></div>
-              <div className="mt-3 text-green-600 dark:text-green-400">&gt; output: [12, 25, 30, 45, 60] ✓</div>
+          <div className="relative group">
+            {/* Glowing background blob */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-300"></div>
+            
+            <div className="relative overflow-hidden bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-2xl dark:bg-[#0A0F1C]/95 dark:border-gray-800 transition-transform duration-500 group-hover:-translate-y-2">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200/50 bg-gray-50/80 dark:bg-gray-900/80 dark:border-gray-800">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 group-hover:gap-2 transition-all duration-300">
+                    <span className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm"></span>
+                    <span className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm"></span>
+                  </div>
+                  <span className="ml-2 text-xs text-gray-400 font-techmono dark:text-gray-500 transition-colors group-hover:text-blue-500 dark:group-hover:text-blue-400">bst_insert.c</span>
+                </div>
+                <div className="text-[10px] text-gray-400 dark:text-gray-500 font-techmono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded transition-colors group-hover:bg-blue-50 group-hover:text-blue-600 dark:group-hover:bg-blue-900/30 dark:group-hover:text-blue-400">
+                  Ready
+                </div>
+              </div>
+              
+              <div className="p-5 text-[13px] leading-[1.7] font-techmono selection:bg-blue-200 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">1</span><span className="text-purple-600 dark:text-purple-400">struct</span> <span className="text-gray-800 dark:text-gray-200">Node* insert(</span><span className="text-purple-600 dark:text-purple-400">struct</span> <span className="text-gray-800 dark:text-gray-200">Node* root, </span><span className="text-blue-600 dark:text-blue-400">int</span> <span className="text-gray-800 dark:text-gray-200">key) {'{'}</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">2</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">if</span><span className="text-gray-800 dark:text-gray-200"> (root == </span><span className="text-purple-600 dark:text-purple-400">NULL</span><span className="text-gray-800 dark:text-gray-200">) </span><span className="text-purple-600 dark:text-purple-400">return</span><span className="text-gray-800 dark:text-gray-200"> newNode(key);</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">3</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">if</span><span className="text-gray-800 dark:text-gray-200"> (key &lt; root-&gt;data)</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">4</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;&nbsp;&nbsp;root-&gt;left = insert(root-&gt;left, key);</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">5</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">else</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">6</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;&nbsp;&nbsp;root-&gt;right = insert(root-&gt;right, key);</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">7</span><span className="text-gray-400 dark:text-gray-500">// O(log n) avg &middot; O(n) worst</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">8</span><span className="text-gray-800 dark:text-gray-200">&nbsp;&nbsp;</span><span className="text-purple-600 dark:text-purple-400">return</span><span className="text-gray-800 dark:text-gray-200"> root;</span>
+                </div>
+                <div className="px-2 -mx-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors cursor-text group/line">
+                  <span className="inline-block w-6 mr-3 text-right text-gray-300 select-none dark:text-gray-600 group-hover/line:text-blue-400">9</span><span className="text-gray-800 dark:text-gray-200">{'}'}</span>
+                </div>
+                
+                <div className="px-2 -mx-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800/50 flex items-center gap-2">
+                  <span className="flex w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <span className="text-green-600 dark:text-green-400 font-medium tracking-tight">&gt; Output: [12, 25, 30, 45, 60] ✓</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -224,7 +265,7 @@ export default function HomePage() {
                 Ready to Master Data Structures?
               </h2>
               <p className="mb-8 text-lg text-gray-700 dark:text-gray-300">
-                Join thousands of students who have improved their DSA skills with our comprehensive learning platform.
+                Dive into the GTU diploma syllabus with clear explanations, interactive code, and a structured learning path.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link href="/learn">
