@@ -120,19 +120,20 @@ export default function HomePage() {
               one place.
             </p>
 
-            <div className="flex flex-col items-start justify-start gap-4 mt-8 sm:flex-row">
-              <Link href="/learn">
-                <button className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg group hover:bg-blue-700">
-                  <Play className="w-5 h-5" />
-                  Start Learning
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <div className="flex flex-col items-start justify-start gap-4 mt-10 sm:flex-row">
+              <Link href="/learn" className="relative group/btn">
+                <div className="absolute inset-0 bg-blue-500 rounded-lg blur opacity-40 group-hover/btn:opacity-80 transition duration-500"></div>
+                <button className="relative flex items-center gap-2 px-8 py-3.5 font-medium text-white transition-all duration-300 bg-blue-600 rounded-lg group hover:bg-blue-500 hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20">
+                  <Play className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                  <span>Start Learning</span>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 </button>
               </Link>
 
-              <Link href="https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf" target="_blank" rel="noopener noreferrer">
-                <button className="flex items-center gap-2 px-6 py-3 font-medium text-gray-700 transition-colors duration-200 border border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
-                  <BookOpen className="w-5 h-5" />
-                  View Syllabus
+              <Link href="https://s3-ap-southeast-1.amazonaws.com/gtusitecirculars/Syallbus/DI03000021.pdf" target="_blank" rel="noopener noreferrer" className="group/syllabus">
+                <button className="flex items-center gap-2 px-8 py-3.5 font-medium text-gray-700 transition-all duration-300 border border-gray-300 rounded-lg dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-[1.02] active:scale-95 shadow-lg shadow-black/5 dark:shadow-none">
+                  <BookOpen className="w-5 h-5 transition-transform duration-300 group-hover/syllabus:scale-110 group-hover/syllabus:text-blue-500 dark:group-hover/syllabus:text-blue-400" />
+                  <span>View Syllabus</span>
                 </button>
               </Link>
             </div>
@@ -251,30 +252,51 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Call to Action — framed as the function this whole page is building up to calling */}
-        <div className="overflow-hidden bg-white border border-gray-200 rounded-lg dark:bg-gray-800/10 dark:border-gray-700">
-          <div className="flex items-center gap-1.5 px-4 py-3 border-b border-gray-200 bg-gray-50 dark:bg-gray-900/40 dark:border-gray-700">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
-            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
-            <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
-            <span className="ml-2 text-xs text-gray-400 font-techmono dark:text-gray-500">main.c</span>
-          </div>
-          <div className="p-8 text-center sm:p-12">
-            <div className="max-w-3xl mx-auto">
-              <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
-                Ready to Master Data Structures?
-              </h2>
-              <p className="mb-8 text-lg text-gray-700 dark:text-gray-300">
-                Dive into the GTU diploma syllabus with clear explanations, interactive code, and a structured learning path.
-              </p>
-              <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <Link href="/learn">
-                  <button className="flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-lg group hover:bg-blue-700">
-                    <BookOpen className="w-5 h-5" />
-                    Start Your Journey
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
+        {/* Bottom CTA — Terminal Execution Window */}
+        <div className="relative group/cta max-w-4xl mx-auto mt-8 mb-8">
+          {/* Glowing background blob */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-20 group-hover/cta:opacity-40 transition duration-1000"></div>
+          
+          <div className="relative overflow-hidden bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-2xl shadow-2xl dark:bg-[#0A0F1C]/95 dark:border-gray-800 transition-transform duration-500 hover:-translate-y-1">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200/50 bg-gray-50/80 dark:bg-gray-900/80 dark:border-gray-800">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 hover:gap-2 transition-all duration-300 cursor-default">
+                  <span className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm"></span>
+                  <span className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm"></span>
+                  <span className="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm"></span>
+                </div>
+                <span className="ml-2 text-xs text-gray-400 font-techmono dark:text-gray-500">./execute_learning_path</span>
+              </div>
+              <span className="text-[10px] text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30 px-2 py-1 rounded font-techmono flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                Running
+              </span>
+            </div>
+            
+            <div className="p-10 text-center sm:p-14 relative overflow-hidden">
+              {/* Subtle background code watermark */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-100/50 dark:text-gray-800/30 font-techmono text-[200px] leading-none pointer-events-none select-none z-0">
+                {'}'}
+              </div>
+              
+              <div className="relative z-10 max-w-2xl mx-auto">
+                <h2 className="mb-5 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
+                  Ready to Master Data Structures?
+                </h2>
+                <p className="mb-10 text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Dive into the GTU diploma syllabus with clear explanations, interactive code, and a structured learning path.
+                </p>
+                
+                <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                  <Link href="/learn" className="relative group/btn inline-block">
+                    <div className="absolute inset-0 bg-blue-500 rounded-lg blur opacity-40 group-hover/btn:opacity-80 transition duration-500"></div>
+                    <button className="relative flex items-center justify-center gap-2 px-8 py-4 w-full sm:w-auto font-medium text-white transition-all duration-300 bg-blue-600 rounded-lg group hover:bg-blue-500 hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20">
+                      <Code className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+                      <span>Start Your Journey</span>
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
