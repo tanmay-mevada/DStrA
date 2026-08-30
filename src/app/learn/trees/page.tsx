@@ -130,7 +130,7 @@ export default function TreeVisualizer() {
 
   useEffect(() => {
     if (status !== 'loading' && !session?.user) {
-      toast('Please Login to continue');
+      toast('Please Login to continue', { id: 'login-toast' });
       router.replace('/auth/login');
       return;
     }
